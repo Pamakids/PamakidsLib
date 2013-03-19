@@ -1,7 +1,6 @@
 package com.pamakids.manager
 {
 	import com.pamakids.utils.Singleton;
-	import com.pamakids.vo.ThemeVO;
 
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -24,8 +23,6 @@ package com.pamakids.manager
 		}
 
 		private var bitmapDic:Dictionary=new Dictionary();
-
-		private var currentTheme:ThemeVO;
 
 		private var imageTypes:Array=['.jpg', '.png'];
 		private var lm:LoadManager;
@@ -79,9 +76,11 @@ package com.pamakids.manager
 			else
 			{
 				var data:Object=textureData[name];
+				if (!data)
+					return null;
 				var bitmap:Bitmap=bitmapDic[data.bitmapName];
 				var bd:BitmapData=new BitmapData(data.width, data.height);
-				bd.copyPixels(bitmap.bitmapData, new Rectangle(0, 0, data.width, data.height), new Point(data.x, data.y));
+				bd.copyPixels(bitmap.bitmapData, new Rectangle(data.x, data.y, data.width, data.height), new Point());
 				asset=new Bitmap(bd);
 			}
 

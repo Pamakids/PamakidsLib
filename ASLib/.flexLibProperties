@@ -2,7 +2,16 @@
 <flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
   <includeClasses>
     <classEntry path="com.pamakids.manager.AssetsManager"/>
-    <classEntry path="com.pamakids.vo.ThemeVO"/>
+    <classEntry path="com.pamakids.components.base.Container"/>
+    <classEntry path="com.pamakids.components.controls.PButton"/>
+    <classEntry path="com.pamakids.components.base.Skin"/>
+    <classEntry path="com.pamakids.components.controls.PToggleButton"/>
+    <classEntry path="com.pamakids.layouts.ILayout"/>
+    <classEntry path="com.pamakids.layouts.base.LayoutBase"/>
+    <classEntry path="com.pamakids.layouts.HLayout"/>
+    <classEntry path="com.pamakids.components.controls.PToggleButtonBar"/>
+    <classEntry path="com.pamakids.vo.ButtonVO"/>
+    <classEntry path="com.pamakids.events.IndexEvent"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
