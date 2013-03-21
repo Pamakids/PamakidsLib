@@ -4,7 +4,7 @@ package com.pamakids.utils
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 
-	/**
+	/**46p
 	 * 单例管理类
 	 * @author mani
 	 */
@@ -43,21 +43,23 @@ package com.pamakids.utils
 		}
 
 		/**
-		 *
+		 *这里首先字典不怎么会用，这里太灵活了，新建一个类为什么没有（）；
+		 * 最好解释一遍。
 		 * @param c
 		 * @return
 		 */
 		public static function getInstance(c:Class):*
 		{
-			var theClass:*=c;
-			var ret:*=_instances[c];
-			if (ret == null)
+			var theClass:*=c;// 把传进来的类给当前类
+			var ret:*=_instances[c];    // 先存到字典然后再赋值给ret
+			if (ret == null)            //如果字典里面没有
 			{
-				_constructingClass=theClass;
-				new theClass;
-				ret=_instances[theClass];
+				_constructingClass=theClass;  //给静态类赋值了
+				new theClass;                     // 新建一个类，为什么没有（）；
+				ret=_instances[theClass];        // 什么意思不懂
+				
 			}
-			return ret;
+			return ret;                          // 返回ret               
 		}
 	}
 }

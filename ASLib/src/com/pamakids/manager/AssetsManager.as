@@ -12,7 +12,7 @@ package com.pamakids.manager
 	public class AssetsManager extends Singleton
 	{
 
-		public static function get instance():AssetsManager
+		public static function get instance():AssetsManager       // 不懂为什么这里有一个get
 		{
 			return Singleton.getInstance(AssetsManager);
 		}
@@ -67,9 +67,9 @@ package com.pamakids.manager
 
 		public function getAsset(name:String, type:String='image'):Bitmap
 		{
-			var asset:Bitmap;
+			var asset:Bitmap;       // 声明一个位图对象
 
-			if (bitmapDic[name])
+			if (bitmapDic[name])    // 这么写实在不知道是什么意思？
 			{
 				asset=bitmapDic[name];
 			}

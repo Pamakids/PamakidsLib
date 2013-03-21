@@ -70,9 +70,9 @@ package com.pamakids.manager
 			var arr:Array=path.split('/')
 			var fileName:String=arr[arr.length - 1];
 			var file1:File=File.applicationStorageDirectory.resolvePath(directory);
-			if (!file1.exists)
-				file1.createDirectory();
-			var fs:FileStream=new FileStream();
+			if (!file1.exists)            // 如果不存在
+				file1.createDirectory();    //创建指定的目录和任何所需的父目录。如果该目录已存在，则不执行任何操作
+			var fs:FileStream=new FileStream();            //创建 FileStream 对象。使用 open() 或 openAsync() 方法打开文件。
 			var file2:File=file1.resolvePath(fileName);
 			try
 			{
