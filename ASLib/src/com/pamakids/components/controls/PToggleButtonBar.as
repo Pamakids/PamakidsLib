@@ -2,10 +2,11 @@ package com.pamakids.components.controls
 {
 	import com.pamakids.components.base.Container;
 	import com.pamakids.events.IndexEvent;
-	import com.pamakids.layouts.HLayout;
+//	import com.pamakids.layouts.HLayout;
 	import com.pamakids.layouts.ILayout;
+	import com.pamakids.layouts.Llayout;
 	import com.pamakids.layouts.base.LayoutBase;
-
+	
 	import flash.events.MouseEvent;
 
 	public class PToggleButtonBar extends Container
@@ -24,7 +25,7 @@ package com.pamakids.components.controls
 			this.dataProvider=dataProvider;
 
 			if (direction == LayoutBase.HORIZONTAL)
-				layout=new HLayout(this);
+				layout=new Llayout(this);
 		}
 
 		override protected function init():void

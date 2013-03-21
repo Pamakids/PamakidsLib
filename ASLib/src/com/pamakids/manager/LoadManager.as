@@ -65,17 +65,18 @@ package com.pamakids.manager
 		 */
 		public function load(url:String, onComplete:Function, savePath:String=null, params:Array=null, loadingCallBack:Function=null, forceReload:Boolean=false, formate:String=URLLoaderDataFormat.BINARY):void
 		{
-			var b:ByteArray;
+			var b:ByteArray;         // ByteArray 类提供用于优化读取、写入以及处理二进制数据的方法和属性。
 
 			//如果有存储路径，先去本地缓存找是否有
 			if (savePath)
 			{
-				var o:Object=FileManager.readFile(savePath);
-				b=o as ByteArray;
-				if (b)
+				var o:Object=FileManager.readFile(savePath); // 声明一个对象等于它的返回值
+				b=o as ByteArray;                       // 把对象转化为ByteArray
+				if (b)                                 //如果有ByteArray
 				{
-					if (params)
-						onComplete(b, params);
+					if (params)                        // 如果有参数数组
+						onComplete(b, params);         //执行加载完成回调函数，但是这个函数是干什么呢？
+					
 					else
 						onComplete(b);
 				}
@@ -192,6 +193,7 @@ package com.pamakids.manager
 			var params:Array;
 
 			var b:ByteArray=u.data as ByteArray;
+			
 			if (b && b.length == 0)
 				return;
 
@@ -199,7 +201,7 @@ package com.pamakids.manager
 			for (var key:String in loadingDic)
 			{
 				if (loadingDic[key] == u)
-				{
+				{ 
 					loadedDic[key]=u.data;
 					delete loadingDic[key];
 					break;
