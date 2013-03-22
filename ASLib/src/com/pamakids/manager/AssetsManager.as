@@ -1,7 +1,7 @@
 package com.pamakids.manager
 {
 	import com.pamakids.utils.Singleton;
-
+	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
@@ -38,7 +38,7 @@ package com.pamakids.manager
 			loadedCallbacks.push(callback);
 		}
 
-		public function loadTheme(theme:Object, cache:Boolean=false):void
+		public function loadTheme(theme:Object, toCache:Boolean=false):void
 		{
 			var dir:String=theme.dir;
 			var url:String;
@@ -47,14 +47,14 @@ package com.pamakids.manager
 			{
 				if (asset.type)
 				{
-					savePath=cache ? dir + asset.name + asset.type : "";
+					savePath=toCache ? dir + asset.name + asset.type : "";
 					url=dir + asset.name + asset.type;
 					tobeLoaded.push(asset.name + asset.type);
 					lm.load(url, loadedHandler, savePath, [asset.name, asset.type], null, false, LoadManager.BITMAP);
 				}
 				else
 				{
-					savePath=cache ? dir + asset.name : "";
+					savePath=toCache ? dir + asset.name : "";
 					url=dir + asset.name + '.xml';
 					tobeLoaded.push(asset.name + '.xml');
 					lm.load(url, loadedHandler, savePath, [asset.name, '.xml'], null, false, URLLoaderDataFormat.TEXT);

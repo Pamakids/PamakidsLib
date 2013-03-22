@@ -68,25 +68,35 @@ package com.pamakids.manager
 			var b:ByteArray;
 
 			//如果有存储路径，先去本地缓存找是否有
-			if (savePath)
+			if (savePath)//一个return会一直load下去,两个return条件会更严密?
 			{
-				var o:Object=FileManager.readFile(savePath);
-				b=o as ByteArray;
+				var cachedData:Object=FileManager.readFile(savePath);
+				if(cachedData is ByteArray)
+					cachedData = cachedData as ByteArray;
+				if(cachedData)
+				{
+					params ? onComplete(cachedData, params) : onComplete(cachedData);
+					return;
+				}
+				
+				/*b= cachedData as ByteArray;
 				if (b)
 				{
 					if (params)
 						onComplete(b, params);
 					else
 						onComplete(b);
+					//return;
 				}
-				else if (o)
+				else if (cachedData)
 				{
 					if (params)
-						onComplete(o, params);
+						onComplete(cachedData, params);
 					else
-						onComplete(o);
+						onComplete(cachedData);
+					//return;
 				}
-				return;
+				return*/
 			}
 
 			var u:URLLoader=loadingDic[url];
@@ -136,7 +146,7 @@ package com.pamakids.manager
 			completeParamsDic[u]=params;
 			u.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			u.addEventListener(Event.COMPLETE, onBinaryLoaded);
-			if (loadingCallBack != null)
+			if (loadingCallBack)
 			{
 				u.addEventListener(ProgressEvent.PROGRESS, loadingCallBack);
 			}
@@ -156,6 +166,7 @@ package com.pamakids.manager
 			delete completeParamsDic[l.loader];
 			for each (var f:Function in callbacks)
 			{
+				
 				if (params)
 				{
 					f(l.content, params);
@@ -227,14 +238,7 @@ package com.pamakids.manager
 			//每个回调函数都调用
 			for each (f in arr)
 			{
-				if (params)
-				{
-					f(u.data, params);
-				}
-				else
-				{
-					f(u.data);
-				}
+				params?f(u.data,params):f(u.data);
 			}
 		}
 	}
