@@ -5,17 +5,9 @@ package com.pamakids.manager
 	import flash.filesystem.FileStream;
 	import flash.utils.ByteArray;
 
-	/**
-	 * 文件管理
-	 * @author mani
-	 */
 	public class FileManager
 	{
 
-		/**
-		 * 读取文件
-		 * @param path 路径
-		 */
 		public static function readFile(path:String):Object
 		{
 			var o:Object;
@@ -72,6 +64,7 @@ package com.pamakids.manager
 			var fileName:String=arr[arr.length - 1];
 			var file1:File=File.applicationStorageDirectory.resolvePath(directory);
 			if (!file1.exists)
+			trace("ImageCache - Cached image not found, create it !");
 				file1.createDirectory();
 			var fs:FileStream=new FileStream();
 			var file2:File=file1.resolvePath(fileName);

@@ -5,23 +5,20 @@ package com.pamakids.components.controls
 
 	public class PToggleButton extends PButton
 	{
-		public function PToggleButton(name:String, selected:String='', required:Boolean=false)
+		protected var selectedState:DisplayObject;
+		private var _selected:Boolean;
+		private var required:Boolean;
+		public function PToggleButton(name:String,selectedIconLocation:String='', required:Boolean=false)
 		{
 			super(name);
-			if (selected)
+			if (selectedIconLocation)
 			{
-				selectedState=getBitmap(selected);
+				selectedState=getBitmap(selectedIconLocation);
 				selectedState.visible=false;
 				addChild(selectedState);
 			}
-			this.required=required;
+			this.required=required;//将全局设为false
 		}
-
-		protected var selectedState:DisplayObject;
-
-		private var _selected:Boolean;
-		private var required:Boolean;
-
 		public function get selected():Boolean
 		{
 			return _selected;
@@ -30,20 +27,22 @@ package com.pamakids.components.controls
 		public function set selected(value:Boolean):void
 		{
 			_selected=value;
-			if (selectedState)
+			
+			if (selectedState)//条件
 				selectedState.visible=value;
 			upState.visible=!value;
 		}
 
 		override protected function onMouseDown(event:MouseEvent):void
 		{
+			
 			super.onMouseDown(event);
-			if (!required)
+			
+			if (!required)//这个   "反" 是外部类调用的时候改的?
 				selected=!selected;
 			else if (!selected)
 				selected=true;
 		}
-
 		override protected function onMouseUp(event:MouseEvent):void
 		{
 			super.onMouseUp(event);

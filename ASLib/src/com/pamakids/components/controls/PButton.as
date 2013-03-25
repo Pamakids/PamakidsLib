@@ -8,6 +8,9 @@ package com.pamakids.components.controls
 
 	public class PButton extends Skin
 	{
+		protected var upState:DisplayObject;
+		protected var downState:DisplayObject;	
+		private var _enable:Boolean=true;
 		public function PButton(name:String)
 		{
 			super(0, 0, true, false);
@@ -33,7 +36,7 @@ package com.pamakids.components.controls
 			if (enable)
 			{
 				upState.visible=false;
-				stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				//stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			}
 			else
 			{
@@ -54,11 +57,6 @@ package com.pamakids.components.controls
 			removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 		}
 
-		protected var upState:DisplayObject;
-		protected var downState:DisplayObject;
-
-		private var _enable:Boolean=true;
-
 		public function get enable():Boolean
 		{
 			return _enable;
@@ -67,7 +65,7 @@ package com.pamakids.components.controls
 		public function set enable(value:Boolean):void
 		{
 			_enable=value;
-			if (!value)
+			if (!value)//条件
 			{
 				var rc:Number=1 / 3;
 				var gc:Number=1 / 3;

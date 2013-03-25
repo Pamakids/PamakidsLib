@@ -2,12 +2,25 @@ package com.pamakids.layouts.base
 {
 	import com.pamakids.components.base.Container;
 	import com.pamakids.layouts.ILayout;
-
+	
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 
 	public class LayoutBase implements ILayout
 	{
+		private var _gap:Number;
+		public var paddingLeft:Number=0;
+		public var paddingRight:Number=0;
+		public var paddingTop:Number=0;
+		public var paddingBottom:Number=0;
+		private var _itemWidth:Number=0;
+		private var _itemHeight:Number=0;
+		protected var container:Container;
+		public var contentWidth:Number=0;
+		public var contentHeight:Number=0;
+		
+		public static const HORIZONTAL:String="HORIZONTAL";
+		public static const VERTICAL:String="VERTICAL";
 		protected var items:Array=[];
 
 		public function LayoutBase(container:Container)
@@ -113,19 +126,7 @@ package com.pamakids.layouts.base
 			return container.autoFill;
 		}
 
-		private var _gap:Number;
-		public var paddingLeft:Number=0;
-		public var paddingRight:Number=0;
-		public var paddingTop:Number=0;
-		public var paddingBottom:Number=0;
-		private var _itemWidth:Number=0;
-		private var _itemHeight:Number=0;
-		protected var container:Container;
-		public var contentWidth:Number=0;
-		public var contentHeight:Number=0;
-
-		public static const HORIZONTAL:String="HORIZONTAL";
-		public static const VERTICAL:String="VERTICAL";
+		
 
 	}
 }
