@@ -1,8 +1,10 @@
 package com.pamakids.components.base
 {
+	import com.pamakids.filters.ColorFilter;
 	import com.pamakids.manager.AssetsManager;
 
 	import flash.display.Bitmap;
+	import flash.filters.ColorMatrixFilter;
 
 	public class Skin extends Container
 	{
@@ -35,6 +37,22 @@ package com.pamakids.components.base
 			bitmaps.length=0;
 			while (numChildren)
 				removeChildAt(0);
+		}
+
+		private var _enable:Boolean=true;
+
+		public function get enable():Boolean
+		{
+			return _enable;
+		}
+
+		public function set enable(value:Boolean):void
+		{
+			_enable=value;
+			if (!value)
+				filters=[ColorFilter.getDisableFilter()];
+			else
+				filters=[];
 		}
 	}
 }

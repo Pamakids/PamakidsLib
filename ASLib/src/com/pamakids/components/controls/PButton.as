@@ -4,13 +4,13 @@ package com.pamakids.components.controls
 
 	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
-	import flash.filters.ColorMatrixFilter;
 
 	public class PButton extends Skin
 	{
 		protected var upState:DisplayObject;
-		protected var downState:DisplayObject;	
+		protected var downState:DisplayObject;
 		private var _enable:Boolean=true;
+
 		public function PButton(name:String)
 		{
 			super(0, 0, true, false);
@@ -36,7 +36,7 @@ package com.pamakids.components.controls
 			if (enable)
 			{
 				upState.visible=false;
-				//stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+					//stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			}
 			else
 			{
@@ -57,27 +57,8 @@ package com.pamakids.components.controls
 			removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 		}
 
-		public function get enable():Boolean
-		{
-			return _enable;
-		}
-
-		public function set enable(value:Boolean):void
-		{
-			_enable=value;
-			if (!value)//条件
-			{
-				var rc:Number=1 / 3;
-				var gc:Number=1 / 3;
-				var bc:Number=1 / 3;
-				var cmf:ColorMatrixFilter=new ColorMatrixFilter([rc, gc, bc, 0, 0, rc, gc, bc, 0, 0, rc, gc, bc, 0, 0, 0, 0, 0, 1, 0]);
-				filters=[cmf];
-			}
-			else
-			{
-				filters=[];
-			}
-		}
+		protected var upState:DisplayObject;
+		protected var downState:DisplayObject;
 
 	}
 }
