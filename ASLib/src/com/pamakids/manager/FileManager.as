@@ -29,6 +29,7 @@ package com.pamakids.manager
 				var fs:FileStream=new FileStream();
 				fs.open(f, FileMode.READ);
 				o=fs.readObject();
+				
 				fs.close();
 			}
 			catch (error:Error)
@@ -66,7 +67,7 @@ package com.pamakids.manager
 		 */
 		public static function saveFile(path:String, file:Object):File
 		{
-			var directory:String=path.match(new RegExp('.*(?=/)'))[0];
+			var directory:String=path.match(new RegExp('.*(?=/)'))[0];//a
 			var arr:Array=path.split('/')
 			var fileName:String=arr[arr.length - 1];
 			var file1:File=File.applicationStorageDirectory.resolvePath(directory);
