@@ -7,18 +7,40 @@ package com.pamakids.components.controls
 	{
 		protected var selectedState:DisplayObject;
 		private var _selected:Boolean;
+
+		/**
+		 * 如果为true，只可开不可关；false则可开关
+		 */
 		private var required:Boolean;
-		public function PToggleButton(name:String,selectedIconLocation:String='', required:Boolean=false)
+		private var selectedIconLocation:String;
+
+		public function PToggleButton(name:String, selectedIconLocation:String='', required:Boolean=false)
 		{
 			super(name);
+			this.selectedIconLocation=selectedIconLocation;
+			initSelectedState();
+			this.required=required;
+		}
+
+		private function initSelectedState():void
+		{
+			if (selectedState)
+				removeChild(selectedState);
+
 			if (selectedIconLocation)
 			{
 				selectedState=getBitmap(selectedIconLocation);
-				selectedState.visible=false;
+				selectedState.visible=selected;
 				addChild(selectedState);
 			}
-			this.required=required;//将全局设为false
 		}
+
+		override protected function updateSkin():void
+		{
+			super.updateSkin();
+			initSelectedState();
+		}
+
 		public function get selected():Boolean
 		{
 			return _selected;
@@ -27,22 +49,23 @@ package com.pamakids.components.controls
 		public function set selected(value:Boolean):void
 		{
 			_selected=value;
-			
-			if (selectedState)//条件
+
+			if (selectedState) //条件
 				selectedState.visible=value;
 			upState.visible=!value;
 		}
 
 		override protected function onMouseDown(event:MouseEvent):void
 		{
-			
+
 			super.onMouseDown(event);
-			
-			if (!required)//这个   "反" 是外部类调用的时候改的?
+
+			if (!required)
 				selected=!selected;
 			else if (!selected)
 				selected=true;
 		}
+
 		override protected function onMouseUp(event:MouseEvent):void
 		{
 			super.onMouseUp(event);

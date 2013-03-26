@@ -7,7 +7,7 @@ package com.pamakids.layouts
 
 	public class HLayout extends LayoutBase
 	{
-		public var verticalCenter:Boolean=true;//为什么这里要写默认值 而下面的没呢?
+		public var verticalCenter:Boolean=true; //为什么这里要写默认值 而下面的没呢?
 		public var horizontalCenter:Boolean;
 
 		public function HLayout(container:Container)
@@ -24,15 +24,16 @@ package com.pamakids.layouts
 				if (verticalCenter && !autoFill)
 					d.y=(height - d.height) / 2;
 				x=x + d.width + gap;
-				trace(x);
-			}
-			if (d)
-			{
-				contentHeight=d.height;
-				contentWidth=x + d.width;
 			}
 			if (autoFill)
+			{
+				if (d)
+				{
+					contentHeight=d.height;
+					contentWidth=x + d.width;
+				}
 				container.setSize(contentWidth, contentHeight);
+			}
 		}
 	}
 }

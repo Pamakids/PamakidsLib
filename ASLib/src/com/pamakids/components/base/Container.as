@@ -69,7 +69,7 @@ package com.pamakids.components.base
 
 		private function drawBackground():void
 		{
-			if (!width || !height || !enableBackground)//条件
+			if (!width || !height || !enableBackground) //条件
 				return;
 
 			graphics.clear();

@@ -14,6 +14,16 @@ package com.pamakids.components.controls
 		public function PButton(name:String)
 		{
 			super(0, 0, true, false);
+			updateSkin();
+		}
+
+		override protected function updateSkin():void
+		{
+			if (upState)
+				removeChild(upState);
+			if (downState)
+				removeChild(downState);
+
 			upState=getBitmap(name + 'Up');
 			downState=getBitmap(name + 'Down');
 			if (downState)
@@ -36,7 +46,7 @@ package com.pamakids.components.controls
 			if (enable)
 			{
 				upState.visible=false;
-					//stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+				stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			}
 			else
 			{

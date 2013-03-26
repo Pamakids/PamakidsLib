@@ -4,6 +4,7 @@ package com.pamakids.components.controls
 	import com.pamakids.events.IndexEvent;
 	import com.pamakids.layouts.HLayout;
 	import com.pamakids.layouts.ILayout;
+	import com.pamakids.layouts.VLayout;
 	import com.pamakids.layouts.base.LayoutBase;
 
 	import flash.events.MouseEvent;
@@ -27,6 +28,8 @@ package com.pamakids.components.controls
 
 			if (direction == LayoutBase.HORIZONTAL)
 				layout=new HLayout(this);
+			else if (direction == LayoutBase.VERTICAL)
+				layout=new VLayout(this);
 		}
 
 		override protected function init():void

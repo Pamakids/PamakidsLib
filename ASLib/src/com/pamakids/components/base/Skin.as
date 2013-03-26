@@ -4,7 +4,6 @@ package com.pamakids.components.base
 	import com.pamakids.manager.AssetsManager;
 
 	import flash.display.Bitmap;
-	import flash.filters.ColorMatrixFilter;
 
 	public class Skin extends Container
 	{
@@ -37,6 +36,17 @@ package com.pamakids.components.base
 			bitmaps.length=0;
 			while (numChildren)
 				removeChildAt(0);
+			am.removeLoadedCallback(updateSkin);
+		}
+
+		override protected function init():void
+		{
+			am.addLoadedCallback(updateSkin);
+		}
+
+		protected function updateSkin():void
+		{
+
 		}
 
 		private var _enable:Boolean=true;
