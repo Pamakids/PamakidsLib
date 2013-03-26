@@ -7,9 +7,10 @@ package com.pamakids.components.controls
 	import com.pamakids.layouts.VLayout;
 	import com.pamakids.layouts.base.LayoutBase;
 
+	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
 
-	public class PButtonBar extends Container
+	public class ButtonBar extends Container
 	{
 
 		private var dataProvider:Array;
@@ -21,7 +22,7 @@ package com.pamakids.components.controls
 
 		public var selectable:Boolean=true;
 
-		public function PButtonBar(dataProvider:Array, direction:String=LayoutBase.HORIZONTAL, width:Number=0, height:Number=0)
+		public function ButtonBar(dataProvider:Array, direction:String=LayoutBase.HORIZONTAL, width:Number=0, height:Number=0)
 		{
 			super(width, height);
 			this.dataProvider=dataProvider;
@@ -39,12 +40,18 @@ package com.pamakids.components.controls
 			layout.itemHeight=itemHeight;
 			for each (var o:Object in dataProvider)
 			{
-				var pb:PButton=selectable ? new PToggleButton(o.name, o.selected, o.required) : new PButton(o.name);
+				var pb:Button=selectable ? new ToggleButton(o.name, o.selected, o.required) : new Button(o.name);
 				buttons.push(pb);
 				pb.addEventListener(MouseEvent.CLICK, onClick);
 				pb.centerFill=true;
-				layout.addItem(pb);
+				addChild(pb);
 			}
+		}
+
+		override public function addChild(child:DisplayObject):DisplayObject
+		{
+			layout.addItem(child);
+			return super.addChild(child);
 		}
 
 		protected function onClick(event:MouseEvent):void
@@ -52,7 +59,7 @@ package com.pamakids.components.controls
 			dispatchEvent(new IndexEvent(buttons.indexOf(event.currentTarget)));
 			if (selectable)
 			{
-				for each (var pb:PToggleButton in buttons)
+				for each (var pb:ToggleButton in buttons)
 				{
 					if (pb != event.currentTarget)
 						pb.selected=false;
@@ -62,7 +69,7 @@ package com.pamakids.components.controls
 
 		override protected function dispose():void
 		{
-			for each (var pb:PToggleButton in buttons)
+			for each (var pb:ToggleButton in buttons)
 			{
 				pb.removeEventListener(MouseEvent.CLICK, onClick);
 			}

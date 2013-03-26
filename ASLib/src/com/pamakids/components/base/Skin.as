@@ -4,14 +4,22 @@ package com.pamakids.components.base
 	import com.pamakids.manager.AssetsManager;
 
 	import flash.display.Bitmap;
+	import flash.utils.Dictionary;
+
+	import avmplus.getQualifiedClassName;
 
 	public class Skin extends Container
 	{
 
-		private var am:AssetsManager;
+		public static var css:Dictionary=new Dictionary();
 
-		public function Skin(width:Number=0, height:Number=0, enableBackground:Boolean=false, enableMask:Boolean=false)
+		private var am:AssetsManager;
+		protected var styleName:String;
+
+		public function Skin(styleName:String, width:Number=0, height:Number=0, enableBackground:Boolean=false, enableMask:Boolean=false)
 		{
+			trace(getQualifiedClassName(this));
+			this.styleName=styleName;
 			am=AssetsManager.instance;
 			bitmaps=[];
 			super(width, height, enableBackground, enableMask);

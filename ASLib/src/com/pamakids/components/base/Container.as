@@ -17,9 +17,38 @@ package com.pamakids.components.base
 			addEventListener(Event.ADDED_TO_STAGE, onStage);
 		}
 
+		public function get enableMask():Boolean
+		{
+			return _enableMask;
+		}
+
+		private var maskSprite:Sprite;
+
+		public function set enableMask(value:Boolean):void
+		{
+			_enableMask=value;
+			drawMask();
+		}
+
+		private function drawMask():void
+		{
+			if (!enableMask || !width || !height)
+				return;
+			if (!maskSprite)
+				maskSprite=new Sprite();
+			maskSprite.graphics.clear();
+			maskSprite.graphics.beginFill(0);
+			maskSprite.graphics.drawRect(0, 0, width, height);
+			maskSprite.graphics.endFill();
+			super.addChild(maskSprite);
+			mask=maskSprite;
+		}
+
 		protected function onStage(event:Event):void
 		{
 			addEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
+			drawBackground();
+			drawMask();
 			init();
 		}
 
@@ -54,7 +83,7 @@ package com.pamakids.components.base
 		private var _centerFill:Boolean;
 
 		private var _enableBackground:Boolean;
-		private var enableMask:Boolean;
+		private var _enableMask:Boolean;
 
 		public function get enableBackground():Boolean
 		{
@@ -67,13 +96,16 @@ package com.pamakids.components.base
 			drawBackground();
 		}
 
+		public var backgroudAlpha:Number=0;
+		public var backgroundColor:uint=0;
+
 		private function drawBackground():void
 		{
 			if (!width || !height || !enableBackground) //条件
 				return;
 
 			graphics.clear();
-			graphics.beginFill(0, 0);
+			graphics.beginFill(backgroundColor, backgroudAlpha);
 			graphics.lineStyle(0, 0, 0);
 			graphics.drawRect(0, 0, width, height);
 			graphics.endFill();
@@ -131,13 +163,14 @@ package com.pamakids.components.base
 			resize();
 		}
 
-		private function resize():void
+		protected function resize():void
 		{
 			if (width || height)
 			{
 				autoFill=false;
 				centerChildren();
 				drawBackground();
+				drawMask();
 			}
 		}
 

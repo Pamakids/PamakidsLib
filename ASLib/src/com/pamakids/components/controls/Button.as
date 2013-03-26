@@ -5,15 +5,15 @@ package com.pamakids.components.controls
 	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
 
-	public class PButton extends Skin
+	public class Button extends Skin
 	{
 		protected var upState:DisplayObject;
 		protected var downState:DisplayObject;
 		private var _enable:Boolean=true;
 
-		public function PButton(name:String)
+		public function Button(styleName:String)
 		{
-			super(0, 0, true, false);
+			super(styleName, 0, 0, true, false);
 			updateSkin();
 		}
 
@@ -24,8 +24,8 @@ package com.pamakids.components.controls
 			if (downState)
 				removeChild(downState);
 
-			upState=getBitmap(name + 'Up');
-			downState=getBitmap(name + 'Down');
+			upState=getBitmap(styleName + 'Up');
+			downState=getBitmap(styleName + 'Down');
 			if (downState)
 			{
 				addChild(downState);
@@ -66,9 +66,6 @@ package com.pamakids.components.controls
 			removeEventListener(MouseEvent.CLICK, onClick);
 			removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 		}
-
-		protected var upState:DisplayObject;
-		protected var downState:DisplayObject;
 
 	}
 }

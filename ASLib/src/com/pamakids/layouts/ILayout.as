@@ -1,6 +1,9 @@
 package com.pamakids.layouts
 {
+	import com.pamakids.components.base.Container;
+
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 
 	public interface ILayout
 	{
@@ -12,5 +15,6 @@ package com.pamakids.layouts
 		function set gap(value:Number):void;
 		function set itemWidth(value:Number):void;
 		function set itemHeight(value:Number):void;
+		function set container(value:Container):void;
 	}
 }
