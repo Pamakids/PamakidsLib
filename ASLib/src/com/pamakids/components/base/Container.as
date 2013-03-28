@@ -163,11 +163,13 @@ package com.pamakids.components.base
 			resize();
 		}
 
+		public var forceFillByLayout:Boolean;
+
 		protected function resize():void
 		{
 			if (width || height)
 			{
-				autoFill=false;
+				autoFill=forceFillByLayout;
 				centerChildren();
 				drawBackground();
 				drawMask();

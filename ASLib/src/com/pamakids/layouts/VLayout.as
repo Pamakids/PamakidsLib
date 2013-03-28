@@ -29,7 +29,7 @@ package com.pamakids.layouts
 			{
 				if (element)
 				{
-					contentHeight=element.height + elementY;
+					contentHeight=element.height + element.y;
 					contentWidth=element.width;
 				}
 				container.setSize(contentWidth, contentHeight);
