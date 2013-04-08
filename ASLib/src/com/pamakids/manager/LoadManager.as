@@ -57,7 +57,21 @@ package com.pamakids.manager
 		private var savePathDic:Dictionary; //存储路径字典
 
 		/**
-		 * 加载
+		 *  *
+		 * load（）：分为五部分
+		 * <li>1：在本地找，</li>
+		 * 2：在应用缓存去找
+		 * 3：前面都没有的情况下就正式加载，
+		 * onBinaryLoaded（）：加载完成，注意清除侦听事件，
+		 * 4在加载完成事件里村道应用缓存里，也就是loadedDic里
+		 * 5存到本地文件，通过FileManager.saveFile();
+		 *
+		 * 然后就是清理工作，把用到的字典都删除掉。
+		 * 然后执行每个回调函数
+		 * 二：判断类型formate是否等于bitmap，如果是就执行loader（）
+		 *
+		 * 添加loaderonComplete，
+		 * 执行回调函数，f（);*
 		 * @param url url地址
 		 * @param onComplete 加载完成回调函数
 		 * @param savePath //存储路径
@@ -72,19 +86,21 @@ package com.pamakids.manager
 			//如果有存储路径，先去本地缓存找是否有
 			if (savePath) //一个return会一直load下去,两个return条件会更严密?
 			{
-				var cachedData:Object=FileManager.readFile(savePath);
+				var cachedData:Object=formate == BITMAP ? FileManager.readFileByteArray(savePath) : FileManager.readFile(savePath);
 				if (cachedData is ByteArray)
 					cachedData=cachedData as ByteArray;
 				if (cachedData)
 				{
-					params ? onComplete(cachedData, params) : onComplete(cachedData);
+					if (formate == BITMAP)
+						getBitmapFromByteArray(cachedData as ByteArray, [onComplete], params);
+					else
+						params ? onComplete(cachedData, params) : onComplete(cachedData);
 					return;
 				}
 			}
 
 			var u:URLLoader=loadingDic[url];
 			var arr:Array;
-			completeParamsDic[onComplete]=params;
 
 			//如果有正在加载的，则把加载完成的回调函数添加到数组里
 			if (u)
@@ -102,15 +118,7 @@ package com.pamakids.manager
 				//如果从程序缓存里找到了已加载的数据，则返回
 				if (b)
 				{
-					if (params)
-					{
-						onComplete(b, params);
-						delete completeParamsDic[onComplete];
-					}
-					else
-					{
-						onComplete(b);
-					}
+					params ? onComplete(b, params) : onComplete(b);
 					return;
 				}
 			}
@@ -129,7 +137,7 @@ package com.pamakids.manager
 			completeParamsDic[u]=params;
 			u.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			u.addEventListener(Event.COMPLETE, onBinaryLoaded);
-			if (loadingCallBack)
+			if (loadingCallBack != null)
 			{
 				u.addEventListener(ProgressEvent.PROGRESS, loadingCallBack);
 			}
@@ -139,7 +147,7 @@ package com.pamakids.manager
 		{
 			var l:LoaderInfo=event.target as LoaderInfo;
 			l.removeEventListener(Event.COMPLETE, onLoaded);
-			var callbacks:Array=loaderDic[l.loader];
+			var callbacks:Object=loaderDic[l.loader];
 			delete loaderDic[l.loader];
 
 			var params:Array;
@@ -147,10 +155,27 @@ package com.pamakids.manager
 			//每个回调函数都调用
 			params=completeParamsDic[l.loader];
 			delete completeParamsDic[l.loader];
-			for each (var f:Function in callbacks)
+			if (callbacks is Array)
 			{
-				params ? f(l.content, params) : f(l.content);
+				for each (var f:Function in callbacks)
+				{
+					params ? f(l.content, params) : f(l.content);
+				}
 			}
+			else if (callbacks is Function)
+			{
+				callbacks(l.content);
+			}
+		}
+
+		public function loadByteArray(byteArray:ByteArray, callback:Function):void
+		{
+			var l:Loader=new Loader();
+			var lc:LoaderContext=new LoaderContext();
+			lc.imageDecodingPolicy=ImageDecodingPolicy.ON_LOAD;
+			loaderDic[l]=callback;
+			l.loadBytes(byteArray, lc);
+			l.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaded);
 		}
 
 		private function getBitmapFromByteArray(byteArray:ByteArray, callbacks:Array=null, params:Array=null):void
@@ -183,17 +208,6 @@ package com.pamakids.manager
 			if (b && b.length == 0)
 				return;
 
-			//将加载的数据存到应用缓存里
-			for (var key:String in loadingDic)
-			{
-				if (loadingDic[key] == u)
-				{
-					loadedDic[key]=u.data;
-					delete loadingDic[key];
-					break;
-				}
-			}
-
 			//将加载数据存到本地文件
 			var savePath:String=savePathDic[u];
 			if (savePath)
@@ -201,8 +215,21 @@ package com.pamakids.manager
 				FileManager.saveFile(savePath, u.data);
 				delete savePathDic[u];
 			}
-			delete loaderDic[u];
+
 			var formate:String=loaderFormate[u];
+			//将加载的数据存到应用缓存里
+			for (var key:String in loadingDic)
+			{
+				if (loadingDic[key] == u)
+				{
+					if (!savePath && formate != BITMAP)
+						loadedDic[key]=u.data;
+					delete loadingDic[key];
+					break;
+				}
+			}
+
+			delete loaderDic[u];
 			delete loaderFormate[u];
 			params=completeParamsDic[u];
 			delete completeParamsDic[u];

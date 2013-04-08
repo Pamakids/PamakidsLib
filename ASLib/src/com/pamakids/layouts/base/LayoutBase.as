@@ -23,10 +23,13 @@ package com.pamakids.layouts.base
 		public static const VERTICAL:String="VERTICAL";
 		protected var items:Array=[];
 
-		public function LayoutBase(container:Container)
+		public function LayoutBase(container:Container=null)
 		{
-			this.container=container;
-			this.container.addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
+			if (container)
+			{
+				this.container=container;
+				this.container.addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
+			}
 		}
 
 		public function get container():Container
@@ -37,6 +40,7 @@ package com.pamakids.layouts.base
 		public function set container(value:Container):void
 		{
 			_container=value;
+			value.addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 		}
 
 		public function get gap():Number

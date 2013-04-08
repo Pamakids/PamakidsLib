@@ -1,5 +1,7 @@
 package com.pamakids.components.base
 {
+	import com.pamakids.layouts.ILayout;
+
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -15,6 +17,19 @@ package com.pamakids.components.base
 			this.enableBackground=enableBackground;
 			this.enableMask=enableMask;
 			addEventListener(Event.ADDED_TO_STAGE, onStage);
+		}
+
+		private var _layout:ILayout;
+
+		public function get layout():ILayout
+		{
+			return _layout;
+		}
+
+		public function set layout(value:ILayout):void
+		{
+			_layout=value;
+			value.container=this;
 		}
 
 		public function get enableMask():Boolean
@@ -130,6 +145,8 @@ package com.pamakids.components.base
 
 		override public function addChild(child:DisplayObject):DisplayObject
 		{
+			if (layout)
+				layout.addItem(child);
 			if (centerFill)
 				centerDisplayObject(child);
 			if (autoFill)
@@ -138,6 +155,13 @@ package com.pamakids.components.base
 				height=child.height > height ? child.height : height;
 			}
 			return super.addChild(child);
+		}
+
+		override public function removeChild(child:DisplayObject):DisplayObject
+		{
+			if (layout)
+				layout.removeItem(child);
+			return super.removeChild(child);
 		}
 
 		private function centerDisplayObject(d:DisplayObject):void
@@ -163,13 +187,13 @@ package com.pamakids.components.base
 			resize();
 		}
 
-		public var forceFillByLayout:Boolean;
+		public var autoFillByLayout:Boolean;
 
 		protected function resize():void
 		{
 			if (width || height)
 			{
-				autoFill=forceFillByLayout;
+				autoFill=autoFillByLayout;
 				centerChildren();
 				drawBackground();
 				drawMask();

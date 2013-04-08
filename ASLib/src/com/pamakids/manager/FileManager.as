@@ -21,7 +21,6 @@ package com.pamakids.manager
 				var fs:FileStream=new FileStream();
 				fs.open(f, FileMode.READ);
 				o=fs.readObject();
-				
 				fs.close();
 			}
 			catch (error:Error)
@@ -59,13 +58,13 @@ package com.pamakids.manager
 		 */
 		public static function saveFile(path:String, file:Object):File
 		{
-			var directory:String=path.match(new RegExp('.*(?=/)'))[0];//a
+			var directory:String=path.match(new RegExp('.*(?=/)'))[0]; //a
 			var arr:Array=path.split('/')
 			var fileName:String=arr[arr.length - 1];
 			var file1:File=File.applicationStorageDirectory.resolvePath(directory);
 			if (!file1.exists)
-			trace("ImageCache - Cached image not found, create it !");
-				file1.createDirectory();
+				trace("FileCache - Cached file not found, create it !");
+			file1.createDirectory();
 			var fs:FileStream=new FileStream();
 			var file2:File=file1.resolvePath(fileName);
 			try
@@ -73,17 +72,40 @@ package com.pamakids.manager
 				fs.open(file2, FileMode.WRITE);
 				if (file is ByteArray)
 					fs.writeBytes(file as ByteArray)
-				else if(file is String)
+				else if (file is String)
 					fs.writeUTFBytes(file as String);
-				else 
+				else
 					fs.writeObject(file);
 				fs.close();
 			}
 			catch (error:Error)
 			{
+				trace('save file error', error);
 			}
 			return file2;
 		}
+
+		public static function copyTo(source:File, toPath:String, overrite:Boolean=true):void
+		{
+			var toFile:File=new File(toPath);
+			if (source.nativePath != toFile.nativePath)
+				source.copyTo(toFile, overrite);
+		}
+
+		public static function deleteFile(path:String):void
+		{
+			var f:File=new File(path);
+			try
+			{
+				if (f.exists)
+					f.deleteFileAsync();
+			}
+			catch (error:Error)
+			{
+				trace("Delete File Error:" + error.toString());
+			}
+		}
+
 	}
 }
 

@@ -10,7 +10,7 @@ package com.pamakids.layouts
 		public var verticalCenter:Boolean=true; //为什么这里要写默认值 而下面的没呢?
 		public var horizontalCenter:Boolean;
 
-		public function HLayout(container:Container)
+		public function HLayout(container:Container=null)
 		{
 			super(container);
 		}

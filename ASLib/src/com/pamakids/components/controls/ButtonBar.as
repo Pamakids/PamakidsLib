@@ -3,18 +3,15 @@ package com.pamakids.components.controls
 	import com.pamakids.components.base.Container;
 	import com.pamakids.events.IndexEvent;
 	import com.pamakids.layouts.HLayout;
-	import com.pamakids.layouts.ILayout;
 	import com.pamakids.layouts.VLayout;
 	import com.pamakids.layouts.base.LayoutBase;
 
-	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
 
 	public class ButtonBar extends Container
 	{
 
 		private var dataProvider:Array;
-		private var layout:ILayout;
 		public var gap:Number=8;
 		public var itemWidth:Number;
 		public var itemHeight:Number;
@@ -28,9 +25,9 @@ package com.pamakids.components.controls
 			this.dataProvider=dataProvider;
 
 			if (direction == LayoutBase.HORIZONTAL)
-				layout=new HLayout(this);
+				layout=new HLayout();
 			else if (direction == LayoutBase.VERTICAL)
-				layout=new VLayout(this);
+				layout=new VLayout();
 		}
 
 		override protected function init():void
@@ -46,12 +43,6 @@ package com.pamakids.components.controls
 				pb.centerFill=true;
 				addChild(pb);
 			}
-		}
-
-		override public function addChild(child:DisplayObject):DisplayObject
-		{
-			layout.addItem(child);
-			return super.addChild(child);
 		}
 
 		protected function onClick(event:MouseEvent):void

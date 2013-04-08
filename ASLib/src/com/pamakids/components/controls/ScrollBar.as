@@ -119,6 +119,11 @@ package com.pamakids.components.controls
 			if (!barHeight)
 				return;
 
+			updateScrollBar();
+		}
+
+		private function updateScrollBar():void
+		{
 			bar.graphics.clear();
 			ScaleBitmap.draw(barBitmapData, bar.graphics, width, barHeight, new Rectangle(5, 5, barBitmapData.width - 10, barBitmapData.height - 10), null, true);
 		}
@@ -126,6 +131,7 @@ package com.pamakids.components.controls
 		override protected function updateSkin():void
 		{
 			barBitmapData=getBitmap(styleName).bitmapData;
+			updateScrollBar();
 
 			if (!width)
 				width=barBitmapData.width;

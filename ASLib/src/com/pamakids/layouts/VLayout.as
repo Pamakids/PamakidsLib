@@ -10,7 +10,7 @@ package com.pamakids.layouts
 		private var verticalCenter:Boolean;
 		private var horizentalCenter:Boolean=true;
 
-		public function VLayout(container:Container)
+		public function VLayout(container:Container=null)
 		{
 			super(container);
 		}

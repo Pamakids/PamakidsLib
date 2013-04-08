@@ -14,9 +14,6 @@ package com.pamakids.components.controls
 	{
 		private var scrollBar:ScrollBar;
 
-		private var layout:ILayout;
-		public var layoutClass:Class;
-
 		private var container:Container;
 		private var downPoint:Point;
 
@@ -25,14 +22,12 @@ package com.pamakids.components.controls
 			super(styleName, width, height, true, true);
 
 			container=new Container();
-			container.forceFillByLayout=true;
+			container.autoFillByLayout=true;
 			super.addChild(container);
 		}
 
 		override protected function init():void
 		{
-			if (layoutClass)
-				layout=new layoutClass(container);
 			addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
 		}
 
@@ -92,11 +87,14 @@ package com.pamakids.components.controls
 			}
 		}
 
+		override public function set layout(value:ILayout):void
+		{
+			container.layout=value;
+		}
+
 		override public function addChild(child:DisplayObject):DisplayObject
 		{
 			container.addChild(child);
-			if (layout)
-				layout.addItem(child);
 			if (container.height > height)
 			{
 				initScrollBar();
@@ -104,13 +102,5 @@ package com.pamakids.components.controls
 			}
 			return child;
 		}
-
-		override public function removeChild(child:DisplayObject):DisplayObject
-		{
-			if (layout)
-				layout.removeItem(child);
-			return container.removeChild(child);
-		}
-
 	}
 }
