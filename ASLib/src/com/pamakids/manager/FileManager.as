@@ -32,7 +32,7 @@ package com.pamakids.manager
 
 		public static function readFileByteArray(path:String):ByteArray
 		{
-			var o:ByteArray=new ByteArray();
+			var o:ByteArray;
 
 			try
 			{
@@ -41,6 +41,7 @@ package com.pamakids.manager
 					return o;
 				var fs:FileStream=new FileStream();
 				fs.open(f, FileMode.READ);
+				o=new ByteArray()
 				fs.readBytes(o);
 				fs.close();
 			}
@@ -56,33 +57,38 @@ package com.pamakids.manager
 		 * @param path 文件路径，必须是dir/subdir/filename.extendtion的格式，切忌不能以/开头
 		 * @param file 存储文件的数据
 		 */
-		public static function saveFile(path:String, file:Object):File
+		public static function saveFile(path:String, fileObject:Object):File
 		{
-			var directory:String=path.match(new RegExp('.*(?=/)'))[0]; //a
-			var arr:Array=path.split('/')
-			var fileName:String=arr[arr.length - 1];
-			var file1:File=File.applicationStorageDirectory.resolvePath(directory);
-			if (!file1.exists)
-				trace("FileCache - Cached file not found, create it !");
-			file1.createDirectory();
+			createDirectory(path);
 			var fs:FileStream=new FileStream();
-			var file2:File=file1.resolvePath(fileName);
+			var file:File=File.applicationStorageDirectory.resolvePath(path);
 			try
 			{
-				fs.open(file2, FileMode.WRITE);
+				fs.open(file, FileMode.WRITE);
 				if (file is ByteArray)
-					fs.writeBytes(file as ByteArray)
+					fs.writeBytes(fileObject as ByteArray)
 				else if (file is String)
-					fs.writeUTFBytes(file as String);
+					fs.writeUTFBytes(fileObject as String);
 				else
-					fs.writeObject(file);
+					fs.writeObject(fileObject);
 				fs.close();
 			}
 			catch (error:Error)
 			{
 				trace('save file error', error);
 			}
-			return file2;
+			return file;
+		}
+
+		private static function createDirectory(path:String):void
+		{
+			var directory:String=path.match(new RegExp('.*(?=/)'))[0]; //a
+			var file:File=File.applicationStorageDirectory.resolvePath(directory);
+			if (!file.exists)
+			{
+				trace("FileCache - Directory not found, create it !");
+				file.createDirectory();
+			}
 		}
 
 		public static function copyTo(source:File, toPath:String, overrite:Boolean=true):void

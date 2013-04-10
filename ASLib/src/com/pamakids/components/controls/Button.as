@@ -25,6 +25,12 @@ package com.pamakids.components.controls
 				removeChild(downState);
 
 			upState=getBitmap(styleName + 'Up');
+			if (!upState)
+			{
+				upState=getBitmap(styleName);
+				if (!upState)
+					throw new Error("Can't find asset：" + styleName);
+			}
 			downState=getBitmap(styleName + 'Down');
 			if (downState)
 			{

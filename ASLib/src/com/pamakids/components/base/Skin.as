@@ -36,7 +36,6 @@ package com.pamakids.components.base
 
 		override protected function dispose():void
 		{
-			am=null;
 			for each (var bitmap:Bitmap in bitmaps)
 			{
 				bitmap.bitmapData.dispose();
@@ -45,6 +44,7 @@ package com.pamakids.components.base
 			while (numChildren)
 				removeChildAt(0);
 			am.removeLoadedCallback(updateSkin);
+			am=null;
 		}
 
 		override protected function init():void
