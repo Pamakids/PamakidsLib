@@ -1,20 +1,20 @@
 /**
- * VERSION: 12.0
- * DATE: 2012-01-12
- * AS3
- * UPDATES AND DOCS AT: http://www.greensock.com
+ * VERSION: 1.52
+ * DATE: 10/2/2009
+ * ACTIONSCRIPT VERSION: 3.0 
+ * UPDATES AND DOCUMENTATION AT: http://www.TweenMax.com
  **/
 package com.greensock.plugins {
-	import com.greensock.TweenLite;
-	import flash.display.DisplayObject;
+	import flash.display.*;
 	import flash.geom.ColorTransform;
+	import com.greensock.*;
 /**
- * [AS3/AS2 only] Ever wanted to tween ColorTransform properties of a DisplayObject to do advanced effects like overexposing, altering
+ * Ever wanted to tween ColorTransform properties of a DisplayObject to do advanced effects like overexposing, altering
  * the brightness or setting the percent/amount of tint? Or maybe tween individual ColorTransform 
  * properties like redMultiplier, redOffset, blueMultiplier, blueOffset, etc. ColorTransformPlugin gives you an easy way to 
- * do just that. 
+ * do just that. <br /><br />
  * 
- * <p><b>PROPERTIES:</b></p>
+ * <b>PROPERTIES:</b><br />
  * <ul>
  * 		<li><code> tint (or color) : uint</code> - Color of the tint. Use a hex value, like 0xFF0000 for red.</li>
  * 		<li><code> tintAmount : Number</code> - Number between 0 and 1. Works with the "tint" property and indicats how much of an effect the tint should have. 0 makes the tint invisible, 0.5 is halfway tinted, and 1 is completely tinted.</li>
@@ -28,44 +28,38 @@ package com.greensock.plugins {
  * 		<li><code> greenMultiplier : Number</code></li>
  * 		<li><code> blueMultiplier : Number</code></li>
  * 		<li><code> alphaMultiplier : Number</code> </li>
- * </ul>
+ * </ul><br /><br />
  * 
- * <p><b>USAGE:</b></p>
- * <listing version="3.0">
-import com.greensock.TweenLite; 
-import com.greensock.plugins.TweenPlugin; 
-import com.greensock.plugins.ColorTransformPlugin; 
-TweenPlugin.activate([ColorTransformPlugin]); //activation is permanent in the SWF, so this line only needs to be run once.
-
-TweenLite.to(mc, 1, {colorTransform:{tint:0xFF0000, tintAmount:0.5}}); 
-</listing>
+ * <b>USAGE:</b><br /><br />
+ * <code>
+ * 		import com.greensock.TweenLite; <br />
+ * 		import com.greensock.plugins.TweenPlugin; <br />
+ * 		import com.greensock.plugins.ColorTransformPlugin; <br />
+ * 		TweenPlugin.activate([ColorTransformPlugin]); //activation is permanent in the SWF, so this line only needs to be run once.<br /><br />
  * 
- * <p><strong>Copyright 2008-2013, GreenSock. All rights reserved.</strong> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for <a href="http://www.greensock.com/club/">Club GreenSock</a> members, the software agreement that was issued with the membership.</p>
+ * 		TweenLite.to(mc, 1, {colorTransform:{tint:0xFF0000, tintAmount:0.5}}); <br /><br />
+ * </code>
+ * 
+ * <b>Copyright 2010, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
  * 
  * @author Jack Doyle, jack@greensock.com
  */
 	public class ColorTransformPlugin extends TintPlugin {
 		/** @private **/
-		public static const API:Number = 2; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
+		public static const API:Number = 1.0; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
 		
 		/** @private **/
 		public function ColorTransformPlugin() {
 			super();
-			_propName = "colorTransform";
+			this.propName = "colorTransform"; 
 		}
 		
 		/** @private **/
-		override public function _onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
-			var start:ColorTransform, end:ColorTransform = new ColorTransform();
-			if (target is DisplayObject) {
-				_transform = DisplayObject(target).transform;
-				start = _transform.colorTransform;
-			} else if (target is ColorTransform) {
-				start = target as ColorTransform;
-			} else {
+		override public function onInitTween(target:Object, value:*, tween:TweenLite):Boolean {
+			if (!(target is DisplayObject)) {
 				return false;
 			}
-			end.concat(start);
+			var end:ColorTransform = target.transform.colorTransform;
 			for (var p:String in value) {
 				if (p == "tint" || p == "color") {
 					if (value[p] != null) {
@@ -92,7 +86,10 @@ TweenLite.to(mc, 1, {colorTransform:{tint:0xFF0000, tintAmount:0.5}});
 				end.redMultiplier = end.greenMultiplier = end.blueMultiplier = 1 - Math.abs(value.brightness - 1);
 			}
 			
-			_init(start, end);
+			_ignoreAlpha = Boolean(tween.vars.alpha != undefined && value.alphaMultiplier == undefined);
+			
+			init(target as DisplayObject, end);
+			
 			return true;
 		}
 		

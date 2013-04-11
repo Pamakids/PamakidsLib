@@ -1,24 +1,28 @@
 /**
- * VERSION: 12.0
- * DATE: 2012-01-12
- * AS3 
- * UPDATES AND DOCS AT: http://www.greensock.com
+ * VERSION: 2.03
+ * DATE: 10/22/2009
+ * ACTIONSCRIPT VERSION: 3.0 
+ * UPDATES AND DOCUMENTATION AT: http://www.TweenMax.com
  **/
 package com.greensock.plugins {
-	import com.greensock.TweenLite;
-	import flash.filters.BitmapFilter;
+	import com.greensock.*;
+	import com.greensock.core.*;
+	
+	import flash.display.*;
+	import flash.filters.*;
 /**
- * @private
  * Base class for all filter plugins (like blurFilter, colorMatrixFilter, glowFilter, etc.). Handles common routines. 
  * There is no reason to use this class directly.<br /><br />
  * 
- * <p><strong>Copyright 2008-2013, GreenSock. All rights reserved.</strong> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for <a href="http://www.greensock.com/club/">Club GreenSock</a> members, the software agreement that was issued with the membership.</p>
+ * <b>Copyright 2010, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
  * 
  * @author Jack Doyle, jack@greensock.com
  */
 	public class FilterPlugin extends TweenPlugin {
 		/** @private **/
-		public static const API:Number = 2; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
+		public static const VERSION:Number = 2.03;
+		/** @private **/
+		public static const API:Number = 1.0; //If the API/Framework for plugins changes in the future, this number helps determine compatibility
 		
 		/** @private **/
 		protected var _target:Object;
@@ -30,70 +34,93 @@ package com.greensock.plugins {
 		protected var _index:int;
 		/** @private **/
 		protected var _remove:Boolean;
-		/** @private **/
-		private var _tween:TweenLite;
 		
 		/** @private **/
-		public function FilterPlugin(props:String="", priority:Number=0) {
-			super(props, priority);
+		public function FilterPlugin() {
+			super();
 		}
 		
 		/** @private **/
-		protected function _initFilter(target:*, props:Object, tween:TweenLite, type:Class, defaultFilter:BitmapFilter, propNames:Array):Boolean {
-			_target = target;
-			_tween = tween;
-			_type = type;
+		protected function initFilter(props:Object, defaultFilter:BitmapFilter, propNames:Array):void {
 			var filters:Array = _target.filters, p:String, i:int, colorTween:HexColorsPlugin;
 			var extras:Object = (props is BitmapFilter) ? {} : props;
+			_index = -1;
 			if (extras.index != null) {
 				_index = extras.index;
 			} else {
-				_index = filters.length;
-				while (--_index > -1 && !(filters[_index] is _type)) { };
+				i = filters.length;
+				while (i--) {
+					if (filters[i] is _type) {
+						_index = i;
+						break;
+					}
+				}
 			}
-			if (_index < 0 || filters[_index] == null || extras.addFilter == true) {
-				_index = filters.length;
+			if (_index == -1 || filters[_index] == null || extras.addFilter == true) {
+				_index = (extras.index != null) ? extras.index : filters.length;
 				filters[_index] = defaultFilter;
 				_target.filters = filters;
 			}
 			_filter = filters[_index];
-			_remove = (extras.remove == true);
+			
+			if (extras.remove == true) {
+				_remove = true;
+				this.onComplete = onCompleteTween;
+			}
 			i = propNames.length;
-			while (--i > -1) {
+			while (i--) {
 				p = propNames[i];
 				if (p in props && _filter[p] != props[p]) {
 					if (p == "color" || p == "highlightColor" || p == "shadowColor") {
 						colorTween = new HexColorsPlugin();
-						colorTween._initColor(_filter, p, props[p]);
-						_addTween(colorTween, "setRatio", 0, 1, _propName);
+						colorTween.initColor(_filter, p, _filter[p], props[p]);
+						_tweens[_tweens.length] = new PropTween(colorTween, "changeFactor", 0, 1, p, false);
 					} else if (p == "quality" || p == "inner" || p == "knockout" || p == "hideObject") {
 						_filter[p] = props[p];
 					} else {
-						_addTween(_filter, p, _filter[p], props[p], _propName);
+						addTween(_filter, p, _filter[p], props[p], p);
 					}
 				}
 			}
-			return true;
 		}
 		
 		/** @private **/
-		override public function setRatio(v:Number):void {
-			super.setRatio(v);
-			var filters:Array = _target.filters;
-			if (!(filters[_index] is _type)) { //a filter may have been added or removed since the tween began, changing the index.
-				_index = filters.length; //default (in case it was removed)
-				while (--_index > -1 && !(filters[_index] is _type)) { };
-				if (_index == -1) {
-					_index = filters.length;
-				}
-			}
-			if (v == 1 && _remove && _tween._time == _tween._duration) {
-				if (_index < filters.length) {
+		public function onCompleteTween():void {
+			if (_remove) {
+				var filters:Array = _target.filters;
+				if (!(filters[_index] is _type)) { //a filter may have been added or removed since the tween began, changing the index.
+					var i:int = filters.length;
+					while (i--) {
+						if (filters[i] is _type) {
+							filters.splice(i, 1);
+							break;
+						}
+					}
+				} else {
 					filters.splice(_index, 1);
 				}
-			} else {
-				filters[_index] = _filter;
+				_target.filters = filters;
 			}
+		}
+		
+		/** @private **/
+		override public function set changeFactor(n:Number):void {
+			var i:int = _tweens.length, ti:PropTween, filters:Array = _target.filters;
+			while (i--) {
+				ti = _tweens[i];
+				ti.target[ti.property] = ti.start + (ti.change * n);
+			}
+			
+			if (!(filters[_index] is _type)) { //a filter may have been added or removed since the tween began, changing the index.
+				i = _index = filters.length; //default (in case it was removed)
+				while (i--) {
+					if (filters[i] is _type) {
+						_index = i;
+						break;
+					}
+				}
+			}
+			filters[_index] = _filter;
 			_target.filters = filters;
 		}
 		

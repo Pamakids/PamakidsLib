@@ -1,34 +1,32 @@
 /**
- * VERSION: 1.935
- * DATE: 2013-03-18
+ * VERSION: 1.14
+ * DATE: 2010-06-22
  * AS3
  * UPDATES AND DOCS AT: http://www.greensock.com/loadermax/
  **/
 package com.greensock.loading.core {
 	import com.greensock.events.LoaderEvent;
-	import com.greensock.loading.LoaderMax;
 	import com.greensock.loading.LoaderStatus;
 	
 	import flash.events.Event;
 	import flash.events.ProgressEvent;
 	import flash.net.URLRequest;
 	import flash.net.URLStream;
-	import flash.net.URLVariables;
 	
-	/** Dispatched when the loader experiences an IO_ERROR while loading or auditing its size. **/
 	[Event(name="ioError", type="com.greensock.events.LoaderEvent")]
 /**
  * Serves as the base class for all individual loaders (not LoaderMax) like <code>ImageLoader, 
  * XMLLoader, SWFLoader, MP3Loader</code>, etc. There is no reason to use this class on its own. 
  * Please see the documentation for the other classes.
+ * <br /><br />
  * 
- * <p><strong>Copyright 2010-2013, GreenSock. All rights reserved.</strong> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for <a href="http://www.greensock.com/club/">Club GreenSock</a> members, the software agreement that was issued with the membership.</p>
+ * <b>Copyright 2010, GreenSock. All rights reserved.</b> This work is subject to the terms in <a href="http://www.greensock.com/terms_of_use.html">http://www.greensock.com/terms_of_use.html</a> or for corporate Club GreenSock members, the software agreement that was issued with the corporate membership.
  * 
  * @author Jack Doyle, jack@greensock.com
  */	
 	public class LoaderItem extends LoaderCore {
 		/** @private **/
-		protected static var _cacheID:Number = new Date().getTime();
+		protected static var _cacheID:uint = uint(Math.random() * 100000000) * int(Math.random() * 1000);
 		
 		/** @private **/
 		protected var _url:String;
@@ -42,8 +40,6 @@ package com.greensock.loading.core {
 		protected var _preferEstimatedBytesInAudit:Boolean;
 		/** @private **/
 		protected var _httpStatus:int;
-		/** @private used to prevent problems that could occur if an audit is in process and load() is called on a bad URL - the audit could fail first and swap the URL and then when the real load fails just after that, we couldn't just do if (_url != this.vars.alternateURL) because the audit would have already changed it.  **/
-		protected var _skipAlternateURL:Boolean;
 		
 		/**
 		 * Constructor
@@ -55,7 +51,6 @@ package com.greensock.loading.core {
 			super(vars);
 			_request = (urlOrRequest is URLRequest) ? urlOrRequest as URLRequest : new URLRequest(urlOrRequest);
 			_url = _request.url;
-			_setRequestURL(_request, _url);
 		}
 		
 		/** @private **/
@@ -64,38 +59,7 @@ package com.greensock.loading.core {
 			_httpStatus = 0;
 			_closeStream();
 			if (this.vars.noCache && (!_isLocal || _url.substr(0, 4) == "http")) {
-				_setRequestURL(_request, _url, "gsCacheBusterID=" + (_cacheID++));
-			}
-		}
-		
-		/** @private Flash doesn't properly apply extra GET url parameters when the URL contains them already (like "http://www.greensock.com?id=2") - it ends up missing an "&" delimiter so this method splits any that exist out into a URLVariables object and optionally adds extra parameters like gsCacheBusterID, etc. **/
-		protected function _setRequestURL(request:URLRequest, url:String, extraParams:String=""):void {
-			var a:Array = (this.vars.allowMalformedURL) ? [url] : url.split("?");
-			
-			//in order to avoid a VERY strange bug in certain versions of the Flash Player (like 10.0.12.36), we must loop through each character and rebuild a separate String variable instead of just using a[0], otherwise the "?" delimiter will be omitted when GET parameters are appended to the URL by Flash! Performing any String manipulations on the url will cause the issue as long as there is a "?" in the url. Like url.split("?") or url.substr(0, url.indexOf("?"), etc. Absolutely baffling. Definitely a bug in the Player - it was fixed in 10.1.
-			var s:String = a[0];
-			var parsedURL:String = "";
-			for (var i:int = 0; i < s.length; i++) {
-				parsedURL += s.charAt(i);
-			}
-			
-			request.url = parsedURL;
-			if (a.length >= 2) {
-				extraParams += (extraParams == "") ? a[1] : "&" + a[1];
-			}
-			if (extraParams != "") {
-				var data:URLVariables = new URLVariables( ((request.data is URLVariables) ? request.data.toString() : null) );
-				a = extraParams.split("&");
-				i = a.length;
-				var pair:Array;
-				while (--i > -1) {
-					pair = a[i].split("=");
-					data[pair.shift()] = pair.join("=");
-				}
-				request.data = data;
-			}
-			if (_isLocal && this.vars.allowMalformedURL != true && _request.data != null && _request.url.substr(0, 4) != "http") {
-				_request.method = "POST"; //to avoid errors when loading local files with GET URL parameters
+				_request.url = _url + ((_url.indexOf("?") == -1) ? "?" : "&") + "cacheBusterID=" + (_cacheID++);
 			}
 		}
 		
@@ -113,11 +77,7 @@ package com.greensock.loading.core {
 				_auditStream.addEventListener(Event.COMPLETE, _auditStreamHandler, false, 0, true);
 				_auditStream.addEventListener("ioError", _auditStreamHandler, false, 0, true);
 				_auditStream.addEventListener("securityError", _auditStreamHandler, false, 0, true);
-				var request:URLRequest = new URLRequest();
-				request.data = _request.data;
-				request.method = _request.method;
-				_setRequestURL(request, _url, (!_isLocal || _url.substr(0, 4) == "http") ? "gsCacheBusterID=" + (_cacheID++) + "&purpose=audit" : "");
-				_auditStream.load(request);  
+				_auditStream.load(_request);
 			}
 		}
 		
@@ -147,20 +107,13 @@ package com.greensock.loading.core {
 					_cachedBytesTotal = uint(this.vars.estimatedBytes);
 				}
 			} else if (event.type == "ioError" || event.type == "securityError") {
-				if (this.vars.alternateURL != undefined && this.vars.alternateURL != "" && this.vars.alternateURL != _url) {
+				if ("alternateURL" in this.vars && _url != this.vars.alternateURL) {
+					_url = _request.url = this.vars.alternateURL;
+					_auditStream.load(_request);
 					_errorHandler(event);
-					if (_status != LoaderStatus.DISPOSED) { //it is conceivable that the user disposed the loader in an onError handler
-						_url = this.vars.alternateURL;
-						_setRequestURL(_request, _url);
-						var request:URLRequest = new URLRequest();
-						request.data = _request.data;
-						request.method = _request.method;
-						_setRequestURL(request, _url, (!_isLocal || _url.substr(0, 4) == "http") ? "gsCacheBusterID=" + (_cacheID++) + "&purpose=audit" : "");
-						_auditStream.load(request);
-					}
 					return;
 				} else {	
-					//note: a CANCEL event won't be dispatched because technically the loader wasn't officially loading - we were only briefly checking the bytesTotal with a URLStream.
+					//note: a CANCEL event won't be dispatched because technically the loader wasn't officially loading - we were only briefly checking the bytesTotal with a NetStream.
 					super._failHandler(event);
 				}
 			}
@@ -170,14 +123,12 @@ package com.greensock.loading.core {
 		}
 		
 		/** @private **/
-		override protected function _failHandler(event:Event, dispatchError:Boolean=true):void {
-			if (this.vars.alternateURL != undefined && this.vars.alternateURL != "" && !_skipAlternateURL) { //don't do (_url != vars.alternateURL) because the audit could have changed it already - that's the whole purpose of _skipAlternateURL.
-				_errorHandler(event);
-				_skipAlternateURL = true;
-				_url = "temp" + Math.random(); //in case the audit already changed the _url to vars.alternateURL, we temporarily make it something different in order to force the refresh in the url setter which skips running the code if the url is set to the same value as it previously was. 
+		override protected function _failHandler(event:Event):void {
+			if ("alternateURL" in this.vars && _url != this.vars.alternateURL) {
 				this.url = this.vars.alternateURL; //also calls _load()
+				_errorHandler(event);
 			} else {
-				super._failHandler(event, dispatchError);
+				super._failHandler(event);
 			}
 		}
 		
@@ -185,7 +136,7 @@ package com.greensock.loading.core {
 		/** @private **/
 		protected function _httpStatusHandler(event:Event):void {
 			_httpStatus = (event as Object).status;
-			dispatchEvent(new LoaderEvent(event.type, this, String(_httpStatus), event));
+			dispatchEvent(new LoaderEvent(LoaderEvent.HTTP_STATUS, this));
 		}
 		
 		
@@ -197,13 +148,9 @@ package com.greensock.loading.core {
 		}
 		public function set url(value:String):void {
 			if (_url != value) {
-				_url = value;
-				_setRequestURL(_request, _url);
+				_url = _request.url = value;
 				var isLoading:Boolean = Boolean(_status == LoaderStatus.LOADING);
-				_dump(1, LoaderStatus.READY, true);
-				_auditedSize = Boolean(uint(this.vars.estimatedBytes) != 0 && this.vars.auditSize != true);
-				_cachedBytesTotal = (uint(this.vars.estimatedBytes) != 0) ? uint(this.vars.estimatedBytes) : LoaderMax.defaultEstimatedBytes;
-				_cacheIsDirty = true;
+				_dump(0, LoaderStatus.READY, true);
 				if (isLoading) {
 					_load();
 				}
