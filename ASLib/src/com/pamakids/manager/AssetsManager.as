@@ -1,7 +1,8 @@
 package com.pamakids.manager
 {
 	import com.pamakids.utils.Singleton;
-	
+	import com.pamakids.utils.URLUtil;
+
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
@@ -32,29 +33,42 @@ package com.pamakids.manager
 
 		private var themeDic:Dictionary=new Dictionary();
 		private var tobeLoaded:Array=[];
+		private var isHttpTheme:Boolean;
 
 		public function addLoadedCallback(callback:Function):void
 		{
 			loadedCallbacks.push(callback);
 		}
 
-		public function loadTheme(theme:Object, toCache:Boolean=false):void
+		private var themeURL:String;
+
+		public function loadTheme(url:String):void
 		{
+			isHttpTheme=URLUtil.isHttp(url);
+			themeURL=url;
+			lm.load(url, loadedThemeInfoHandler, isHttpTheme ? URLUtil.getCachePath(url) : null, null, null, false, URLLoaderDataFormat.TEXT);
+		}
+
+		private function loadedThemeInfoHandler(themeStr:String):void
+		{
+			var theme:Object=JSON.parse(themeStr);
 			var dir:String=theme.dir;
+			if (isHttpTheme)
+				dir=URLUtil.getUrlDir(themeURL) + dir;
 			var url:String;
 			var savePath:String;
 			for each (var asset:Object in theme.assets)
 			{
 				if (asset.type)
 				{
-					savePath=toCache ? dir + asset.name + asset.type : "";
+					savePath=isHttpTheme ? dir + asset.name + asset.type : "";
 					url=dir + asset.name + asset.type;
 					tobeLoaded.push(asset.name + asset.type);
 					lm.load(url, loadedHandler, savePath, [asset.name, asset.type], null, false, LoadManager.BITMAP);
 				}
 				else
 				{
-					savePath=toCache ? dir + asset.name : "";
+					savePath=isHttpTheme ? dir + asset.name : "";
 					url=dir + asset.name + '.xml';
 					tobeLoaded.push(asset.name + '.xml');
 					lm.load(url, loadedHandler, savePath, [asset.name, '.xml'], null, false, URLLoaderDataFormat.TEXT);

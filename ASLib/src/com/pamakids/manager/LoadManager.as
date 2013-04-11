@@ -191,7 +191,7 @@ package com.pamakids.manager
 
 		private function ioErrorHandler(event:IOErrorEvent):void
 		{
-			trace('load io error');
+			trace('Load IO Error: ' + event.toString());
 			if (errorHandler != null)
 				errorHandler();
 		}
