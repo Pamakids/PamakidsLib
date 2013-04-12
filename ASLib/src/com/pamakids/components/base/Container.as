@@ -1,5 +1,6 @@
 package com.pamakids.components.base
 {
+	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.layouts.ILayout;
 
 	import flash.display.DisplayObject;
@@ -149,12 +150,16 @@ package com.pamakids.components.base
 				layout.addItem(child);
 			if (centerFill)
 				centerDisplayObject(child);
-			if (autoFill)
-			{
-				width=child.width > width ? child.width : width;
-				height=child.height > height ? child.height : height;
-			}
+			autoSetSize(child);
 			return super.addChild(child);
+		}
+
+		protected function autoSetSize(child:DisplayObject):void
+		{
+			if (autoFill || forceAutoFill)
+			{
+				setSize(child.width > width ? child.width : width, child.height > height ? child.height : height);
+			}
 		}
 
 		override public function removeChild(child:DisplayObject):DisplayObject
@@ -164,10 +169,10 @@ package com.pamakids.components.base
 			return super.removeChild(child);
 		}
 
-		private function centerDisplayObject(d:DisplayObject):void
+		protected function centerDisplayObject(child:DisplayObject):void
 		{
-			d.x=width / 2 - d.width / 2;
-			d.y=height / 2 - d.height / 2;
+			child.x=width / 2 - child.width / 2;
+			child.y=height / 2 - child.height / 2;
 		}
 
 		private function centerChildren():void
@@ -187,16 +192,17 @@ package com.pamakids.components.base
 			resize();
 		}
 
-		public var autoFillByLayout:Boolean;
+		public var forceAutoFill:Boolean;
 
 		protected function resize():void
 		{
 			if (width || height)
 			{
-				autoFill=autoFillByLayout;
+				autoFill=forceAutoFill;
 				centerChildren();
 				drawBackground();
 				drawMask();
+				dispatchEvent(new ResizeEvent(width, height));
 			}
 		}
 

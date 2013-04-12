@@ -3,17 +3,15 @@ package com.pamakids.components.controls
 	import com.greensock.TweenLite;
 	import com.greensock.easing.Cubic;
 	import com.pamakids.components.base.Skin;
-	import com.pamakids.utils.ScaleBitmap;
 
 	import flash.display.BitmapData;
-	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 
 	public class ScrollBar extends Skin
 	{
 
 		private var _contentHeight:Number;
-		private var bar:Sprite;
+		private var bar:ScaleBitmap;
 		private var barBitmapData:BitmapData;
 		private var _barHeight:Number;
 
@@ -21,9 +19,6 @@ package com.pamakids.components.controls
 
 		public function ScrollBar(styleName:String, width:Number=0, height:Number=0)
 		{
-			bar=new Sprite();
-			addChild(bar);
-
 			super(styleName, width, height);
 			updateSkin();
 		}
@@ -67,6 +62,7 @@ package com.pamakids.components.controls
 		private var storeBarHeight:Number=0;
 		private var restoring:Boolean;
 		private var extra:Number;
+		private var scaleRect:Rectangle;
 
 		public function scrollTo(position:Number):void
 		{
@@ -118,25 +114,24 @@ package com.pamakids.components.controls
 		{
 			if (!barHeight)
 				return;
-
-			updateScrollBar();
-		}
-
-		private function updateScrollBar():void
-		{
-			bar.graphics.clear();
-			ScaleBitmap.draw(barBitmapData, bar.graphics, width, barHeight, new Rectangle(5, 5, barBitmapData.width - 10, barBitmapData.height - 10), null, true);
+			bar.setSize(width, barHeight);
 		}
 
 		override protected function updateSkin():void
 		{
 			barBitmapData=getBitmap(styleName).bitmapData;
-			updateScrollBar();
-
 			if (!width)
 				width=barBitmapData.width;
 			if (!height)
 				height=barBitmapData.height;
+			if (bar)
+			{
+				bar.bitmapData.dispose();
+				removeChild(bar);
+			}
+			bar=new ScaleBitmap(barBitmapData, 'auto', true);
+			bar.scale9Grid=new Rectangle(5, 5, 5, 5);
+			addChild(bar);
 		}
 
 	}

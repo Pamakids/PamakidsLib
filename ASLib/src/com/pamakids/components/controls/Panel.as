@@ -22,7 +22,7 @@ package com.pamakids.components.controls
 			super(styleName, width, height, true, true);
 
 			container=new Container();
-			container.autoFillByLayout=true;
+			container.forceAutoFill=true;
 			super.addChild(container);
 		}
 
