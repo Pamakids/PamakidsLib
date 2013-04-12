@@ -11,7 +11,7 @@ package com.pamakids.components.controls
 	{
 		protected var textField:TextField;
 
-		public function Label(text:String, width:Number=0, height:Number=0)
+		public function Label(text:String='', width:Number=0, height:Number=0)
 		{
 			this.text=text;
 			super(width, height);
@@ -21,8 +21,20 @@ package com.pamakids.components.controls
 
 		private var _text:String;
 		private var _fontSize:uint=12;
-		private var _fontColor:uint;
+		private var _color:uint;
 		private var _background:ScaleBitmap;
+		private var _fontFamily:String;
+
+		public function get fontFamily():String
+		{
+			return _fontFamily;
+		}
+
+		public function set fontFamily(value:String):void
+		{
+			_fontFamily=value;
+			updateFormat();
+		}
 
 		public function get background():ScaleBitmap
 		{
@@ -58,14 +70,14 @@ package com.pamakids.components.controls
 				centerDisplayObject(textField);
 		}
 
-		public function get fontColor():uint
+		public function get color():uint
 		{
-			return _fontColor;
+			return _color;
 		}
 
-		public function set fontColor(value:uint):void
+		public function set color(value:uint):void
 		{
-			_fontColor=value;
+			_color=value;
 			updateFormat();
 		}
 
@@ -101,7 +113,8 @@ package com.pamakids.components.controls
 				return;
 			var tf:TextFormat=new TextFormat();
 			tf.size=fontSize;
-			tf.color=fontColor;
+			tf.color=color;
+			tf.font=fontFamily;
 			textField.setTextFormat(tf);
 			autoSetSize(textField);
 		}
@@ -123,7 +136,8 @@ package com.pamakids.components.controls
 		{
 			var tf:TextFormat=new TextFormat();
 			tf.size=fontSize;
-			tf.color=fontColor;
+			tf.color=color;
+			tf.font=fontFamily;
 			textField=new TextField();
 			textField.selectable=false;
 			textField.defaultTextFormat=tf;
