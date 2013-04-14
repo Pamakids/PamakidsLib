@@ -39,6 +39,7 @@ package com.pamakids.manager
 				var f:File=File.applicationStorageDirectory.resolvePath(path);
 				if (!f.exists)
 					return o;
+				trace("Read File ByteArray:" + f.nativePath);
 				var fs:FileStream=new FileStream();
 				fs.open(f, FileMode.READ);
 				o=new ByteArray()

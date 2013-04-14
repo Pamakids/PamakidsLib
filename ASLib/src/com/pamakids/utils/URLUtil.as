@@ -5,7 +5,7 @@ package com.pamakids.utils
 	{
 		public static function getRelativeURL(url:String):String
 		{
-			return url.replace(new RegExp('(http|https)://.*?/'), '');
+			return isHttp(url) ? url.replace(new RegExp('(http|https)://.*?/'), '') : '';
 		}
 
 		public static function isHttp(url:String):Boolean

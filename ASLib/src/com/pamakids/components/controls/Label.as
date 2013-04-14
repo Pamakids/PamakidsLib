@@ -5,6 +5,7 @@ package com.pamakids.components.controls
 	import flash.display.DisplayObject;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
+	import flash.text.TextFormatAlign;
 
 	[Event(name="resize", type="com.pamakids.events.ResizeEvent")]
 	public class Label extends Container
@@ -24,6 +25,20 @@ package com.pamakids.components.controls
 		private var _color:uint;
 		private var _background:ScaleBitmap;
 		private var _fontFamily:String;
+		private var _algin:String;
+
+		public function get algin():String
+		{
+			if (!_algin)
+				_algin=TextFormatAlign.CENTER;
+			return _algin;
+		}
+
+		public function set algin(value:String):void
+		{
+			_algin=value;
+			updateFormat();
+		}
 
 		public function get fontFamily():String
 		{
@@ -115,6 +130,7 @@ package com.pamakids.components.controls
 			tf.size=fontSize;
 			tf.color=color;
 			tf.font=fontFamily;
+			tf.align=algin;
 			textField.setTextFormat(tf);
 			autoSetSize(textField);
 		}
@@ -138,7 +154,9 @@ package com.pamakids.components.controls
 			tf.size=fontSize;
 			tf.color=color;
 			tf.font=fontFamily;
+			tf.align=algin;
 			textField=new TextField();
+			textField.multiline=true;
 			textField.selectable=false;
 			textField.defaultTextFormat=tf;
 			textField.text=text;
