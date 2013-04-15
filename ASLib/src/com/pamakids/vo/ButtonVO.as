@@ -8,6 +8,7 @@ package com.pamakids.vo
 			this.name=name;
 			this.selected=selected;
 			this.required=required;
+
 			this.centerFill=centerFill;
 			
 		}
