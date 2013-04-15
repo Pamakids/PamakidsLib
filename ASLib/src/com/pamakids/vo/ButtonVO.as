@@ -9,6 +9,7 @@ package com.pamakids.vo
 			this.selected=selected;
 			this.required=required;
 			this.centerFill=centerFill;
+			
 		}
 
 		public var centerFill:Boolean;
