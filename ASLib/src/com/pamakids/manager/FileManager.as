@@ -66,9 +66,9 @@ package com.pamakids.manager
 			try
 			{
 				fs.open(file, FileMode.WRITE);
-				if (file is ByteArray)
+				if (fileObject is ByteArray)
 					fs.writeBytes(fileObject as ByteArray)
-				else if (file is String)
+				else if (fileObject is String)
 					fs.writeUTFBytes(fileObject as String);
 				else
 					fs.writeObject(fileObject);
