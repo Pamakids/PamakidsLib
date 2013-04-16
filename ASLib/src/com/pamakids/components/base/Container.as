@@ -43,6 +43,11 @@ package com.pamakids.components.base
 		public function set enableMask(value:Boolean):void
 		{
 			_enableMask=value;
+			if (!value && maskSprite)
+			{
+				mask=null;
+				super.removeChild(maskSprite);
+			}
 			drawMask();
 		}
 
