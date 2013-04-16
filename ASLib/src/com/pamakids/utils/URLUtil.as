@@ -15,6 +15,8 @@ package com.pamakids.utils
 
 		public static function getCachePath(url:String):String
 		{
+			if (!isHttp(url))
+				return '';
 			var cachePath:String=getRelativeURL(url);
 			if (cachePath.indexOf('/') == -1)
 				cachePath='cache/' + cachePath;
