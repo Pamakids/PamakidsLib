@@ -44,8 +44,10 @@ package
 		function set data(data:Object):void;
 		function get data():Object;
 		function get properties():Array;
+		
+		
 		function start():void;
-		function init(parent:DisplayObjectContainer):void;
+		function initialize(width:Number, height:Number):void;
 		function close():void;
 	}
 
