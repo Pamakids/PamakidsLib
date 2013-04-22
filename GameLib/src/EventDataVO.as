@@ -5,14 +5,14 @@ package
 	 * 事件VO，由内容派发出来的事件
 	 * @author mani
 	 */
-	public class EventVO
+	public class EventDataVO
 	{
-		public var type:String;
+		public var data:String;
 		public var tip:String;
 
-		public function EventVO(type:String='', tip:String='')
+		public function EventDataVO(data:String, tip:String='')
 		{
-			this.type=type;
+			this.data=data;
 			this.tip=tip;
 		}
 	}

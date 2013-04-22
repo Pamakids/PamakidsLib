@@ -1,6 +1,7 @@
 package
 {
 	import flash.display.Sprite;
+	import flash.events.DataEvent;
 
 	public class ContentBase extends Sprite implements IContent
 	{
@@ -9,6 +10,16 @@ package
 
 		public function ContentBase()
 		{
+		}
+
+		/**
+		 * 告诉编辑器当前内容触发了什么事件
+		 * @param data 事件数据，跟events列表里的事件数据对应
+		 *
+		 */
+		public function say(data:String):void
+		{
+			dispatchEvent(new DataEvent(DataEvent.DATA, false, false, data));
 		}
 
 		/**
