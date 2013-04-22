@@ -1,6 +1,5 @@
 package
 {
-	import flash.display.DisplayObjectContainer;
 	import flash.events.IEventDispatcher;
 
 	/**
@@ -44,8 +43,8 @@ package
 		function set data(data:Object):void;
 		function get data():Object;
 		function get properties():Array;
-		
-		
+
+
 		function start():void;
 		function initialize(width:Number, height:Number):void;
 		function close():void;

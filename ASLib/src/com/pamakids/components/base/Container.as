@@ -47,6 +47,7 @@ package com.pamakids.components.base
 			{
 				mask=null;
 				super.removeChild(maskSprite);
+				maskSprite=null;
 			}
 			drawMask();
 		}

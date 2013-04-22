@@ -36,7 +36,15 @@ package com.pamakids.utils
 
 		public static function getResizedBitmapData(sourceBitmap:BitmapData, targetWidth:Number, targetHeight:Number, resizingMethod:String='', disposeSourceBmp:Boolean=true, transparent:Boolean=true):BitmapData
 		{
-			var curW:Number=sourceBitmap.width;
+			try
+			{
+				var curW:Number=sourceBitmap.width;
+			}
+			catch (error:Error)
+			{
+				trace("Invalid BitmapData");
+			}
+
 			var curH:Number=sourceBitmap.height;
 
 			var ratio_w:Number=targetWidth / curW;

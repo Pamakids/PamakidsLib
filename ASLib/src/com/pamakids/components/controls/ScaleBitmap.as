@@ -41,7 +41,7 @@ package com.pamakids.components.controls
 		// ------------------------------------------------
 
 
-		function ScaleBitmap(bmpData:BitmapData=null, pixelSnapping:String="auto", smoothing:Boolean=false)
+		function ScaleBitmap(bmpData:BitmapData=null, pixelSnapping:String="auto", smoothing:Boolean=true)
 		{
 
 			// super constructor

@@ -4,6 +4,7 @@ package com.pamakids.components.controls
 
 	import flash.display.DisplayObject;
 	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 
@@ -16,21 +17,38 @@ package com.pamakids.components.controls
 		{
 			this.text=text;
 			super(width, height);
-			if (!width || !height)
+			if (!width && !height)
 				forceAutoFill=true;
 		}
 
+		private var _maxWidth:Number;
 		private var _text:String;
 		private var _fontSize:uint=12;
 		private var _color:uint;
-		private var _background:ScaleBitmap;
 		private var _fontFamily:String;
 		private var _algin:String;
+
+		public function get maxWidth():Number
+		{
+			return _maxWidth;
+		}
+
+		public function set maxWidth(value:Number):void
+		{
+			if (!value)
+			{
+				forceAutoFill=true;
+				if (textField)
+					autoSetSize(textField);
+			}
+			_maxWidth=value;
+			measure();
+		}
 
 		public function get algin():String
 		{
 			if (!_algin)
-				_algin=TextFormatAlign.CENTER;
+				_algin=TextFormatAlign.LEFT;
 			return _algin;
 		}
 
@@ -51,26 +69,6 @@ package com.pamakids.components.controls
 			updateFormat();
 		}
 
-		public function get background():ScaleBitmap
-		{
-			return _background;
-		}
-
-		public function set background(value:ScaleBitmap):void
-		{
-			if (_background)
-			{
-				_background.bitmapData.dispose();
-				removeChild(_background);
-			}
-			else
-			{
-				autoSetSize(_background);
-				addChildAt(_background, 0);
-			}
-			_background=value;
-		}
-
 		override protected function resize():void
 		{
 			super.resize();
@@ -79,9 +77,7 @@ package com.pamakids.components.controls
 
 		private function adjust():void
 		{
-			if (_background && width > _background.width)
-				_background.setSize(width, height);
-			if (!forceAutoFill && textField && width > textField.width)
+			if (textField && width > textField.width)
 				centerDisplayObject(textField);
 		}
 
@@ -92,6 +88,8 @@ package com.pamakids.components.controls
 
 		public function set color(value:uint):void
 		{
+			if (value == _color)
+				return;
 			_color=value;
 			updateFormat();
 		}
@@ -103,6 +101,8 @@ package com.pamakids.components.controls
 
 		public function set fontSize(value:uint):void
 		{
+			if (value == _fontSize)
+				return;
 			_fontSize=value;
 			updateFormat();
 		}
@@ -114,12 +114,33 @@ package com.pamakids.components.controls
 
 		public function set text(value:String):void
 		{
+			if (value == _text)
+				return;
 			_text=value;
 			if (textField)
 			{
 				textField.text=value;
-				autoSetSize(textField);
+				updateFormat();
 			}
+		}
+
+		protected function measure():void
+		{
+			if (maxWidth && textField && width)
+			{
+				if (width > maxWidth)
+				{
+					width=maxWidth;
+					textField.width=maxWidth;
+					forceAutoFill=false;
+				}
+			}
+		}
+
+		override public function setSize(width:Number, height:Number):void
+		{
+			super.setSize(width, height);
+			measure();
 		}
 
 		protected function updateFormat():void
@@ -139,8 +160,6 @@ package com.pamakids.components.controls
 		{
 			if (autoFill || forceAutoFill)
 			{
-				textField.width=textField.textWidth;
-				textField.height=textField.textHeight;
 				if (child == textField)
 					setSize(textField.width, textField.height);
 				else
@@ -156,7 +175,12 @@ package com.pamakids.components.controls
 			tf.font=fontFamily;
 			tf.align=algin;
 			textField=new TextField();
-			textField.multiline=true;
+			textField.autoSize=TextFieldAutoSize.LEFT;
+			if (!forceAutoFill)
+			{
+//				textField.multiline=true;
+				textField.wordWrap=true;
+			}
 			textField.selectable=false;
 			textField.defaultTextFormat=tf;
 			textField.text=text;
