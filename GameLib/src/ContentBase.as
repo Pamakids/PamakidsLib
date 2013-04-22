@@ -17,7 +17,7 @@ package
 		 * @param data 事件数据，跟events列表里的事件数据对应
 		 *
 		 */
-		public function say(data:String):void
+		protected function say(data:String):void
 		{
 			dispatchEvent(new DataEvent(DataEvent.DATA, false, false, data));
 		}
