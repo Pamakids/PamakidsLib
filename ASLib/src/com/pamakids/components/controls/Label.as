@@ -35,11 +35,14 @@ package com.pamakids.components.controls
 
 		public function set maxWidth(value:Number):void
 		{
-			if (!value)
+			if (_maxWidth && _maxWidth != value)
 			{
+				_maxWidth=value;
 				forceAutoFill=true;
 				if (textField)
-					autoSetSize(textField);
+					removeChild(textField);
+				createTextField();
+				updateFormat();
 			}
 			_maxWidth=value;
 			measure();
@@ -48,7 +51,7 @@ package com.pamakids.components.controls
 		public function get algin():String
 		{
 			if (!_algin)
-				_algin=TextFormatAlign.LEFT;
+				_algin=TextFormatAlign.CENTER;
 			return _algin;
 		}
 
@@ -153,6 +156,8 @@ package com.pamakids.components.controls
 			tf.font=fontFamily;
 			tf.align=algin;
 			textField.setTextFormat(tf);
+			if (!maxWidth || maxWidth > textField.width)
+				forceAutoFill=true;
 			autoSetSize(textField);
 		}
 
@@ -169,6 +174,33 @@ package com.pamakids.components.controls
 
 		override protected function init():void
 		{
+			if (!textField)
+			{
+				createTextField();
+				adjust();
+			}
+
+//			var tf:TextFormat=new TextFormat();
+//			tf.size=fontSize;
+//			tf.color=color;
+//			tf.font=fontFamily;
+//			tf.align=algin;
+//			textField=new TextField();
+//			textField.autoSize=TextFieldAutoSize.LEFT;
+//			if (!forceAutoFill)
+//			{
+//				//				textField.multiline=true;
+//				textField.wordWrap=true;
+//			}
+//			textField.selectable=false;
+//			textField.defaultTextFormat=tf;
+//			textField.text=text;
+//			addChild(textField);
+//			adjust();
+		}
+
+		private function createTextField():void
+		{
 			var tf:TextFormat=new TextFormat();
 			tf.size=fontSize;
 			tf.color=color;
@@ -177,15 +209,11 @@ package com.pamakids.components.controls
 			textField=new TextField();
 			textField.autoSize=TextFieldAutoSize.LEFT;
 			if (!forceAutoFill)
-			{
-//				textField.multiline=true;
 				textField.wordWrap=true;
-			}
 			textField.selectable=false;
 			textField.defaultTextFormat=tf;
 			textField.text=text;
 			addChild(textField);
-			adjust();
 		}
 	}
 }

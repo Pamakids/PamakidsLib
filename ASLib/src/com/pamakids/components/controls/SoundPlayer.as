@@ -19,7 +19,7 @@ package com.pamakids.components.controls
 	 * @author mani
 	 */
 	[Event(name="playing", type="flash.events.DataEvent")]
-	[Event(name="playComplete", type="flash.events.DataEvent")]
+	[Event(name="playComplete", type="flash.events.Event")]
 	public class SoundPlayer extends EventDispatcher
 	{
 
@@ -71,29 +71,25 @@ package com.pamakids.components.controls
 
 		private function initIntervalTimer():void
 		{
-			if (!internalTime)
-				return;
-			if (internalTimer)
-			{
-				internalTimer.stop();
-				internalTimer.removeEventListener(TimerEvent.TIMER, onTimer);
-			}
+			stopInternalTimer();
 			internalTimer=new Timer(internalTime);
 			internalTimer.addEventListener(TimerEvent.TIMER, onTimer);
 			internalTimer.start();
 		}
 
+		private function stopInternalTimer():void
+		{
+			if (internalTimer)
+			{
+				internalTimer.stop();
+				internalTimer.removeEventListener(TimerEvent.TIMER, onTimer);
+			}
+		}
+
 		protected function onTimer(event:TimerEvent):void
 		{
 			if (soundChannel)
-			{
 				dispatchEvent(new DataEvent(PLAYING, false, false, soundChannel.position.toString()));
-				if (soundChannel.position == sound.length)
-				{
-					dispatchEvent(new Event(PLAY_COMPLETE));
-					internalTimer.stop();
-				}
-			}
 		}
 
 		public function get volume():Number
@@ -143,6 +139,15 @@ package com.pamakids.components.controls
 				internalTimer.stop();
 		}
 
+		private function stopSoundChannel():void
+		{
+			if (soundChannel)
+			{
+				soundChannel.stop();
+				soundChannel.removeEventListener(Event.SOUND_COMPLETE, playedHandler);
+			}
+		}
+
 		/**
 		 * 播放音乐
 		 */
@@ -151,6 +156,7 @@ package com.pamakids.components.controls
 			if (playing)
 				return;
 			playing=true;
+			stopSoundChannel();
 			soundChannel=sound.play(currentPosition);
 			if (muted)
 			{
@@ -194,18 +200,24 @@ package com.pamakids.components.controls
 		 */
 		public function replay():void
 		{
-			playing=true;
-			if (soundChannel)
-				soundChannel.stop();
-			soundChannel=sound.play(currentPosition);
-			if (muted)
-			{
-				soundTransform=soundChannel.soundTransform;
-				soundTransform.volume=0;
-				soundChannel.soundTransform=soundTransform;
-			}
-			if (internalTimer)
-				internalTimer.start();
+			playing=false;
+			currentPosition=0;
+			play();
+//			playing=true;
+//			if (soundChannel)
+//			{
+//				soundChannel.stop();
+//				soundChannel.removeEventListener(Event.SOUND_COMPLETE, playedHandler);
+//			}
+//			soundChannel=sound.play(currentPosition);
+//			soundChannel.addEventListener(Event.SOUND_COMPLETE, playedHandler);
+//			if (muted)
+//			{
+//				soundTransform=soundChannel.soundTransform;
+//				soundTransform.volume=0;
+//				soundChannel.soundTransform=soundTransform;
+//			}
+//			initIntervalTimer();
 		}
 
 		/**
@@ -283,6 +295,9 @@ package com.pamakids.components.controls
 
 		private function playedHandler(event:Event):void
 		{
+			trace('Sound Played', url);
+			stopInternalTimer();
+			dispatchEvent(new Event(PLAY_COMPLETE));
 			if (repeat)
 			{
 				playing=false;

@@ -43,6 +43,7 @@ package com.pamakids.utils
 			catch (error:Error)
 			{
 				trace("Invalid BitmapData");
+				return null;
 			}
 
 			var curH:Number=sourceBitmap.height;

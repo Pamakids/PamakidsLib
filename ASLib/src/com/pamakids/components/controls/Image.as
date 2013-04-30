@@ -46,7 +46,7 @@ package com.pamakids.components.controls
 			if (value is String)
 				lm.load(value as String, loadedHandler, URLUtil.getCachePath(value as String), null, null, false, LoadManager.BITMAP);
 			else if (value is ByteArray)
-				lm.loadByteArray(value as ByteArray, loadedHandler);
+				lm.loadContentFromByteArray(value as ByteArray, loadedHandler);
 		}
 
 		protected function loadedHandler(bitmap:Bitmap):void
@@ -79,13 +79,13 @@ package com.pamakids.components.controls
 		override protected function dispose():void
 		{
 			disposeBitmap();
-			tobeDisposedBitmap=null;
 			if (content && content.parent)
 			{
 				content.bitmapData.dispose();
 				content.parent.removeChild(content);
 				content=null;
 			}
+			tobeDisposedBitmap=null;
 			lm=null;
 		}
 
@@ -95,8 +95,10 @@ package com.pamakids.components.controls
 		{
 			if (tobeDisposedBitmap)
 			{
-				tobeDisposedBitmap.bitmapData.dispose();
-				tobeDisposedBitmap.parent.removeChild(tobeDisposedBitmap);
+				if (tobeDisposedBitmap.bitmapData)
+					tobeDisposedBitmap.bitmapData.dispose();
+				if (tobeDisposedBitmap.parent)
+					tobeDisposedBitmap.parent.removeChild(tobeDisposedBitmap);
 				if (content)
 					tobeDisposedBitmap=content;
 			}

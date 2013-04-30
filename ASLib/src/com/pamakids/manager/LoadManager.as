@@ -21,6 +21,10 @@ package com.pamakids.manager
 	{
 
 		public static const BITMAP:String="BITMAP";
+		public static const SWF:String="SWF";
+
+		private var bigDataFormates:Array;
+
 		private static var _instance:LoadManager;
 
 		public static function get instance():LoadManager
@@ -38,6 +42,7 @@ package com.pamakids.manager
 			savePathDic=new Dictionary();
 			onCompleteDic=new Dictionary();
 			completeParamsDic=new Dictionary();
+			bigDataFormates=[BITMAP, SWF];
 		}
 
 		public var errorHandler:Function;
@@ -92,7 +97,7 @@ package com.pamakids.manager
 				if (cachedData)
 				{
 					if (formate == BITMAP)
-						getBitmapFromByteArray(cachedData as ByteArray, [onComplete], params);
+						getContentFromByteArray(cachedData as ByteArray, [onComplete], params);
 					else
 						params ? onComplete(cachedData, params) : onComplete(cachedData);
 					return;
@@ -130,23 +135,22 @@ package com.pamakids.manager
 			if (savePath)
 				savePathDic[u]=savePath;
 			loaderDic[u]=[onComplete];
-			if (formate == BITMAP)
+			if (bigDataFormates.indexOf(formate) != -1)
 				formate=URLLoaderDataFormat.BINARY;
 			u.dataFormat=formate;
 			u.load(new URLRequest(url));
 			completeParamsDic[u]=params;
 			u.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			u.addEventListener(Event.COMPLETE, onBinaryLoaded);
+
 			if (loadingCallBack != null)
-			{
 				u.addEventListener(ProgressEvent.PROGRESS, loadingCallBack);
-			}
 		}
 
-		protected function onLoaded(event:Event):void
+		protected function contentLoadedHandler(event:Event):void
 		{
 			var l:LoaderInfo=event.target as LoaderInfo;
-			l.removeEventListener(Event.COMPLETE, onLoaded);
+			l.removeEventListener(Event.COMPLETE, contentLoadedHandler);
 			var callbacks:Object=loaderDic[l.loader];
 			delete loaderDic[l.loader];
 
@@ -168,25 +172,26 @@ package com.pamakids.manager
 			}
 		}
 
-		public function loadByteArray(byteArray:ByteArray, callback:Function):void
+		public function loadContentFromByteArray(byteArray:ByteArray, callback:Function):void
 		{
 			var l:Loader=new Loader();
 			var lc:LoaderContext=new LoaderContext();
 			lc.imageDecodingPolicy=ImageDecodingPolicy.ON_LOAD;
 			loaderDic[l]=callback;
 			l.loadBytes(byteArray, lc);
-			l.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaded);
+			l.contentLoaderInfo.addEventListener(Event.COMPLETE, contentLoadedHandler);
 		}
 
-		private function getBitmapFromByteArray(byteArray:ByteArray, callbacks:Array=null, params:Array=null):void
+		private function getContentFromByteArray(byteArray:ByteArray, callbacks:Array=null, params:Array=null):void
 		{
 			var l:Loader=new Loader();
 			var lc:LoaderContext=new LoaderContext();
 			lc.imageDecodingPolicy=ImageDecodingPolicy.ON_LOAD;
+			lc.allowCodeImport=true;
 			loaderDic[l]=callbacks;
 			l.loadBytes(byteArray, lc);
 			completeParamsDic[l]=params;
-			l.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoaded);
+			l.contentLoaderInfo.addEventListener(Event.COMPLETE, contentLoadedHandler);
 		}
 
 		private function ioErrorHandler(event:IOErrorEvent):void
@@ -222,7 +227,7 @@ package com.pamakids.manager
 			{
 				if (loadingDic[key] == u)
 				{
-					if (!savePath && formate != BITMAP)
+					if (!savePath && bigDataFormates.indexOf(formate) == -1)
 						loadedDic[key]=u.data;
 					delete loadingDic[key];
 					break;
@@ -233,9 +238,9 @@ package com.pamakids.manager
 			delete loaderFormate[u];
 			params=completeParamsDic[u];
 			delete completeParamsDic[u];
-			if (formate == BITMAP && b)
+			if (bigDataFormates.indexOf(formate) != -1 && b)
 			{
-				getBitmapFromByteArray(b, arr, params);
+				getContentFromByteArray(b, arr, params);
 				return;
 			}
 
