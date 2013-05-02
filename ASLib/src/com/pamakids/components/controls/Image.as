@@ -7,6 +7,7 @@ package com.pamakids.components.controls
 
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.utils.ByteArray;
 
@@ -40,22 +41,26 @@ package com.pamakids.components.controls
 		public function set source(value:Object):void
 		{
 			if (!value)
+			{
 				dispose();
+			}
+			else if (value != _source)
+			{
+				lm=LoadManager.instance;
+				if (value is String)
+					lm.load(value as String, loadedHandler, URLUtil.getCachePath(value as String), null, null, false, LoadManager.BITMAP);
+				else if (value is ByteArray)
+					lm.loadContentFromByteArray(value as ByteArray, loadedHandler);
+			}
 			_source=value;
-			lm=LoadManager.instance;
-			if (value is String)
-				lm.load(value as String, loadedHandler, URLUtil.getCachePath(value as String), null, null, false, LoadManager.BITMAP);
-			else if (value is ByteArray)
-				lm.loadContentFromByteArray(value as ByteArray, loadedHandler);
 		}
 
 		protected function loadedHandler(bitmap:Bitmap):void
 		{
 			bitmap.smoothing=smoothing;
-			if (autoFill)
+			if (forceAutoFill || autoFill)
 			{
 				content=bitmap;
-				setSize(bitmap.width, bitmap.height);
 			}
 			else
 			{
@@ -69,6 +74,12 @@ package com.pamakids.components.controls
 			if (tobeDisposedBitmap != content)
 				disposeBitmap();
 			dispatchEvent(new Event('complete', true));
+		}
+
+		override protected function autoSetSize(child:DisplayObject):void
+		{
+			if (autoFill || forceAutoFill)
+				setSize(child.width, child.height);
 		}
 
 		protected function addContent(content:Bitmap):void

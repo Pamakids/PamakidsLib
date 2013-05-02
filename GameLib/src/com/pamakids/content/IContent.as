@@ -1,4 +1,4 @@
-package
+package com.pamakids.content
 {
 	import flash.events.IEventDispatcher;
 

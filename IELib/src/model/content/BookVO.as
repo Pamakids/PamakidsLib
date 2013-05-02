@@ -11,6 +11,5 @@ package model.content
 		 * 本地路径或网络路径
 		 */
 		public var dir:String;
-
 	}
 }

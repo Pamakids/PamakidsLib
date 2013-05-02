@@ -1,11 +1,11 @@
-package
+package com.pamakids.game
 {
 	import flash.events.IEventDispatcher;
 
 	/**
 	 * data 游戏数据，通过传递数据来调整游戏状态等
 	 * start() 开始游戏
-	 * init() 将游戏添加到舞台上
+	 * initialize() 初始化游戏
 	 * close() 关闭游戏
 	 * events:
 	 * 		GAME_OVER: 游戏结束后派发该事件
@@ -37,13 +37,16 @@ package
 		function set totalLife(life:int):void;
 		function get totalLife():int;
 		/**
+		 * 游戏总时间，时间结束，游戏结束
+		 */
+		function set totalTime(time:int):void;
+		/**
 		 * 游戏配置数据,比如当前游戏的难度之类
 		 * @param data
 		 */
 		function set data(data:Object):void;
 		function get data():Object;
 		function get properties():Array;
-
 
 		function start():void;
 		function initialize(width:Number, height:Number):void;

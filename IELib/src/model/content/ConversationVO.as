@@ -27,7 +27,6 @@ package model.content
 		 */
 		public var effectData:Object;
 
-
 		/**
 		 * 类型，显示提示用，包括成功、出错、失败的提示
 		 */
@@ -43,6 +42,10 @@ package model.content
 		/**
 		 * 自动隐藏时长
 		 */
-		public var autoHideTime:Number;
+		public var autoHideTime:Number=3;
+		/**
+		 * 声音播放时机，0是在角色出现时，1是在动画结束时，2是在字幕出现时
+		 */
+		public var soundPlayTime:int;
 	}
 }
