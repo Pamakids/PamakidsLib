@@ -7,6 +7,7 @@ package com.pamakids.components.base
 	import flash.display.Sprite;
 	import flash.events.Event;
 
+
 	public class Container extends Sprite
 	{
 		public function Container(width:Number=0, height:Number=0, enableBackground:Boolean=false, enableMask:Boolean=false)
