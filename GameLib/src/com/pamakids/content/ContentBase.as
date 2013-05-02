@@ -1,4 +1,4 @@
-package
+package com.pamakids.content
 {
 	import flash.display.Sprite;
 	import flash.events.DataEvent;

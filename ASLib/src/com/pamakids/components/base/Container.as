@@ -23,6 +23,21 @@ package com.pamakids.components.base
 
 		private var _layout:ILayout;
 
+		public function get forceAutoFill():Boolean
+		{
+			return _forceAutoFill;
+		}
+
+		public function set forceAutoFill(value:Boolean):void
+		{
+			_forceAutoFill=value;
+			if (!value)
+			{
+				trace('forceAutoFill:' + value);
+				value=value;
+			}
+		}
+
 		public function get layout():ILayout
 		{
 			return _layout;
@@ -199,7 +214,7 @@ package com.pamakids.components.base
 			resize();
 		}
 
-		public var forceAutoFill:Boolean;
+		private var _forceAutoFill:Boolean;
 
 		protected function resize():void
 		{

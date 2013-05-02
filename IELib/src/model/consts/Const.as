@@ -45,6 +45,9 @@ package model.consts
 		public static const CALL:String="CALL";
 		public static const TEXT:String="TEXT";
 
+		public static const THUMB_WIDTH:int=137;
+		public static const THUMB_HEIGHT:int=85;
+
 		/**
 		 * 找茬
 		 */

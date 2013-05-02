@@ -13,6 +13,8 @@ package views
 	import com.pamakids.manager.LoadManager;
 
 	import flash.display.Bitmap;
+	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.events.DataEvent;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
@@ -34,6 +36,7 @@ package views
 
 	import views.book.Avatar;
 	import views.book.Subtitle;
+	import com.pamakids.content.ContentBase;
 
 	public class BookPlayer extends Container
 	{
@@ -59,8 +62,9 @@ package views
 
 		private var currentAvatar:Avatar;
 
-		private var currentPage:HotPointVO;
+		private var currentPageVO:HotPointVO;
 		private var currentPageNum:int;
+		private var currentPage:Sprite;
 
 		private var eventsVO:EventsVO;
 		private var otherImage:Image;
@@ -88,10 +92,9 @@ package views
 			stopPreview();
 			playingPage=page;
 			show(page);
-			currentPage=vo.pages[page];
-			if (currentPage.events)
+			if (currentPageVO.events)
 			{
-				eventsList=currentPage.events.concat();
+				eventsList=currentPageVO.events.concat();
 				if (eventsList && eventsList.length)
 				{
 					eventsVO=eventsList.shift();
@@ -183,7 +186,7 @@ package views
 				subtitle.x=playingAvatar.x + conversationVO.subtitleX;
 				subtitle.y=playingAvatar.y + conversationVO.subtitleY;
 				setChildIndex(subtitle, numChildren - 1);
-				TweenLite.to(subtitle, 0.5, {alpha: 1});
+				TweenLite.to(subtitle, 0.3, {alpha: 1});
 			}
 		}
 
@@ -371,7 +374,7 @@ package views
 			{
 				if (eventsList && eventsList.length)
 					intervalTimer.start();
-				else if (!currentPage.forcePause)
+				else if (!currentPageVO.forcePause)
 					nextPage();
 			}
 		}
@@ -392,11 +395,73 @@ package views
 		{
 			if (!vo.pages)
 				return;
+			currentPageVO=vo.pages[page];
 			subtitle.visible=false;
 			currentPageNum=page;
 			trace('show page:', page);
-			var hpvo:HotPointVO=vo.pages[page];
-			centerImage.source=pc.getUrl(hpvo.content);
+			var image:Image;
+			if (currentPage)
+			{
+				setChildIndex(currentPage, numChildren - 1);
+				TweenLite.to(currentPage, 1, {alpha: 0, onComplete: clearCurrentPage, onCompleteParams: [currentPage]});
+			}
+			fillContent();
+		}
+
+		private function swfLoadedHandler(contentBase:ContentBase):void
+		{
+			contentBase.initialize(width, height);
+			addChildAt(contentBase, 0);
+			currentPage=contentBase;
+			judgeContent(contentBase);
+			showCurrentPage();
+		}
+
+		private function showCurrentPage():void
+		{
+			currentPage.alpha=0;
+			currentPage.visible=true;
+			TweenLite.to(currentPage, 1, {alpha: 1});
+		}
+
+		private function clearCurrentPage(page:DisplayObject):void
+		{
+			var image:Image;
+			var content:ContentBase;
+			if (currentPageVO.isSwf())
+			{
+				content=page as ContentBase;
+				content.dispose();
+				removeChild(content);
+			}
+			else
+			{
+				image=page as Image;
+				image.source=null;
+				image.visible=false;
+				image.alpha=1;
+			}
+		}
+
+		private function fillContent():void
+		{
+			if (currentPageVO.isSwf())
+			{
+				lm.load(pageContentURL, swfLoadedHandler, null, null, null, false, LoadManager.SWF);
+			}
+			else
+			{
+				var image:Image;
+				image=currentPage != centerImage ? centerImage : otherImage;
+				image.forceAutoFill=true;
+				image.source=pageContentURL;
+				currentPage=image;
+			}
+		}
+
+		private function get pageContentURL():String
+		{
+			return pc.getUrl(currentPageVO.content);
 		}
 
 		public function get vo():BookVO
@@ -410,6 +475,8 @@ package views
 			pc.vo=value;
 		}
 
+		private var contentBase:ContentBase;
+
 		override protected function init():void
 		{
 			initImages();
@@ -417,12 +484,50 @@ package views
 			if (pc.useByCreator)
 			{
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+				enableMask=true;
 			}
+			stage.addEventListener(MouseEvent.MOUSE_DOWN, stageMouseDownHandler);
+		}
+
+		public function setPainter(painter:Sprite):void
+		{
+//			if (this.painter)
+//				removeChild(this.painter);
+			this.painter=painter;
+//			addChild(painter);
+		}
+
+		private var dragBound:Rectangle;
+
+		protected function stageMouseDownHandler(event:MouseEvent):void
+		{
+			if (enableDragContent && pc.enableDrag)
+			{
+				stage.addEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler);
+				stage.addEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
+				currentPage.startDrag(false, dragBound);
+			}
+		}
+
+		protected function stageMouseMoveHandler(event:MouseEvent):void
+		{
+			if (painter)
+			{
+				painter.x=currentPage.x;
+				painter.y=currentPage.y;
+			}
+		}
+
+		protected function stageMouseUpHandler(event:MouseEvent):void
+		{
+			currentPage.stopDrag();
+			stage.removeEventListener(MouseEvent.MOUSE_MOVE, stageMouseMoveHandler);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
 		}
 
 		protected function keyDownHandler(event:KeyboardEvent):void
 		{
-			if (!currentPage)
+			if (!currentPageVO)
 				return;
 			if (event.keyCode == Keyboard.LEFT)
 				prePage();
@@ -449,17 +554,54 @@ package views
 				subtitle.vo=null;
 			}
 			pc.playingVO=null;
-			currentPage=null;
+			currentPageVO=null;
 		}
 
 		private function initImages():void
 		{
-			centerImage=new Image(width, height);
+			centerImage=new Image();
+			centerImage.addEventListener(Event.COMPLETE, imageCompleteHandler);
 			addChild(centerImage);
-			otherImage=new Image(width, height);
-			otherImage.x=width;
+			otherImage=new Image();
+			otherImage.addEventListener(Event.COMPLETE, imageCompleteHandler);
 			otherImage.visible=false;
 			addChild(otherImage);
+		}
+
+		protected function imageCompleteHandler(event:Event):void
+		{
+			judgeContent(event.target as DisplayObject);
+		}
+
+		private function judgeContent(target:DisplayObject):void
+		{
+			if (target.width != width || target.height != height)
+			{
+				enableDragContent=true;
+				target.x=width / 2 - target.width / 2;
+				target.y=height / 2 - target.height / 2;
+				var x:Number=target.width > width ? width - target.width : 0;
+				var y:Number=target.height > height ? height - target.height : 0;
+				var w:Number=target.width > width ? target.width - width : width - target.width;
+				var h:Number=target.height > height ? target.height - height : height - target.height;
+				dragBound=new Rectangle(x, y, w, h);
+			}
+			else
+			{
+				enableDragContent=false;
+				target.x=target.y=0;
+			}
+			if (painter)
+			{
+				painter.x=target.x;
+				painter.y=target.y;
+				painter.width=target.width;
+				painter.height=target.height;
+			}
+			if (currentPage is Image)
+				trace('Content: ' + (currentPage as Image).source);
+			trace(target.width + '-' + target.height + '&' + target.x + '-' + target.y);
+			showCurrentPage();
 		}
 
 		private function initSubtitle():void
@@ -479,6 +621,8 @@ package views
 		}
 
 		private var subtitleReady:Boolean;
+		private var enableDragContent:Boolean;
+		private var painter:Sprite;
 
 		private function showSubtitle():void
 		{

@@ -9,7 +9,6 @@ package controller
 	import com.pamakids.utils.Singleton;
 
 	import flash.display.DisplayObject;
-	import flash.events.Event;
 	import flash.filesystem.File;
 	import flash.utils.Dictionary;
 
@@ -186,5 +185,8 @@ package controller
 
 			return s;
 		}
+
+		public var updatePainter:Function;
+		public var enableDrag:Boolean;
 	}
 }
