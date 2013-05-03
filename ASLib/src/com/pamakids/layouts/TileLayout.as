@@ -7,32 +7,37 @@ package com.pamakids.layouts
 
 	public class TileLayout extends LayoutBase
 	{
-		private var verticalGap:Number=0
-		private var horizontalGap:Number=0
+		private var verticalGap:Number
+		private var horizontalGap:Number
+		private var numColumns:int
 
-		public function TileLayout(container:Container=null)
+		public function TileLayout(numColumns:int, verticalGap:Number=0, horizontalGap:Number=0, container:Container=null)
 		{
 			super(container);
-
+			this.numColumns=numColumns
+			this.verticalGap=verticalGap
+			this.horizontalGap=horizontalGap
 		}
 
 		override public function update():void
 		{
-			var elementY:Number=0;
-			for each (var element:DisplayObject in items)
+			var totalHeight:Number=0
+			var totalWidth:Number=0
+			var item:DisplayObject
+			var i:int, l:int=items.length
+			for (i=0; i < l; i++)
 			{
-				element.y=elementY + paddingTop;
-				if (horizentalCenter && !autoFill)
-					element.x=(width - element.width) / 2;
-				elementY=elementY + element.height + gap;
+				item=items[i]
+				item.x=(i % numColumns) * (horizontalGap + item.width)
+				item.y=int(i / numColumns) * (verticalGap + item.height)
 			}
-			if (autoFill)
+
+			if (autoFill && l > 0)
 			{
-				if (element)
-				{
-					contentHeight=element.height + element.y;
-					contentWidth=element.width;
-				}
+				contentHeight=(verticalGap + item.height) * Math.ceil(l / numColumns) - verticalGap
+				contentWidth=(horizontalGap + item.width) * numColumns - horizontalGap
+
+				//trace(contentWidth + ' | ' + contentHeight)
 				container.setSize(contentWidth, contentHeight);
 			}
 		}
