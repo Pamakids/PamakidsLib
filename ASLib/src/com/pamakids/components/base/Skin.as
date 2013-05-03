@@ -18,7 +18,6 @@ package com.pamakids.components.base
 
 		public function Skin(styleName:String, width:Number=0, height:Number=0, enableBackground:Boolean=false, enableMask:Boolean=false)
 		{
-			trace(getQualifiedClassName(this));
 			this.styleName=styleName;
 			am=AssetsManager.instance;
 			bitmaps=[];
@@ -55,6 +54,11 @@ package com.pamakids.components.base
 		protected function updateSkin():void
 		{
 
+		}
+
+		protected function get themeLoaded():Boolean
+		{
+			return am.themeLoaded;
 		}
 
 		private var _enable:Boolean=true;

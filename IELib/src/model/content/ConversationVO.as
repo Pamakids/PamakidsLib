@@ -27,6 +27,8 @@ package model.content
 		 */
 		public var effectData:Object;
 
+
+		//*********Alert使用属性
 		/**
 		 * 类型，显示提示用，包括成功、出错、失败的提示
 		 */

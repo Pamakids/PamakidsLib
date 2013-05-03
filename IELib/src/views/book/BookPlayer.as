@@ -1,4 +1,4 @@
-package views
+package views.book
 {
 	import com.greensock.TweenLite;
 	import com.greensock.plugins.MotionBlurPlugin;
@@ -33,11 +33,9 @@ package views
 	import model.content.ConversationVO;
 	import model.content.EventsVO;
 	import model.content.HotAreaVO;
-	import model.content.HotPointVO;
+	import model.content.PageVO;
 	import model.content.SubtitleVO;
 
-	import views.book.Avatar;
-	import views.book.Subtitle;
 	import views.hotArea.HotAreaContainer;
 
 	public class BookPlayer extends Container
@@ -64,8 +62,8 @@ package views
 
 		private var currentAvatar:Avatar;
 
-		private var currentPageVO:HotPointVO;
-		private var currentPageNum:int;
+		private var currentPageVO:PageVO;
+		private var currentPageNum:int=-1;
 		private var currentPage:Sprite;
 
 		private var eventsVO:EventsVO;
@@ -434,6 +432,7 @@ package views
 			if (currentPage)
 			{
 				setChildIndex(currentPage, numChildren - 1);
+				currentPage.alpha=1;
 				TweenLite.to(currentPage, 1, {alpha: 0, onComplete: clearCurrentPage, onCompleteParams: [currentPage]});
 			}
 			fillContent();
@@ -487,8 +486,16 @@ package views
 				var image:Image;
 				image=currentPage != centerImage ? centerImage : otherImage;
 				image.forceAutoFill=true;
-				image.source=pageContentURL;
 				currentPage=image;
+				if (image.source == pageContentURL)
+				{
+					showCurrentPage();
+					judgeContent(image);
+				}
+				else
+				{
+					image.source=pageContentURL;
+				}
 			}
 		}
 

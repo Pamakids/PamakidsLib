@@ -1,6 +1,6 @@
 package com.pamakids.components.controls
 {
-	import com.pamakids.components.base.Container;
+	import com.pamakids.components.base.UIComponent;
 
 	import flash.display.DisplayObject;
 	import flash.text.TextField;
@@ -9,7 +9,7 @@ package com.pamakids.components.controls
 	import flash.text.TextFormatAlign;
 
 	[Event(name="resize", type="com.pamakids.events.ResizeEvent")]
-	public class Label extends Container
+	public class Label extends UIComponent
 	{
 		protected var textField:TextField;
 
@@ -179,24 +179,6 @@ package com.pamakids.components.controls
 				createTextField();
 				adjust();
 			}
-
-//			var tf:TextFormat=new TextFormat();
-//			tf.size=fontSize;
-//			tf.color=color;
-//			tf.font=fontFamily;
-//			tf.align=algin;
-//			textField=new TextField();
-//			textField.autoSize=TextFieldAutoSize.LEFT;
-//			if (!forceAutoFill)
-//			{
-//				//				textField.multiline=true;
-//				textField.wordWrap=true;
-//			}
-//			textField.selectable=false;
-//			textField.defaultTextFormat=tf;
-//			textField.text=text;
-//			addChild(textField);
-//			adjust();
 		}
 
 		private function createTextField():void

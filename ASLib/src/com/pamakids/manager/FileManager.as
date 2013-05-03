@@ -96,7 +96,16 @@ package com.pamakids.manager
 		{
 			var toFile:File=new File(toPath);
 			if (source.nativePath != toFile.nativePath)
-				source.copyTo(toFile, overrite);
+			{
+				try
+				{
+					source.copyTo(toFile, overrite);
+				}
+				catch (error:Error)
+				{
+					trace("Copy File Error:" + error.toString());
+				}
+			}
 		}
 
 		public static function deleteFile(path:String):void

@@ -44,6 +44,7 @@ package com.pamakids.manager
 
 		public function loadTheme(url:String):void
 		{
+			themeLoaded=false;
 			isHttpTheme=URLUtil.isHttp(url);
 			themeURL=url;
 			lm.load(url, loadedThemeInfoHandler, isHttpTheme ? URLUtil.getCachePath(url) : null, null, null, false, URLLoaderDataFormat.TEXT);
@@ -141,6 +142,9 @@ package com.pamakids.manager
 					f();
 				}
 			}
+			themeLoaded=true;
 		}
+
+		public var themeLoaded:Boolean;
 	}
 }

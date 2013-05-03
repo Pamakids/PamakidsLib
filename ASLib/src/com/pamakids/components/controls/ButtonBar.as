@@ -40,7 +40,7 @@ package com.pamakids.components.controls
 				var pb:Button=selectable ? new ToggleButton(o.name, o.selected, o.required) : new Button(o.name);
 				buttons.push(pb);
 				pb.addEventListener(MouseEvent.CLICK, onClick);
-				pb.centerFill=true;
+				pb.autoCenter=true;
 				addChild(pb);
 			}
 		}
