@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker http://texturepacker.com-->
+<!-- $TexturePacker:SmartUpdate:8e5a732a749edf0d188deb5a066a881c$ -->
+<TextureAtlas imagePath="home.png">
+    <SubTexture name="babyInfoUp" x="243" y="191" width="241" height="61"/>
+    <SubTexture name="beginUp" x="1" y="1" width="292" height="102"/>
+    <SubTexture name="chineseDown" x="485" y="26" width="22" height="24"/>
+    <SubTexture name="chineseUp" x="485" y="1" width="22" height="24"/>
+    <SubTexture name="englishDown" x="294" y="18" width="34" height="16"/>
+    <SubTexture name="englishUp" x="294" y="1" width="34" height="16"/>
+    <SubTexture name="forParentsUp" x="1" y="191" width="241" height="61"/>
+    <SubTexture name="myWorkUp" x="1" y="104" width="293" height="86"/>
+    <SubTexture name="scrollBar" x="485" y="51" width="12" height="29"/>
+    <SubTexture name="yellowCircleSelected" x="294" y="51" width="64" height="51"/>
+</TextureAtlas>
