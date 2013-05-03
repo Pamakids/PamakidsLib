@@ -40,7 +40,10 @@ package com.pamakids.layouts.base
 		public function set container(value:Container):void
 		{
 			_container=value;
-			value.addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
+			if (value)
+			{
+				value.addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
+			}
 		}
 
 		public function get gap():Number
