@@ -40,6 +40,12 @@ package model.content
 		 */
 		public var page:int;
 		public var gameVO:GameVO;
+
+		/**
+		 * 0 自动出现 1 点击后出现
+		 */
+		public var showMethod:int;
+		public var sound:String;
 	}
 }
 

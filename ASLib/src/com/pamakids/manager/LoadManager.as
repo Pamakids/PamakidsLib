@@ -1,5 +1,7 @@
 package com.pamakids.manager
 {
+	import flash.display.Bitmap;
+	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
@@ -161,9 +163,15 @@ package com.pamakids.manager
 			delete completeParamsDic[l.loader];
 			if (callbacks is Array)
 			{
+				var bitmap:Bitmap=l.content as Bitmap;
+				var returnContent:DisplayObject;
 				for each (var f:Function in callbacks)
 				{
-					params ? f(l.content, params) : f(l.content);
+					if (bitmap)
+						returnContent=new Bitmap(bitmap.bitmapData.clone());
+					else
+						returnContent=l.content;
+					params ? f(returnContent, params) : f(returnContent);
 				}
 			}
 			else if (callbacks is Function)

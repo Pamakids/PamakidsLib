@@ -55,11 +55,21 @@ package model.consts
 		public static const SUCCESS:String="SUCCESS";
 		public static const FAILURE:String="FAILURE";
 		public static const WRONG:String="WRONG";
+		public static const RIGHT:String="RIGHT";
+
+		public static const HOT_AREA_ASSET_AUTO_SHOWUP:String="HOT_AREA_ASSET_AUTO_SHOWUP";
+		public static const HOT_AREA_ASSET_CLICK_SHOWUP:String="HOT_AREA_ASSET_CLICK_SHOWUP";
+
+		public static const HOT_AREA_ASSET_SHOW_METHODS:Array=[
+			{label: '自动出现', type: HOT_AREA_ASSET_AUTO_SHOWUP},
+			{label: '点击出现', type: HOT_AREA_ASSET_CLICK_SHOWUP}
+			];
 
 		public static const ALERT_TYPES:ArrayCollection=new ArrayCollection([
 			{label: '成功', type: SUCCESS},
+			{label: '失败', type: FAILURE},
 			{label: '出错', type: WRONG},
-			{label: '失败', type: FAILURE}
+			{label: '正确', type: RIGHT}
 			]);
 
 		public static const HOT_AREA_TYPES:ArrayCollection=new ArrayCollection([

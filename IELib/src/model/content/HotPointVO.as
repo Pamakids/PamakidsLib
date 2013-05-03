@@ -19,12 +19,21 @@ package model.content
 		public var backgroundMusic:String;
 		public var globalBackgroundMusicVolume:Number=1;
 
+		/**
+		 * 警告
+		 */
 		public var rightAlert:String;
 		public var wrongAlert:String;
 		public var successAlert:String;
 		public var failuredAlert:String;
-
 		public var thumbnail:String;
+
+		/**
+		 * 当前页互动内容状态列表
+		 */
+		public var states:Array;
+
+		public var showNextButton:Boolean;
 
 		public function isSwf():Boolean
 		{

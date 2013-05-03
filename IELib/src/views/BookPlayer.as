@@ -9,6 +9,7 @@ package views
 	import com.pamakids.components.controls.Image;
 	import com.pamakids.components.controls.ScaleBitmap;
 	import com.pamakids.components.controls.SoundPlayer;
+	import com.pamakids.content.ContentBase;
 	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.manager.LoadManager;
 
@@ -31,12 +32,13 @@ package views
 	import model.content.BookVO;
 	import model.content.ConversationVO;
 	import model.content.EventsVO;
+	import model.content.HotAreaVO;
 	import model.content.HotPointVO;
 	import model.content.SubtitleVO;
 
 	import views.book.Avatar;
 	import views.book.Subtitle;
-	import com.pamakids.content.ContentBase;
+	import views.hotArea.HotAreaContainer;
 
 	public class BookPlayer extends Container
 	{
@@ -124,8 +126,6 @@ package views
 		{
 			subtitleVO=vo as SubtitleVO;
 			conversationVO=vo as ConversationVO;
-//			subtitle.visible=false;
-//			pc.playingVO=null;
 			stopPreview();
 			if (conversationVO)
 			{
@@ -245,9 +245,11 @@ package views
 
 		private function playEvent(isPreviewEvent:Boolean=false):void
 		{
+			pausing=false;
 			this.isPreviewEvent=isPreviewEvent;
 			isPlayingConversation=eventsVO.type == Const.CONVERSATION;
 			isPlayingSubtitle=eventsVO.type == Const.SUBTITLE;
+			isPlayingGame=eventsVO.type == Const.GAME;
 			playlist=eventsVO.subtitles.concat();
 			if (eventsVO.audioFile)
 				initAudioPlayer();
@@ -258,6 +260,7 @@ package views
 					intervalTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
 					intervalTimer.stop();
 				}
+
 				intervalTimer=new Timer(eventsVO.intervalTime, 1);
 				intervalTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
 			}
@@ -270,8 +273,32 @@ package views
 			{
 				conversationVO=playlist.shift();
 			}
+			else if (isPlayingGame)
+			{
+				if (gameTimer)
+				{
+					gameTimer.stop();
+					gameTimer.removeEventListener(TimerEvent.TIMER, gameTimerHandler);
+					gameTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, gameOverHandler);
+				}
+				gameTimer=new Timer(1000, eventsVO.gameVO.totalTime);
+				gameTimer.addEventListener(TimerEvent.TIMER, gameTimerHandler);
+				gameTimer.addEventListener(TimerEvent.TIMER_COMPLETE, gameOverHandler);
+				gameTimer.start();
+			}
 		}
 
+		protected function gameTimerHandler(event:TimerEvent):void
+		{
+
+		}
+
+		protected function gameOverHandler(event:TimerEvent):void
+		{
+
+		}
+
+		private var isPlayingGame:Boolean;
 		private var isPlayingConversation:Boolean;
 		private var isPlayingSubtitle:Boolean;
 
@@ -294,6 +321,7 @@ package views
 				audioPlayer.autoPlay=true;
 			}
 			audioPlayer.url=pc.getUrl(eventsVO.audioFile);
+			audioPlayer.repeat=eventsVO.repeat;
 		}
 
 		protected function playCompleteHandler(event:Event):void
@@ -376,6 +404,8 @@ package views
 					intervalTimer.start();
 				else if (!currentPageVO.forcePause)
 					nextPage();
+				else
+					pausing=true;
 			}
 		}
 
@@ -393,9 +423,10 @@ package views
 
 		public function show(page:int):void
 		{
-			if (!vo.pages)
+			if (!vo.pages || page == currentPageNum)
 				return;
 			currentPageVO=vo.pages[page];
+			hotAreaContainer.initHotAreas(currentPageVO.hotAreas);
 			subtitle.visible=false;
 			currentPageNum=page;
 			trace('show page:', page);
@@ -412,6 +443,8 @@ package views
 		{
 			contentBase.initialize(width, height);
 			addChildAt(contentBase, 0);
+			if (!currentPageVO.states)
+				currentPageVO.states=contentBase.states;
 			currentPage=contentBase;
 			judgeContent(contentBase);
 			showCurrentPage();
@@ -481,20 +514,41 @@ package views
 		{
 			initImages();
 			initSubtitle();
+			initHotAreaContainer();
 			if (pc.useByCreator)
 			{
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 				enableMask=true;
 			}
+			else
+			{
+				pc.enableDrag=true;
+			}
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, stageMouseDownHandler);
+		}
+
+		private function initHotAreaContainer():void
+		{
+			hotAreaContainer=new HotAreaContainer(width, height);
+			hotAreaContainer.addEventListener("clickHotArea", clickHotAreaHandler);
+			addChild(hotAreaContainer);
+		}
+
+		protected function clickHotAreaHandler(event:Event):void
+		{
+			var vo:HotAreaVO=hotAreaContainer.clickedVO;
+			if (vo.type == Const.FIND_WRONG)
+			{
+				if (pausing)
+				{
+
+				}
+			}
 		}
 
 		public function setPainter(painter:Sprite):void
 		{
-//			if (this.painter)
-//				removeChild(this.painter);
 			this.painter=painter;
-//			addChild(painter);
 		}
 
 		private var dragBound:Rectangle;
@@ -516,6 +570,8 @@ package views
 				painter.x=currentPage.x;
 				painter.y=currentPage.y;
 			}
+			hotAreaContainer.x=currentPage.x;
+			hotAreaContainer.y=currentPage.y;
 		}
 
 		protected function stageMouseUpHandler(event:MouseEvent):void
@@ -598,6 +654,9 @@ package views
 				painter.width=target.width;
 				painter.height=target.height;
 			}
+			hotAreaContainer.x=target.x;
+			hotAreaContainer.y=target.y;
+			hotAreaContainer.setSize(target.width, target.height);
 			if (currentPage is Image)
 				trace('Content: ' + (currentPage as Image).source);
 			trace(target.width + '-' + target.height + '&' + target.x + '-' + target.y);
@@ -623,6 +682,13 @@ package views
 		private var subtitleReady:Boolean;
 		private var enableDragContent:Boolean;
 		private var painter:Sprite;
+		private var hotAreaContainer:HotAreaContainer;
+
+		/**
+		 * 当前页播放完成并处于暂停状态
+		 */
+		private var pausing:Boolean;
+		private var gameTimer:Timer;
 
 		private function showSubtitle():void
 		{
