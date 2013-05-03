@@ -3,7 +3,6 @@ package com.pamakids.layouts
 	import com.pamakids.components.base.Container;
 
 	import flash.display.DisplayObject;
-	import flash.display.Sprite;
 
 	public interface ILayout
 	{
@@ -16,5 +15,8 @@ package com.pamakids.layouts
 		function set itemWidth(value:Number):void;
 		function set itemHeight(value:Number):void;
 		function set container(value:Container):void;
+		function set width(value:Number):void;
+		function set height(value:Number):void;
+		function setAnimation(duration:Number, vars:Object, tweenX:Boolean=true, tweeny:Boolean=true):void;
 	}
 }

@@ -18,21 +18,29 @@ package com.pamakids.layouts
 		override public function update():void
 		{
 			var elementY:Number=0;
+			var x:Number;
+			var y:Number;
+			var elementReady:Boolean;
 			for each (var element:DisplayObject in items)
 			{
-				element.y=elementY + paddingTop;
-				if (horizentalCenter && !autoFill)
-					element.x=(width - element.width) / 2;
-				elementY=elementY + element.height + gap;
+				elementReady=element.width && element.height;
+				if (elementReady)
+				{
+					y=elementY + paddingTop;
+					if (horizentalCenter)
+						x=(width - element.width) / 2;
+					positionItem(element, x, y);
+					elementY=elementY + element.height + gap;
+				}
 			}
 			if (autoFill)
 			{
-				if (element)
+				if (elementReady)
 				{
 					contentHeight=element.height + element.y;
 					contentWidth=element.width;
+					container.setSize(contentWidth, contentHeight);
 				}
-				container.setSize(contentWidth, contentHeight);
 			}
 		}
 	}

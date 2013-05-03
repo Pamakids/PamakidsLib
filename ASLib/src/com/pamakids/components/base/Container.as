@@ -46,7 +46,8 @@ package com.pamakids.components.base
 		public function set layout(value:ILayout):void
 		{
 			_layout=value;
-			value.container=this;
+			if (value)
+				value.container=this;
 		}
 
 		public function get enableMask():Boolean

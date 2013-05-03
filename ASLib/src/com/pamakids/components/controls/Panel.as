@@ -4,9 +4,11 @@ package com.pamakids.components.controls
 	import com.greensock.easing.Cubic;
 	import com.pamakids.components.base.Container;
 	import com.pamakids.components.base.Skin;
+	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.layouts.ILayout;
 
 	import flash.display.DisplayObject;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
@@ -19,11 +21,16 @@ package com.pamakids.components.controls
 
 		public function Panel(styleName:String='', width:Number=0, height:Number=0)
 		{
-			super(styleName, width, height, true, true);
-
 			container=new Container();
 			container.forceAutoFill=true;
+			container.addEventListener(ResizeEvent.RESIZE, containerResizeHandler);
+			super(styleName, width, height, true, true);
 			super.addChild(container);
+		}
+
+		protected function containerResizeHandler(event:Event):void
+		{
+			updateScrollBar();
 		}
 
 		override protected function init():void
@@ -73,6 +80,7 @@ package com.pamakids.components.controls
 
 		override protected function dispose():void
 		{
+			container.removeEventListener(ResizeEvent.RESIZE, containerResizeHandler);
 			removeEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
 			super.dispose();
 		}
@@ -90,16 +98,29 @@ package com.pamakids.components.controls
 		override public function set layout(value:ILayout):void
 		{
 			container.layout=value;
+			value.width=width;
+			value.height=height;
 		}
 
-		override public function addChild(child:DisplayObject):DisplayObject
+		override protected function resize():void
 		{
-			container.addChild(child);
+			super.resize();
+			updateScrollBar();
+		}
+
+		private function updateScrollBar():void
+		{
 			if (container.height > height)
 			{
 				initScrollBar();
 				scrollBar.contentHeight=container.height;
 			}
+		}
+
+		override public function addChild(child:DisplayObject):DisplayObject
+		{
+			container.addChild(child);
+			updateScrollBar();
 			return child;
 		}
 	}

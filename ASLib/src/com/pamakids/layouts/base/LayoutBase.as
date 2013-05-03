@@ -1,5 +1,6 @@
 package com.pamakids.layouts.base
 {
+	import com.greensock.TweenLite;
 	import com.pamakids.components.base.Container;
 	import com.pamakids.layouts.ILayout;
 
@@ -32,6 +33,26 @@ package com.pamakids.layouts.base
 			}
 		}
 
+		public function get height():Number
+		{
+			return _height ? _height : container.height;
+		}
+
+		public function set height(value:Number):void
+		{
+			_height=value;
+		}
+
+		public function get width():Number
+		{
+			return _width ? _width : container.width;
+		}
+
+		public function set width(value:Number):void
+		{
+			_width=value;
+		}
+
 		public function get container():Container
 		{
 			return _container;
@@ -41,9 +62,7 @@ package com.pamakids.layouts.base
 		{
 			_container=value;
 			if (value)
-			{
 				value.addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
-			}
 		}
 
 		public function get gap():Number
@@ -92,6 +111,15 @@ package com.pamakids.layouts.base
 				displayObject.height=itemHeight;
 			}
 			items.push(displayObject);
+			if (displayObject.width && displayObject.height)
+				update();
+			else
+				displayObject.addEventListener(Event.COMPLETE, itemCompleHandler);
+		}
+
+		protected function itemCompleHandler(event:Event):void
+		{
+			trace('itemCompleted');
 			update();
 		}
 
@@ -117,6 +145,8 @@ package com.pamakids.layouts.base
 
 		public function removeItem(displayObject:DisplayObject):void
 		{
+			if (displayObject.hasEventListener(Event.COMPLETE))
+				displayObject.removeEventListener(Event.COMPLETE, itemCompleHandler);
 			container.removeChild(displayObject);
 			items.splice(items.indexOf(displayObject), 1);
 			update();
@@ -127,22 +157,59 @@ package com.pamakids.layouts.base
 
 		}
 
-		public function get height():Number
+		private var tweenX:Boolean=true;
+		private var tweenY:Boolean=true;
+		private var animationVars:Object;
+		private var duration:Number;
+
+		/**
+		 * 设置缓动对象
+		 * @param tween
+		 * @param tweenX 是否缓动X
+		 * @param tweenY 是否缓动Y
+		 */
+		public function setAnimation(duration:Number, vars:Object, tweenX:Boolean=true, tweenY:Boolean=true):void
 		{
-			return container.height;
+			this.tweenX=tweenX;
+			this.tweenY=tweenY;
+			animationVars=vars;
+			this.duration=duration;
 		}
 
-		public function get width():Number
+		protected function positionItem(target:DisplayObject, x:Number, y:Number):void
 		{
-			return container.width;
+			if (animationVars)
+			{
+				var vars:Object={};
+				for (var p:String in animationVars)
+				{
+					vars[p]=animationVars[p];
+				}
+				if (!tweenX)
+					target.x=x;
+				else
+					vars.x=x;
+				if (!tweenY)
+					target.y=y;
+				else
+					vars.y=y;
+				if (tweenX || tweenY)
+					TweenLite.to(target, duration, vars);
+			}
+			else
+			{
+				target.x=x;
+				target.y=y;
+			}
 		}
+
+		private var _width:Number;
+		private var _height:Number;
 
 		public function get autoFill():Boolean
 		{
 			return container.autoFill;
 		}
-
-
 
 	}
 }
