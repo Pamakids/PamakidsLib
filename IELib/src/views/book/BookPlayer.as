@@ -7,11 +7,13 @@ package views.book
 	import com.greensock.plugins.TweenPlugin;
 	import com.pamakids.components.base.Container;
 	import com.pamakids.components.controls.Image;
+	import com.pamakids.components.controls.ProgressBar;
 	import com.pamakids.components.controls.ScaleBitmap;
 	import com.pamakids.components.controls.SoundPlayer;
 	import com.pamakids.content.ContentBase;
 	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.manager.LoadManager;
+	import com.pamakids.util.CloneUtil;
 
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
@@ -23,6 +25,7 @@ package views.book
 	import flash.events.TimerEvent;
 	import flash.geom.Rectangle;
 	import flash.ui.Keyboard;
+	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 
@@ -35,6 +38,7 @@ package views.book
 	import model.content.HotAreaVO;
 	import model.content.PageVO;
 	import model.content.SubtitleVO;
+	import model.games.GameVO;
 
 	import views.hotArea.HotAreaContainer;
 
@@ -114,10 +118,13 @@ package views.book
 		{
 			if (playingAvatar)
 			{
-				removeChild(playingAvatar);
+				if (playingAvatar.parent)
+					removeChild(playingAvatar);
 				playingAvatar=null;
 			}
 			clearAvatars(avatarDic);
+			clearGameListeners();
+			clearHideAlertTimer();
 		}
 
 		public function previewContent(vo:Object):void
@@ -135,7 +142,7 @@ package views.book
 				else
 				{
 					playingAvatar.vo=conversationVO;
-					pc.showVO(conversationVO, playingAvatar, avatarShown);
+					pc.showVO(conversationVO, playingAvatar, avatarShownHandler);
 				}
 			}
 			else if (subtitleVO)
@@ -163,10 +170,16 @@ package views.book
 		protected function avatarCompleteHandler(event:Event):void
 		{
 			event.currentTarget.removeEventListener(Event.COMPLETE, avatarCompleteHandler);
-			pc.showVO(conversationVO, event.currentTarget as Avatar, avatarShown);
+			pc.showVO(conversationVO, event.currentTarget as Avatar, avatarShownHandler);
 		}
 
-		private function avatarShown():void
+		private function avatarShownHandler():void
+		{
+			handleAerlt();
+			showAvatarSubtitle();
+		}
+
+		private function showAvatarSubtitle():void
 		{
 			if (conversationVO.text)
 			{
@@ -243,14 +256,15 @@ package views.book
 
 		private function playEvent(isPreviewEvent:Boolean=false):void
 		{
-			pausing=false;
 			this.isPreviewEvent=isPreviewEvent;
 			isPlayingConversation=eventsVO.type == Const.CONVERSATION;
 			isPlayingSubtitle=eventsVO.type == Const.SUBTITLE;
 			isPlayingGame=eventsVO.type == Const.GAME;
-			playlist=eventsVO.subtitles.concat();
+			if (!isPlayingGame)
+				playlist=eventsVO.subtitles.concat();
+			pausing=isPlayingGame;
 			if (eventsVO.audioFile)
-				initAudioPlayer();
+				playAudio();
 			if (!isPreviewEvent)
 			{
 				if (intervalTimer)
@@ -258,9 +272,11 @@ package views.book
 					intervalTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
 					intervalTimer.stop();
 				}
-
-				intervalTimer=new Timer(eventsVO.intervalTime, 1);
-				intervalTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
+				if (eventsVO.intervalTime)
+				{
+					intervalTimer=new Timer(eventsVO.intervalTime, 1);
+					intervalTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
+				}
 			}
 			if (isPlayingSubtitle)
 			{
@@ -273,27 +289,153 @@ package views.book
 			}
 			else if (isPlayingGame)
 			{
-				if (gameTimer)
+				stopGameTimer();
+				if (progressBar)
 				{
-					gameTimer.stop();
-					gameTimer.removeEventListener(TimerEvent.TIMER, gameTimerHandler);
-					gameTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, gameOverHandler);
+					progressBar.progress=1;
+					progressBar.visible=true;
 				}
 				gameTimer=new Timer(1000, eventsVO.gameVO.totalTime);
 				gameTimer.addEventListener(TimerEvent.TIMER, gameTimerHandler);
 				gameTimer.addEventListener(TimerEvent.TIMER_COMPLETE, gameOverHandler);
 				gameTimer.start();
+				if (gameVO.type == Const.FIND_WRONG)
+					stage.addEventListener(MouseEvent.CLICK, wrongClickHandler);
+			}
+		}
+
+		private function clearGameListeners():void
+		{
+			if (gameVO && gameVO.type == Const.FIND_WRONG)
+				stage.removeEventListener(MouseEvent.CLICK, wrongClickHandler);
+		}
+
+		protected function wrongClickHandler(event:MouseEvent):void
+		{
+			trace('wrong');
+			playAlert(gameVO.wrongAlert);
+		}
+
+		private function get gameVO():GameVO
+		{
+			return eventsVO ? eventsVO.gameVO : null;
+		}
+
+		private function stopGameTimer():void
+		{
+			if (gameTimer)
+			{
+				gameTimer.stop();
+				gameTimer.removeEventListener(TimerEvent.TIMER, gameTimerHandler);
+				gameTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, gameOverHandler);
+				gameTimer=null;
+			}
+		}
+
+		private var progressBar:ProgressBar;
+
+		private function initProgressBar():void
+		{
+			if (!progressBar)
+			{
+				progressBar=new ProgressBar(580);
+				progressBar.x=width / 2 - progressBar.width / 2;
+				progressBar.y=28;
+				addChild(progressBar);
 			}
 		}
 
 		protected function gameTimerHandler(event:TimerEvent):void
 		{
-
+			initProgressBar();
+			progressBar.progress=(1 - gameTimer.currentCount / gameTimer.repeatCount);
 		}
 
 		protected function gameOverHandler(event:TimerEvent):void
 		{
+			trace('Game Over');
+			clearGameListeners();
+			stopGameTimer();
+			if (audioPlayer)
+				audioPlayer.stop();
+			playAlert(gameVO.winAlert);
+		}
 
+		/**
+		 * 播放提示
+		 */
+		private function playAlert(url:String):void
+		{
+			if (!url || playingAlertDic[url])
+				return;
+			playingAlertUrl=url;
+			playingAlertDic[url]=true;
+			lm.load(pc.getUrl(url), alertLoadedHandler);
+		}
+
+		private var playingAlertUrl:String;
+		private var playingAlertDic:Dictionary=new Dictionary();
+		private var playingAlert:ConversationVO;
+
+		private function alertLoadedHandler(byteArray:ByteArray):void
+		{
+			if (byteArray.position)
+				byteArray.position=0;
+			var alert:ConversationVO=CloneUtil.convertObject(byteArray.readObject(), ConversationVO);
+			playingAlert=alert;
+			conversationVO=alert;
+			if (alert.avatar)
+				playingAvatar=getAvatar(alert);
+			else
+				delete playingAlertDic[playingAlertUrl];
+			if (!alert.soundPlayTime)
+				audioEffectPlayer.url=pc.getUrl(alert.sound);
+		}
+
+		private var hideAlertTimer:Timer;
+
+		private function handleAerlt():void
+		{
+			if (playingAlert)
+			{
+				if (playingAlert.soundPlayTime)
+					audioEffectPlayer.url=pc.getUrl(playingAlert.sound);
+				if (playingAlert.hideAfterMouseDown)
+				{
+					stage.addEventListener(MouseEvent.MOUSE_DOWN, hideAlertHandler);
+				}
+				if (playingAlert.autoHideTime)
+				{
+					clearHideAlertTimer();
+					hideAlertTimer=new Timer(1000, playingAlert.autoHideTime);
+					hideAlertTimer.addEventListener(TimerEvent.TIMER_COMPLETE, hideAlertHandler);
+					hideAlertTimer.start();
+				}
+			}
+		}
+
+		private function clearHideAlertTimer():void
+		{
+			if (hideAlertTimer)
+			{
+				hideAlertTimer.stop();
+				hideAlertTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, hideAlertHandler);
+				hideAlertTimer=null;
+			}
+		}
+
+		protected function hideAlertHandler(event:Event=null):void
+		{
+			if (playingAlert.hideAfterMouseDown)
+				stage.removeEventListener(MouseEvent.MOUSE_DOWN, hideAlertHandler);
+			clearHideAlertTimer();
+			delete playingAlertDic[playingAlertUrl];
+			if (playingAlert.avatar)
+				pc.revertAvatar(playingAlert);
+			if (audioEffectPlayer.playing)
+				audioEffectPlayer.stop();
+			playingAlert=null;
+			subtitle.visible=false;
 		}
 
 		private var isPlayingGame:Boolean;
@@ -309,6 +451,15 @@ package views.book
 			}
 		}
 
+		private function playAudio():void
+		{
+			initAudioPlayer();
+			audioPlayer.url=pc.getUrl(eventsVO.audioFile);
+			audioPlayer.repeat=eventsVO.repeat;
+		}
+
+		private var audioEffectPlayer:SoundPlayer;
+
 		private function initAudioPlayer():void
 		{
 			if (!audioPlayer)
@@ -318,13 +469,18 @@ package views.book
 				audioPlayer.addEventListener("playComplete", playCompleteHandler);
 				audioPlayer.autoPlay=true;
 			}
-			audioPlayer.url=pc.getUrl(eventsVO.audioFile);
-			audioPlayer.repeat=eventsVO.repeat;
+
+			if (!audioEffectPlayer)
+			{
+				audioEffectPlayer=new SoundPlayer();
+				audioEffectPlayer.autoPlay=true;
+			}
 		}
 
 		protected function playCompleteHandler(event:Event):void
 		{
-			playEventComplete();
+			if (!isPlayingGame)
+				playEventComplete();
 		}
 
 		private var playlist:Array;
@@ -333,6 +489,8 @@ package views.book
 
 		protected function playingHandler(event:DataEvent):void
 		{
+			if (isPlayingGame)
+				return;
 			var position:Number=parseFloat(event.data);
 			if (isPlayingSubtitle && subtitleVO)
 			{
@@ -426,6 +584,8 @@ package views.book
 			currentPageVO=vo.pages[page];
 			hotAreaContainer.initHotAreas(currentPageVO.hotAreas);
 			subtitle.visible=false;
+			if (progressBar)
+				progressBar.visible=false;
 			currentPageNum=page;
 			trace('show page:', page);
 			var image:Image;
@@ -548,9 +708,21 @@ package views.book
 			{
 				if (pausing)
 				{
-
+					trace(vo.type);
 				}
 			}
+		}
+
+		private function playAudioEffect(url:String):void
+		{
+			if (!url)
+				return;
+			if (!audioEffectPlayer)
+			{
+				audioEffectPlayer=new SoundPlayer();
+				audioEffectPlayer.autoPlay=true;
+			}
+			audioEffectPlayer.url=pc.getUrl(url);
 		}
 
 		public function setPainter(painter:Sprite):void
@@ -618,6 +790,12 @@ package views.book
 			}
 			pc.playingVO=null;
 			currentPageVO=null;
+			if (isPlayingGame)
+			{
+				stopGameTimer();
+				if (progressBar)
+					progressBar.visible=false;
+			}
 		}
 
 		private function initImages():void
@@ -654,13 +832,7 @@ package views.book
 				enableDragContent=false;
 				target.x=target.y=0;
 			}
-			if (painter)
-			{
-				painter.x=target.x;
-				painter.y=target.y;
-				painter.width=target.width;
-				painter.height=target.height;
-			}
+			positionPinter(target);
 			hotAreaContainer.x=target.x;
 			hotAreaContainer.y=target.y;
 			hotAreaContainer.setSize(target.width, target.height);
@@ -670,11 +842,24 @@ package views.book
 			showCurrentPage();
 		}
 
+		public function positionPinter(target:DisplayObject):void
+		{
+			if (painter)
+			{
+				if (!target)
+					target=currentPage;
+				painter.x=target.x;
+				painter.y=target.y;
+				painter.width=target.width;
+				painter.height=target.height;
+			}
+		}
+
 		private function initSubtitle():void
 		{
 			subtitle=new Subtitle();
-			if (pc.useByCreator)
-				subtitle.fontFamily='Microsoft YaHei';
+//			if (pc.useByCreator)
+//				subtitle.fontFamily='Microsoft YaHei';
 			subtitle.visible=false;
 			subtitle.addEventListener(ResizeEvent.RESIZE, subtitleResizedHandler);
 			addChild(subtitle);

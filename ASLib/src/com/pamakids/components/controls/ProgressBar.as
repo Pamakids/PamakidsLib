@@ -4,6 +4,7 @@ package com.pamakids.components.controls
 	import com.pamakids.components.base.Container;
 	import com.pamakids.components.base.Skin;
 
+	import flash.display.Bitmap;
 	import flash.geom.Rectangle;
 
 	/**
@@ -27,6 +28,8 @@ package com.pamakids.components.controls
 		{
 			_progress=value;
 			TweenLite.to(progressMask, 0.3, {width: width * value});
+			if (archor)
+				TweenLite.to(archor, 0.3, {x: progressMask.width - archor.width / 2});
 		}
 
 		/**
@@ -50,10 +53,7 @@ package com.pamakids.components.controls
 		{
 			if (!themeLoaded)
 				return;
-			if (track)
-				removeChild(track);
-			if (bar)
-				removeChild(bar);
+			super.updateSkin();
 
 			track=new ScaleBitmap(getBitmap(styleName + 'Down').bitmapData);
 			track.scale9Grid=trackRect;
@@ -67,6 +67,10 @@ package com.pamakids.components.controls
 			addChild(bar);
 
 			height=track.height; //皮肤高度用track高度来定
+			archor=getBitmap(styleName + 'Archor');
+			archor.y=height / 2 - archor.height / 2;
+			archor.x=width - archor.width / 2;
+			addChild(archor);
 		}
 
 		override protected function init():void
@@ -81,6 +85,7 @@ package com.pamakids.components.controls
 		private var _progress:Number;
 
 		private var progressMask:Container;
+		private var archor:Bitmap;
 
 	}
 }

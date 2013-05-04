@@ -6,17 +6,29 @@ package controller
 	import com.greensock.easing.Bounce;
 	import com.greensock.easing.Cubic;
 	import com.greensock.easing.Elastic;
+	import com.pamakids.manager.FileManager;
+	import com.pamakids.util.CloneUtil;
 	import com.pamakids.utils.Singleton;
 
 	import flash.display.DisplayObject;
 	import flash.filesystem.File;
+	import flash.filesystem.FileMode;
+	import flash.filesystem.FileStream;
 	import flash.utils.Dictionary;
 
+	import model.consts.Const;
 	import model.consts.ShowEffects;
 	import model.consts.ShowPosition;
+	import model.content.AssetVO;
 	import model.content.BookVO;
+	import model.content.ContentVO;
 	import model.content.ConversationVO;
+	import model.content.EventsVO;
+	import model.content.HotAreaVO;
+	import model.content.HotPointVO;
+	import model.content.PageVO;
 	import model.content.SubtitleVO;
+	import model.games.GameVO;
 
 	import views.book.Avatar;
 
@@ -26,16 +38,6 @@ package controller
 	 */
 	public class PC extends Singleton
 	{
-
-		public function get url():String
-		{
-			return _url;
-		}
-
-		public function set url(value:String):void
-		{
-			_url=value;
-		}
 
 		public static function get i():PC
 		{
@@ -48,7 +50,6 @@ package controller
 		}
 
 		public var useByCreator:Boolean;
-		private var _url:String;
 		public var width:Number;
 		public var height:Number;
 		public var vo:BookVO;
@@ -57,6 +58,33 @@ package controller
 
 		public var playingVO:SubtitleVO;
 
+		public function playHotArea(vo:HotAreaVO, target:DisplayObject):void
+		{
+			var vars:Object=vo.effectData;
+			switch (vo.effect)
+			{
+				case ShowEffects.CENTER_ELASTIC:
+					var scale:Number=Number(vo.effectData);
+					target.x=target.width * (scale - 1) / 2;
+					target.y=target.height * (scale - 1) / 2;
+					target.scaleX=target.scaleY=scale;
+					vars={x: 0, y: 0, transformAroundCenter: {scaleX: 1, scaleY: 1}, ease: Elastic.easeOut};
+					break;
+				case ShowEffects.SHAKE:
+					vars={shake: vo.effectData};
+					break;
+			}
+			TweenMax.to(target, vo.effectDuration, vars);
+		}
+
+
+		/**
+		 * 显示字幕或角色动画
+		 * @param subtitleVO
+		 * @param target
+		 * @param onComplete
+		 *
+		 */
 		public function showVO(subtitleVO:SubtitleVO, target:DisplayObject, onComplete:Function=null):void
 		{
 			if (!subtitleVO || playingVO == subtitleVO)
@@ -173,12 +201,13 @@ package controller
 
 		private function removeRevertedAvatar(target:Avatar):void
 		{
-			target.parent.removeChild(target);
+			if (target.parent)
+				target.parent.removeChild(target);
 		}
 
 		public function getUrl(url:String):String
 		{
-			var s:String=this.url + url;
+			var s:String=this.contentDir + url;
 
 			if (useByCreator)
 				s=new File(s).url;
@@ -188,5 +217,132 @@ package controller
 
 		public var updatePainter:Function;
 		public var enableDrag:Boolean;
+
+		/**
+		 * 内容文件夹
+		 */
+		public var contentDir:String;
+
+		public function parseBook(object:Object):BookVO
+		{
+			var bookVO:BookVO=CloneUtil.convertObject(object, BookVO);
+
+			var files:Array;
+			var boolean:Boolean;
+			var hotPointVO:HotPointVO;
+			var tempArr:Array;
+			var fs:FileStream=new FileStream();
+			var pages:Array=bookVO.pages;
+			if (pages)
+				pages=convertHotPoints(pages);
+			var file:File=new File(contentDir + '/contents');
+			files=file.getDirectoryListing();
+			tempArr=[];
+			for each (file in files)
+			{
+				if (file.name.indexOf(Const.PAGE_EXTENSION) != -1)
+				{
+					boolean=false;
+					if (pages)
+					{
+						for each (hotPointVO in pages)
+						{
+							if (hotPointVO.content.indexOf(file.name) != -1)
+							{
+								boolean=true;
+								break;
+							}
+						}
+					}
+					if (!boolean)
+					{
+						fs.open(file, FileMode.READ);
+						tempArr.push(fs.readObject());
+					}
+				}
+			}
+			if (tempArr.length)
+			{
+				tempArr=convertHotPoints(tempArr);
+				pages=pages ? pages.concat(tempArr) : tempArr;
+			}
+			bookVO.pages=pages;
+			bookVO.dir=contentDir;
+
+			globalAssets=FileManager.readFile(contentDir + '/' + Const.GLOBAL_ASSETS) as Array;
+			if (globalAssets)
+				globalAssets=CloneUtil.convertArrayObjects(globalAssets, AssetVO);
+			file=new File(contentDir + '/global');
+			if (file.exists)
+			{
+				files=file.getDirectoryListing();
+				for each (file in files)
+				{
+					if (file.name.indexOf(Const.ASSET_EXTENSION) != -1)
+					{
+						if (!globalAssets)
+							globalAssets=[];
+						fs.open(file, FileMode.READ);
+						globalAssets.push(CloneUtil.convertObject(fs.readObject(), AssetVO));
+					}
+				}
+			}
+			file=new File(contentDir + '/' + Const.ALERT_DIR);
+			if (file.exists)
+			{
+				files=file.getDirectoryListing();
+				alerts=[];
+				for each (file in files)
+				{
+					if (file.name.indexOf(Const.ALERT_EXTENSION) != -1)
+					{
+						fs.open(file, FileMode.READ);
+						alerts.push(CloneUtil.convertObject(fs.readObject(), ConversationVO));
+					}
+				}
+			}
+			fs.close();
+			return bookVO;
+		}
+
+		public var globalAssets:Array;
+		public var alerts:Array;
+
+		private function convertHotPoints(points:Array):Array
+		{
+			var arr:Array=[];
+			for each (var p:Object in points)
+			{
+				var a:Array=[];
+				if (p.hotAreas)
+				{
+					for each (var h:Object in p.hotAreas)
+					{
+						if (h.gameVO)
+							h.gameVO=CloneUtil.convertObject(h.gameVO, GameVO);
+						a.push(CloneUtil.convertObject(h, HotAreaVO));
+					}
+					p.hotAreas=a;
+				}
+				if (p.events)
+				{
+					a=[];
+					for each (var e:Object in p.events)
+					{
+						if (e.gameVO)
+							e.gameVO=CloneUtil.convertObject(e.gameVO, GameVO);
+						var evo:EventsVO=CloneUtil.convertObject(e, EventsVO);
+						if (evo.type == Const.SUBTITLE)
+							evo.subtitles=CloneUtil.convertArrayObjects(evo.subtitles, SubtitleVO);
+						else if (evo.type == Const.CONVERSATION)
+							evo.subtitles=CloneUtil.convertArrayObjects(evo.subtitles, ConversationVO);
+						a.push(evo);
+					}
+					p.events=a;
+				}
+				arr.push(CloneUtil.convertObject(p, PageVO));
+			}
+			return arr;
+		}
 	}
 }

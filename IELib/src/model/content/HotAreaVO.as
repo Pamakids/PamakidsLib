@@ -46,6 +46,13 @@ package model.content
 		 */
 		public var showMethod:int;
 		public var sound:String;
+
+		/**
+		 * 点击后特效数据
+		 */
+		public var effectData:Object;
+		public var effect:String;
+		public var effectDuration:Number;
 	}
 }
 

@@ -24,8 +24,8 @@ package views.hotArea
 		public function HotAreaContainer(width:Number=0, height:Number=0)
 		{
 			backgroudAlpha=0;
-			hotAreaVODic=new Dictionary();
-			dataDic=new Dictionary();
+			voDic=new Dictionary();
+			rectDic=new Dictionary();
 			soundPlayer=new SoundPlayer();
 			pc=PC.i;
 			lm=LoadManager.instance;
@@ -52,8 +52,8 @@ package views.hotArea
 			while (numChildren)
 				removeChildAt(0);
 			hotAreas=[];
-			clearDic(hotAreaVODic);
-			clearDic(dataDic);
+			clearDic(voDic);
+			clearDic(rectDic);
 		}
 
 		private function clearDic(dic:Dictionary):void
@@ -66,7 +66,7 @@ package views.hotArea
 		{
 			var u:Sprite=new Sprite();
 			listenHotArea(u);
-			hotAreaVODic[u]=vo;
+			voDic[u]=vo;
 			if (vo.url)
 			{
 				var isSwf:Boolean=vo.url.indexOf('.swf') != -1;
@@ -96,21 +96,21 @@ package views.hotArea
 					corrds.push(parseFloat(s));
 				}
 				g.drawPath(cmds, corrds);
-				dataDic[u]=[cmds, corrds];
+				rectDic[u]=[cmds, corrds];
 			}
 			else
 			{
 				g.beginFill(0, 0);
 				g.drawRect(0, 0, vo.width, vo.height);
 				g.endFill();
-				dataDic[u]=new Rectangle(vo.x, vo.y, vo.width, vo.height);
+				rectDic[u]=new Rectangle(vo.x, vo.y, vo.width, vo.height);
 			}
 			addChild(u);
 		}
 
 		private var downPoint:Point;
-		private var hotAreaVODic:Dictionary;
-		private var dataDic:Dictionary;
+		private var voDic:Dictionary;
+		private var rectDic:Dictionary;
 
 		private function listenHotArea(u:Sprite):void
 		{
@@ -126,6 +126,7 @@ package views.hotArea
 
 		protected function itemDownHandler(event:MouseEvent):void
 		{
+			event.stopImmediatePropagation();
 			clickedTarget=event.currentTarget as Sprite;
 			downPoint=new Point(event.stageX, event.stageY);
 			stage.addEventListener(MouseEvent.MOUSE_UP, itemMouseUpHandler);
@@ -135,18 +136,20 @@ package views.hotArea
 		{
 			var xoffset:Number=event.stageX - downPoint.x;
 			var yoffset:Number=event.stageY - downPoint.y;
-			if (Math.abs(xoffset) > 20 || Math.abs(yoffset))
+			if (Math.abs(xoffset) < 20 || Math.abs(yoffset) < 20)
 				clickedItem();
 			stage.removeEventListener(MouseEvent.MOUSE_UP, itemMouseUpHandler);
 		}
 
 		private function clickedItem():void
 		{
-			clickedVO=dataDic[clickedTarget];
+			clickedVO=voDic[clickedTarget];
 			if (clickedVO.sound)
 				soundPlayer.url=pc.getUrl(clickedVO.sound);
 			if (clickedVO.showMethod && clickedTarget.numChildren)
 				TweenLite.to(clickedTarget.getChildAt(0), 0.8, {alpha: 1});
+			if (clickedVO.effect)
+				pc.playHotArea(clickedVO, clickedTarget);
 			dispatchEvent(new Event('clickHotArea'));
 		}
 

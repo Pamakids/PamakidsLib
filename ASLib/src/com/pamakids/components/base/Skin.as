@@ -53,7 +53,8 @@ package com.pamakids.components.base
 
 		protected function updateSkin():void
 		{
-
+			while (numChildren)
+				removeChildAt(0);
 		}
 
 		protected function get themeLoaded():Boolean

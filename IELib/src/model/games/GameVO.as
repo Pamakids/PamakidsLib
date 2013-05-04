@@ -1,7 +1,5 @@
 package model.games
 {
-	import model.content.ConversationVO;
-
 
 	[Bindable]
 	public class GameVO
@@ -23,9 +21,9 @@ package model.games
 		 * 游戏类型
 		 */
 		public var type:String;
-		public var winAlert:ConversationVO;
-		public var failureAlert:ConversationVO;
-		public var wrongAlert:ConversationVO;
-		public var rightAlert:ConversationVO;
+		public var winAlert:String;
+		public var failureAlert:String;
+		public var wrongAlert:String;
+		public var rightAlert:String;
 	}
 }
