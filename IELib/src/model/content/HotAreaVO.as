@@ -53,6 +53,11 @@ package model.content
 		public var effectData:Object;
 		public var effect:String;
 		public var effectDuration:Number;
+
+		/**
+		 * 根据素材大小自动填充素材
+		 */
+		public var autoFill:Boolean;
 	}
 }
 

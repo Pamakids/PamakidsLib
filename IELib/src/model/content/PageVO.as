@@ -14,5 +14,9 @@ package model.content
 		public var states:Array;
 
 		public var showNextButton:Boolean;
+		/**
+		 * 索引
+		 */
+		public var index:int;
 	}
 }

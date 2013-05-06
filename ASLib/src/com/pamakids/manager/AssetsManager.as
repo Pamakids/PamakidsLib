@@ -137,12 +137,16 @@ package com.pamakids.manager
 			tobeLoaded.splice(tobeLoaded.indexOf(name + type), 1);
 			if (tobeLoaded.length == 0)
 			{
-				for each (var f:Function in loadedCallbacks)
+				if (!themeLoaded)
 				{
-					f();
+					themeLoaded=true;
+					for each (var f:Function in loadedCallbacks)
+					{
+						trace(f);
+						f();
+					}
 				}
 			}
-			themeLoaded=true;
 		}
 
 		public var themeLoaded:Boolean;

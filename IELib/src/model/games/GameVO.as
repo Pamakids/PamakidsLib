@@ -25,5 +25,6 @@ package model.games
 		public var failureAlert:String;
 		public var wrongAlert:String;
 		public var rightAlert:String;
+		public var pauseAlert:String;
 	}
 }

@@ -1,4 +1,4 @@
-package com.pamakids.components.controls
+package com.pamakids.components.containers
 {
 	import com.greensock.TweenLite;
 	import com.greensock.easing.Cubic;
@@ -11,6 +11,7 @@ package com.pamakids.components.controls
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import com.pamakids.components.controls.ScrollBar;
 
 	public class Panel extends Skin
 	{

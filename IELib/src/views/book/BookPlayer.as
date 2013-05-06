@@ -6,6 +6,8 @@ package views.book
 	import com.greensock.plugins.TransformAroundCenterPlugin;
 	import com.greensock.plugins.TweenPlugin;
 	import com.pamakids.components.base.Container;
+	import com.pamakids.components.base.UIComponent;
+	import com.pamakids.components.controls.Button;
 	import com.pamakids.components.controls.Image;
 	import com.pamakids.components.controls.ProgressBar;
 	import com.pamakids.components.controls.ScaleBitmap;
@@ -13,6 +15,7 @@ package views.book
 	import com.pamakids.content.ContentBase;
 	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.manager.LoadManager;
+	import com.pamakids.manager.PopupManager;
 	import com.pamakids.util.CloneUtil;
 
 	import flash.display.Bitmap;
@@ -40,6 +43,8 @@ package views.book
 	import model.content.SubtitleVO;
 	import model.games.GameVO;
 
+	import views.components.ElasticButton;
+	import views.game.GameResultBox;
 	import views.hotArea.HotAreaContainer;
 
 	public class BookPlayer extends Container
@@ -88,13 +93,15 @@ package views.book
 			_subtitleVO=value;
 		}
 
-		private var playingPage:int;
+		private var playing:Boolean;
 
 		public function play(page:int=0):void
 		{
+			if (playing)
+				return;
+			playing=true;
 			clearPostionContents();
 			stopPreview();
-			playingPage=page;
 			show(page);
 			if (currentPageVO.events)
 			{
@@ -127,11 +134,12 @@ package views.book
 			clearHideAlertTimer();
 		}
 
-		public function previewContent(vo:Object):void
+		public function previewContent(vo:Object, pageVO:PageVO=null):void
 		{
 			subtitleVO=vo as SubtitleVO;
 			conversationVO=vo as ConversationVO;
 			stopPreview();
+			currentPageVO=pageVO;
 			if (conversationVO)
 			{
 				clearPostionContents();
@@ -289,31 +297,172 @@ package views.book
 			}
 			else if (isPlayingGame)
 			{
-				stopGameTimer();
-				if (progressBar)
+				playGame();
+			}
+		}
+
+		private function playGame():void
+		{
+			stopGameTimer();
+			initGameControls();
+			progressBar.progress=1;
+			progressBar.visible=true;
+			pauseButton.visible=true;
+			if (gameTimer)
+			{
+				gameTimer.removeEventListener(TimerEvent.TIMER, gameTimerHandler);
+				gameTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, gameOverHandler);
+			}
+			gameTimer=new Timer(1000, eventsVO.gameVO.totalTime);
+			gameTimer.addEventListener(TimerEvent.TIMER, gameTimerHandler);
+			gameTimer.addEventListener(TimerEvent.TIMER_COMPLETE, gameOverHandler);
+			gameTimer.start();
+			if (gameVO.type == Const.FIND_WRONG)
+			{
+				stage.addEventListener(MouseEvent.MOUSE_UP, wrongClickHandler);
+				initFoundGameData();
+			}
+			initHotAreas();
+		}
+
+		private function initFoundGameData():void
+		{
+			foundItem=[];
+			tobeFoundedItems=[];
+			var arr:Array=currentPageVO.hotAreas;
+			if (arr && arr.length)
+			{
+				for each (var ho:HotAreaVO in arr)
 				{
-					progressBar.progress=1;
-					progressBar.visible=true;
+					if (ho.type == Const.FIND_WRONG)
+						tobeFoundedItems.push(ho);
 				}
-				gameTimer=new Timer(1000, eventsVO.gameVO.totalTime);
-				gameTimer.addEventListener(TimerEvent.TIMER, gameTimerHandler);
-				gameTimer.addEventListener(TimerEvent.TIMER_COMPLETE, gameOverHandler);
-				gameTimer.start();
-				if (gameVO.type == Const.FIND_WRONG)
-					stage.addEventListener(MouseEvent.CLICK, wrongClickHandler);
+			}
+		}
+
+		private var tobeFoundedItems:Array;
+
+		private function hideGameControls():void
+		{
+			if (progressBar)
+				progressBar.visible=false;
+			if (pauseButton)
+				pauseButton.visible=false;
+			clearResultBox();
+			if (foundItem)
+			{
+				foundItem.length=0;
+				foundItem=null;
+			}
+		}
+
+		private function initGameControls():void
+		{
+			initProgressBar();
+			initPauseButton();
+		}
+
+		private function initPauseButton():void
+		{
+			if (!pauseButton)
+			{
+				pauseButton=new ElasticButton('pauseButton');
+				pauseButton.addEventListener(MouseEvent.MOUSE_DOWN, pauseGameHandler);
+				pauseButton.x=20;
+				pauseButton.y=20;
+				pauseButton.visible=false;
+				contentContainer.addChild(pauseButton);
+			}
+		}
+
+		protected function pauseGameHandler(event:MouseEvent=null):void
+		{
+			if (event)
+				event.stopImmediatePropagation();
+			pauseGame();
+			initGameResultBox(GameResultBox.PAUSE);
+			playAlert(gameVO.pauseAlert);
+		}
+
+		private function pauseGame():void
+		{
+			if (gameTimer.running)
+				gameTimer.stop();
+			audioPlayer.pause();
+		}
+
+		public function initGameResultBox(state:String, life:int=0):void
+		{
+			if (gameResult)
+				clearResultBox();
+			gameResult=new GameResultBox();
+			gameResult.state=state;
+			gameResult.life=life;
+			gameResult.addEventListener("resume", resumeGameHandler);
+			gameResult.addEventListener("playAgain", playAgainHandler);
+			gameResult.addEventListener("nextPage", nextPageHandler);
+			PopupManager.popup(gameResult);
+		}
+
+		protected function nextPageHandler(event:Event):void
+		{
+			clearGame();
+			clearResultBox();
+			nextPage();
+		}
+
+		private function clearGame():void
+		{
+			clearGameListeners();
+			hideGameControls();
+			stopGameTimer();
+		}
+
+		protected function playAgainHandler(event:Event):void
+		{
+			clearResultBox();
+			playGame();
+		}
+
+		protected function resumeGameHandler(event:Event):void
+		{
+			clearResultBox();
+			if (audioPlayer.paused)
+				audioPlayer.play();
+			gameTimer.start();
+		}
+
+		public function clearResultBox():void
+		{
+			if (gameResult)
+			{
+				PopupManager.removePopup(gameResult);
+				gameResult.removeEventListener("playAgain", playAgainHandler);
+				gameResult.removeEventListener("nextPage", nextPageHandler);
+				gameResult.removeEventListener("resme", resumeGameHandler);
+				gameResult=null;
+				hideAlertHandler();
 			}
 		}
 
 		private function clearGameListeners():void
 		{
 			if (gameVO && gameVO.type == Const.FIND_WRONG)
-				stage.removeEventListener(MouseEvent.CLICK, wrongClickHandler);
+				stage.removeEventListener(MouseEvent.MOUSE_UP, wrongClickHandler);
 		}
 
 		protected function wrongClickHandler(event:MouseEvent):void
 		{
-			trace('wrong');
-			playAlert(gameVO.wrongAlert);
+			TweenLite.killDelayedCallsTo(playWrongAlert);
+			TweenLite.delayedCall(0.2, playWrongAlert);
+		}
+
+		private function playWrongAlert():void
+		{
+			if (gameTimer.running && !clickedHotArea)
+				playAlert(gameVO.wrongAlert);
+			if (clickedHotArea)
+				clickedHotArea=null;
 		}
 
 		private function get gameVO():GameVO
@@ -347,18 +496,26 @@ package views.book
 
 		protected function gameTimerHandler(event:TimerEvent):void
 		{
-			initProgressBar();
 			progressBar.progress=(1 - gameTimer.currentCount / gameTimer.repeatCount);
 		}
 
 		protected function gameOverHandler(event:TimerEvent):void
 		{
 			trace('Game Over');
-			clearGameListeners();
-			stopGameTimer();
-			if (audioPlayer)
-				audioPlayer.stop();
-			playAlert(gameVO.winAlert);
+			pauseGame();
+			var life:int;
+			if (gameVO.type == Const.FIND_WRONG)
+				life=Math.round((foundItem.length / tobeFoundedItems.length) * gameVO.totalLife);
+			if (life)
+			{
+				initGameResultBox(GameResultBox.WIN, life);
+				playAlert(gameVO.winAlert);
+			}
+			else
+			{
+				initGameResultBox(GameResultBox.FAILURE);
+				playAlert(gameVO.failureAlert);
+			}
 		}
 
 		/**
@@ -368,6 +525,7 @@ package views.book
 		{
 			if (!url || playingAlertDic[url])
 				return;
+			trace('playing alert', url, playingAlertDic[url]);
 			playingAlertUrl=url;
 			playingAlertDic[url]=true;
 			lm.load(pc.getUrl(url), alertLoadedHandler);
@@ -426,16 +584,24 @@ package views.book
 
 		protected function hideAlertHandler(event:Event=null):void
 		{
+			if (!playingAlert)
+				return;
 			if (playingAlert.hideAfterMouseDown)
 				stage.removeEventListener(MouseEvent.MOUSE_DOWN, hideAlertHandler);
 			clearHideAlertTimer();
-			delete playingAlertDic[playingAlertUrl];
 			if (playingAlert.avatar)
-				pc.revertAvatar(playingAlert);
+				pc.revertAvatar(playingAlert, revertedHandler);
+			else
+				delete playingAlertDic[playingAlertUrl];
 			if (audioEffectPlayer.playing)
 				audioEffectPlayer.stop();
 			playingAlert=null;
 			subtitle.visible=false;
+		}
+
+		private function revertedHandler():void
+		{
+			delete playingAlertDic[playingAlertUrl];
 		}
 
 		private var isPlayingGame:Boolean;
@@ -453,7 +619,6 @@ package views.book
 
 		private function playAudio():void
 		{
-			initAudioPlayer();
 			audioPlayer.url=pc.getUrl(eventsVO.audioFile);
 			audioPlayer.repeat=eventsVO.repeat;
 		}
@@ -567,41 +732,53 @@ package views.book
 
 		public function prePage():void
 		{
-			if (playingPage > 1)
-				play(playingPage - 1);
+			if (currentPageNum > 1)
+				play(currentPageNum - 1);
 		}
 
 		public function nextPage():void
 		{
-			if (playingPage < vo.pages.length - 1)
-				play(playingPage + 1);
+			if (currentPageNum < vo.pages.length - 1)
+				play(currentPageNum + 1);
 		}
 
 		public function show(page:int):void
 		{
-			if (!vo.pages || page == currentPageNum)
+			if (!vo.pages || (page == currentPageNum && page))
 				return;
 			currentPageVO=vo.pages[page];
-			hotAreaContainer.initHotAreas(currentPageVO.hotAreas);
+			if (playing)
+			{
+				hotAreaContainer.initHotAreas(currentPageVO.hotAreas);
+				contentContainer.setChildIndex(hotAreaContainer, contentContainer.numChildren - 1);
+			}
 			subtitle.visible=false;
-			if (progressBar)
-				progressBar.visible=false;
+			clearGame();
 			currentPageNum=page;
 			trace('show page:', page);
 			var image:Image;
 			if (currentPage)
 			{
-				setChildIndex(currentPage, numChildren - 1);
+				contentContainer.setChildIndex(currentPage, contentContainer.numChildren - 1);
 				currentPage.alpha=1;
 				TweenLite.to(currentPage, 1, {alpha: 0, onComplete: clearCurrentPage, onCompleteParams: [currentPage]});
 			}
 			fillContent();
 		}
 
+		private function initHotAreas():void
+		{
+			if (!playing)
+			{
+				hotAreaContainer.initHotAreas(currentPageVO.hotAreas);
+				contentContainer.setChildIndex(hotAreaContainer, contentContainer.numChildren - 1);
+			}
+		}
+
 		private function swfLoadedHandler(contentBase:ContentBase):void
 		{
 			contentBase.initialize(width, height);
-			addChildAt(contentBase, 0);
+			contentContainer.addChildAt(contentBase, 0);
 			if (!currentPageVO.states)
 				currentPageVO.states=contentBase.states;
 			currentPage=contentBase;
@@ -624,7 +801,7 @@ package views.book
 			{
 				content=page as ContentBase;
 				content.dispose();
-				removeChild(content);
+				contentContainer.removeChild(content);
 			}
 			else
 			{
@@ -676,21 +853,23 @@ package views.book
 		}
 
 		private var contentBase:ContentBase;
+		private var contentContainer:UIComponent;
 
 		override protected function init():void
 		{
+			contentContainer=new Container(width, height, false, true);
+			addChild(contentContainer);
+			var popupLayer:UIComponent=new UIComponent(width, height);
+			addChild(popupLayer);
+			PopupManager.parent=popupLayer;
 			initImages();
 			initSubtitle();
 			initHotAreaContainer();
+			initAudioPlayer();
 			if (pc.useByCreator)
-			{
 				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-				enableMask=true;
-			}
 			else
-			{
 				pc.enableDrag=true;
-			}
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, stageMouseDownHandler);
 		}
 
@@ -698,14 +877,24 @@ package views.book
 		{
 			hotAreaContainer=new HotAreaContainer(width, height);
 			hotAreaContainer.addEventListener("clickHotArea", clickHotAreaHandler);
-			addChild(hotAreaContainer);
+			contentContainer.addChild(hotAreaContainer);
 		}
+
+		private var clickedHotArea:HotAreaVO;
+		private var foundItem:Array;
 
 		protected function clickHotAreaHandler(event:Event):void
 		{
 			var vo:HotAreaVO=hotAreaContainer.clickedVO;
 			if (vo.type == Const.FIND_WRONG)
 			{
+				clickedHotArea=vo;
+				if (foundItem.indexOf(clickedHotArea) == -1)
+					foundItem.push(clickedHotArea);
+				if (foundItem.length == tobeFoundedItems.length)
+				{
+					gameOverHandler(null);
+				}
 				if (pausing)
 				{
 					trace(vo.type);
@@ -778,6 +967,7 @@ package views.book
 
 		public function stopPreview():void
 		{
+			playing=false;
 			if (audioPlayer)
 				audioPlayer.stop();
 			if (intervalTimer)
@@ -790,23 +980,21 @@ package views.book
 			}
 			pc.playingVO=null;
 			currentPageVO=null;
-			if (isPlayingGame)
-			{
-				stopGameTimer();
-				if (progressBar)
-					progressBar.visible=false;
-			}
+			stopGameTimer();
+			clearGame();
+			hotAreaContainer.clear();
+			clearPostionContents();
 		}
 
 		private function initImages():void
 		{
 			centerImage=new Image();
 			centerImage.addEventListener(Event.COMPLETE, imageCompleteHandler);
-			addChild(centerImage);
+			contentContainer.addChild(centerImage);
 			otherImage=new Image();
 			otherImage.addEventListener(Event.COMPLETE, imageCompleteHandler);
 			otherImage.visible=false;
-			addChild(otherImage);
+			contentContainer.addChild(otherImage);
 		}
 
 		protected function imageCompleteHandler(event:Event):void
@@ -858,8 +1046,6 @@ package views.book
 		private function initSubtitle():void
 		{
 			subtitle=new Subtitle();
-//			if (pc.useByCreator)
-//				subtitle.fontFamily='Microsoft YaHei';
 			subtitle.visible=false;
 			subtitle.addEventListener(ResizeEvent.RESIZE, subtitleResizedHandler);
 			addChild(subtitle);
@@ -881,6 +1067,8 @@ package views.book
 		 */
 		private var pausing:Boolean;
 		private var gameTimer:Timer;
+		private var pauseButton:Button;
+		private var gameResult:GameResultBox;
 
 		private function showSubtitle():void
 		{
@@ -904,8 +1092,13 @@ package views.book
 					subtitleReady=true;
 				}
 				if (subtitleReady && playingSubtitle == subtitleVO)
-					pc.showVO(subtitleVO, subtitle);
+					pc.showVO(subtitleVO, subtitle, subtitleShownHandler);
 			}
+		}
+
+		private function subtitleShownHandler():void
+		{
+			trace(subtitle.x, subtitle.y, subtitle.visible, subtitle.alpha);
 		}
 
 //************************定位内容		

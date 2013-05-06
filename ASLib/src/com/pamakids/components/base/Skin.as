@@ -20,30 +20,29 @@ package com.pamakids.components.base
 		{
 			this.styleName=styleName;
 			am=AssetsManager.instance;
-			bitmaps=[];
 			super(width, height, enableBackground, enableMask);
 		}
 
-		private var bitmaps:Array;
-
 		protected function getBitmap(name:String):Bitmap
 		{
-			var bitmap:Bitmap=am.getAsset(name);
-			bitmaps.push(bitmap);
-			return bitmap;
+			return am.getAsset(name);
 		}
 
 		override protected function dispose():void
 		{
-			for each (var bitmap:Bitmap in bitmaps)
-			{
-				bitmap.bitmapData.dispose();
-			}
-			bitmaps.length=0;
-			while (numChildren)
-				removeChildAt(0);
+			clearChildren();
 			am.removeLoadedCallback(updateSkin);
 			am=null;
+		}
+
+		private function clearChildren():void
+		{
+			while (numChildren)
+			{
+				var bitmap:Bitmap=removeChildAt(0) as Bitmap;
+				if (bitmap)
+					bitmap.bitmapData.dispose();
+			}
 		}
 
 		override protected function init():void
@@ -53,8 +52,7 @@ package com.pamakids.components.base
 
 		protected function updateSkin():void
 		{
-			while (numChildren)
-				removeChildAt(0);
+			clearChildren();
 		}
 
 		protected function get themeLoaded():Boolean

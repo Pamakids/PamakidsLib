@@ -127,8 +127,9 @@ package com.pamakids.components.controls
 		 */
 		public function pause():void
 		{
-			if (!playing)
+			if (!playing || paused)
 				return;
+			paused=true;
 			if (soundChannel)
 			{
 				playing=false;
@@ -138,6 +139,8 @@ package com.pamakids.components.controls
 			if (internalTimer)
 				internalTimer.stop();
 		}
+
+		public var paused:Boolean;
 
 		private function stopSoundChannel():void
 		{
@@ -155,6 +158,7 @@ package com.pamakids.components.controls
 		{
 			if (playing)
 				return;
+			paused=false;
 			playing=true;
 			stopSoundChannel();
 			soundChannel=sound.play(currentPosition);

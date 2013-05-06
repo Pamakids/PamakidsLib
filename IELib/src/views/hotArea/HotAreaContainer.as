@@ -11,7 +11,6 @@ package views.hotArea
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
 	import controller.PC;
@@ -23,13 +22,12 @@ package views.hotArea
 	{
 		public function HotAreaContainer(width:Number=0, height:Number=0)
 		{
-			backgroudAlpha=0;
+//			backgroudAlpha=0.2;
 			voDic=new Dictionary();
-			rectDic=new Dictionary();
 			soundPlayer=new SoundPlayer();
 			pc=PC.i;
 			lm=LoadManager.instance;
-			super(width, height, true, false);
+			super(width, height, false, false);
 		}
 
 		private var hotAreas:Array;
@@ -53,7 +51,6 @@ package views.hotArea
 				removeChildAt(0);
 			hotAreas=[];
 			clearDic(voDic);
-			clearDic(rectDic);
 		}
 
 		private function clearDic(dic:Dictionary):void
@@ -61,6 +58,8 @@ package views.hotArea
 			for (var i:* in dic)
 				delete dic[i];
 		}
+
+		private const ALPHA:Number=0.5;
 
 		private function createHotArea(vo:HotAreaVO):void
 		{
@@ -81,7 +80,7 @@ package views.hotArea
 			if (vo.commands)
 			{
 				g.lineStyle(1, 0, 0);
-				g.beginFill(0, 0);
+				g.beginFill(0, ALPHA);
 				var cmds:Vector.<int>=new Vector.<int>();
 				var arr:Array=vo.commands.split(',');
 				var s:String;
@@ -96,25 +95,22 @@ package views.hotArea
 					corrds.push(parseFloat(s));
 				}
 				g.drawPath(cmds, corrds);
-				rectDic[u]=[cmds, corrds];
 			}
 			else
 			{
-				g.beginFill(0, 0);
+				g.beginFill(0x383838, ALPHA);
 				g.drawRect(0, 0, vo.width, vo.height);
 				g.endFill();
-				rectDic[u]=new Rectangle(vo.x, vo.y, vo.width, vo.height);
 			}
 			addChild(u);
 		}
 
 		private var downPoint:Point;
 		private var voDic:Dictionary;
-		private var rectDic:Dictionary;
 
 		private function listenHotArea(u:Sprite):void
 		{
-			u.addEventListener(MouseEvent.MOUSE_DOWN, itemDownHandler);
+			u.addEventListener(MouseEvent.MOUSE_DOWN, itemDownHandler, false, 0, true);
 		}
 
 		private var clickedTarget:Sprite;
@@ -137,7 +133,10 @@ package views.hotArea
 			var xoffset:Number=event.stageX - downPoint.x;
 			var yoffset:Number=event.stageY - downPoint.y;
 			if (Math.abs(xoffset) < 20 || Math.abs(yoffset) < 20)
+			{
+				event.stopImmediatePropagation();
 				clickedItem();
+			}
 			stage.removeEventListener(MouseEvent.MOUSE_UP, itemMouseUpHandler);
 		}
 
@@ -146,8 +145,8 @@ package views.hotArea
 			clickedVO=voDic[clickedTarget];
 			if (clickedVO.sound)
 				soundPlayer.url=pc.getUrl(clickedVO.sound);
-			if (clickedVO.showMethod && clickedTarget.numChildren)
-				TweenLite.to(clickedTarget.getChildAt(0), 0.8, {alpha: 1});
+			if (clickedTarget.numChildren)
+				TweenLite.to(clickedTarget.getChildAt(0), 0.8, {alpha: clickedVO.showMethod});
 			if (clickedVO.effect)
 				pc.playHotArea(clickedVO, clickedTarget);
 			dispatchEvent(new Event('clickHotArea'));

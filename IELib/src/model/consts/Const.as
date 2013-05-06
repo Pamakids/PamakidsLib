@@ -56,12 +56,13 @@ package model.consts
 		public static const FAILURE:String="FAILURE";
 		public static const WRONG:String="WRONG";
 		public static const RIGHT:String="RIGHT";
+		public static const PAUSE:String="PAUSE";
 
 		public static const HOT_AREA_ASSET_AUTO_SHOWUP:String="HOT_AREA_ASSET_AUTO_SHOWUP";
 		public static const HOT_AREA_ASSET_CLICK_SHOWUP:String="HOT_AREA_ASSET_CLICK_SHOWUP";
 
 		public static const HOT_AREA_ASSET_SHOW_METHODS:Array=[
-			{label: '自动出现', type: HOT_AREA_ASSET_AUTO_SHOWUP},
+			{label: '点击消失', type: HOT_AREA_ASSET_AUTO_SHOWUP},
 			{label: '点击出现', type: HOT_AREA_ASSET_CLICK_SHOWUP}
 			];
 
@@ -69,7 +70,8 @@ package model.consts
 			{label: '成功', type: SUCCESS},
 			{label: '失败', type: FAILURE},
 			{label: '出错', type: WRONG},
-			{label: '正确', type: RIGHT}
+			{label: '正确', type: RIGHT},
+			{label: '暂停', type: PAUSE}
 			]);
 
 		public static const HOT_AREA_TYPES:ArrayCollection=new ArrayCollection([

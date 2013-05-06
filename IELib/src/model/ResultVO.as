@@ -15,7 +15,7 @@ package model
 		public var reason:String;
 		public var errCode:String;
 
-		public function toString()
+		public function toString():String
 		{
 			var s:String;
 			for (var p:* in this)

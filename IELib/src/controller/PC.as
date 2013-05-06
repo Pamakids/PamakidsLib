@@ -6,6 +6,7 @@ package controller
 	import com.greensock.easing.Bounce;
 	import com.greensock.easing.Cubic;
 	import com.greensock.easing.Elastic;
+	import com.pamakids.components.Page;
 	import com.pamakids.manager.FileManager;
 	import com.pamakids.util.CloneUtil;
 	import com.pamakids.utils.Singleton;
@@ -85,7 +86,7 @@ package controller
 		 * @param onComplete
 		 *
 		 */
-		public function showVO(subtitleVO:SubtitleVO, target:DisplayObject, onComplete:Function=null):void
+		public function showVO(subtitleVO:SubtitleVO, target:DisplayObject, onComplete:Function=null, params:Array=null):void
 		{
 			if (!subtitleVO || playingVO == subtitleVO)
 				return;
@@ -179,7 +180,10 @@ package controller
 					}
 				}
 				if (onComplete != null)
+				{
 					vars.onComplete=onComplete;
+					vars.onCompleteParams=params;
+				}
 				var t:TweenMax=TweenMax.to(target, duration, vars);
 				if (cvo)
 					tweenDic[subtitleVO]=t;
@@ -188,13 +192,18 @@ package controller
 
 		private var tweenDic:Dictionary=new Dictionary();
 
-		public function revertAvatar(vo:ConversationVO):void
+		public function revertAvatar(vo:ConversationVO, callback:Function=null, params:Array=null):void
 		{
 			var t:TweenMax=tweenDic[vo];
 			if (!t)
 				return;
 			t.reverse();
 			TweenLite.killDelayedCallsTo(removeRevertedAvatar);
+			if (callback != null)
+			{
+				TweenLite.killDelayedCallsTo(callback);
+				TweenLite.delayedCall(vo.effectDuration, callback, params);
+			}
 			TweenLite.delayedCall(vo.effectDuration, removeRevertedAvatar, [t.target]);
 			delete tweenDic[vo];
 		}
@@ -266,6 +275,7 @@ package controller
 				tempArr=convertHotPoints(tempArr);
 				pages=pages ? pages.concat(tempArr) : tempArr;
 			}
+			pages.sortOn('index', Array.NUMERIC);
 			bookVO.pages=pages;
 			bookVO.dir=contentDir;
 
@@ -304,6 +314,11 @@ package controller
 			fs.close();
 			return bookVO;
 		}
+
+//		private function orderPage(a:Page, b:Page):int
+//		{
+//			
+//		}
 
 		public var globalAssets:Array;
 		public var alerts:Array;

@@ -181,7 +181,7 @@ package com.pamakids.components.controls
 			}
 		}
 
-		private function createTextField():void
+		protected function createTextField():void
 		{
 			var tf:TextFormat=new TextFormat();
 			tf.size=fontSize;

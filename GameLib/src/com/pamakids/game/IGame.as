@@ -51,6 +51,7 @@ package com.pamakids.game
 		function start():void;
 		function initialize(width:Number, height:Number):void;
 		function close():void;
+		function pause():void;
 	}
 
 }

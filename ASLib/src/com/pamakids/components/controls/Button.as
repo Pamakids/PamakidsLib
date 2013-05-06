@@ -33,11 +33,9 @@ package com.pamakids.components.controls
 			}
 			downState=getBitmap(styleName + 'Down');
 			if (downState)
-			{
 				addChild(downState);
-				addEventListener(MouseEvent.CLICK, onClick);
-				addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-			}
+			addEventListener(MouseEvent.CLICK, onClick);
+			addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 			addChild(upState);
 		}
 
@@ -51,7 +49,8 @@ package com.pamakids.components.controls
 		{
 			if (enable)
 			{
-				upState.visible=false;
+				if (downState)
+					upState.visible=false;
 				stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			}
 			else
