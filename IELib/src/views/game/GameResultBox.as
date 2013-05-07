@@ -42,14 +42,12 @@ package views.game
 				b.addEventListener(MouseEvent.CLICK, playAgainHandler);
 				addChild(b);
 				if (state == WIN)
-				{
 					showLifeIcons();
-					b=new ElasticButton('gameNext');
-					b.x=parent.width - b.width - 40 - x;
-					b.y=parent.height - b.height - 40 - y;
-					b.addEventListener(MouseEvent.CLICK, nextPageHandler);
-					addChild(b);
-				}
+				b=new ElasticButton('gameNext');
+				b.x=parent.width - b.width - 40 - x;
+				b.y=parent.height - b.height - 40 - y;
+				b.addEventListener(MouseEvent.CLICK, nextPageHandler);
+				addChild(b);
 			}
 			else
 			{
@@ -91,6 +89,7 @@ package views.game
 		}
 
 		public var life:int;
+		public var showNextPageButton:Boolean;
 
 		private function showLifeIcons():void
 		{

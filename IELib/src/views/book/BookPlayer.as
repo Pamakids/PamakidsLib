@@ -117,7 +117,7 @@ package views.book
 		}
 
 		private var playingAvatar:Avatar;
-		private var intervalTimer:Timer;
+		private var eventIntervalTimer:Timer;
 
 		private function clearPreview():void
 		{
@@ -268,20 +268,19 @@ package views.book
 			isPlayingGame=eventsVO.type == Const.GAME;
 			if (!isPlayingGame)
 				playlist=eventsVO.subtitles.concat();
-			pausing=isPlayingGame;
 			if (eventsVO.audioFile)
 				playAudio();
 			if (!isPreviewEvent)
 			{
-				if (intervalTimer)
+				if (eventIntervalTimer)
 				{
-					intervalTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
-					intervalTimer.stop();
+					eventIntervalTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, nextEvent);
+					eventIntervalTimer.stop();
 				}
 				if (eventsVO.intervalTime)
 				{
-					intervalTimer=new Timer(eventsVO.intervalTime, 1);
-					intervalTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerComplete);
+					eventIntervalTimer=new Timer(eventsVO.intervalTime, 1);
+					eventIntervalTimer.addEventListener(TimerEvent.TIMER_COMPLETE, nextEvent);
 				}
 			}
 			if (isPlayingSubtitle)
@@ -406,7 +405,10 @@ package views.book
 		{
 			clearGame();
 			clearResultBox();
-			nextPage();
+			if (eventsVO.showNextButton)
+				nextPage();
+			else
+				nextEvent();
 		}
 
 		private function clearGame():void
@@ -607,12 +609,16 @@ package views.book
 		private var isPlayingConversation:Boolean;
 		private var isPlayingSubtitle:Boolean;
 
-		protected function onTimerComplete(event:TimerEvent):void
+		protected function nextEvent(event:TimerEvent=null):void
 		{
 			if (eventsList && eventsList.length)
 			{
 				eventsVO=eventsList.shift();
 				playEvent();
+			}
+			else
+			{
+				nextPage();
 			}
 		}
 
@@ -718,24 +724,26 @@ package views.book
 		{
 			if (isPlayingSubtitle)
 				subtitle.visible=false;
+			if (eventsVO.showNextButton)
+				judgePageButtonsState(true);
 			if (!isPreviewEvent)
 			{
 				if (eventsList && eventsList.length)
-					intervalTimer.start();
+					eventIntervalTimer.start();
 				else if (!currentPageVO.forcePause)
 					nextPage();
 				else
-					pausing=true;
+					judgePageButtonsState(true);
 			}
 		}
 
-		public function prePage():void
+		public function prePage(event:Event=null):void
 		{
 			if (currentPageNum > 1)
 				play(currentPageNum - 1);
 		}
 
-		public function nextPage():void
+		public function nextPage(event:Event=null):void
 		{
 			if (currentPageNum < vo.pages.length - 1)
 				play(currentPageNum + 1);
@@ -746,6 +754,7 @@ package views.book
 			if (!vo.pages || (page == currentPageNum && page))
 				return;
 			currentPageVO=vo.pages[page];
+			judgePageButtonsState();
 			if (playing)
 			{
 				hotAreaContainer.initHotAreas(currentPageVO.hotAreas);
@@ -760,7 +769,10 @@ package views.book
 			{
 				contentContainer.setChildIndex(currentPage, contentContainer.numChildren - 1);
 				currentPage.alpha=1;
-				TweenLite.to(currentPage, 1, {alpha: 0, onComplete: clearCurrentPage, onCompleteParams: [currentPage]});
+				if (pc.useByCreator)
+					clearCurrentPage(currentPage);
+				else
+					TweenLite.to(currentPage, 1, {alpha: 0, onComplete: clearCurrentPage, onCompleteParams: [currentPage]});
 			}
 			fillContent();
 		}
@@ -864,12 +876,52 @@ package views.book
 			initImages();
 			initSubtitle();
 			initHotAreaContainer();
+			initPageButtons();
 			initAudioPlayer();
-			if (pc.useByCreator)
-				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-			else
+			if (!pc.useByCreator)
 				pc.enableDrag=true;
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, stageMouseDownHandler);
+		}
+
+		private function initPageButtons():void
+		{
+			prePageButton=new ElasticButton('prePage');
+			prePageButton.y=height - prePageButton.height - 40;
+			prePageButton.x=40;
+			prePageButton.addEventListener(MouseEvent.CLICK, prePage);
+			contentContainer.addChild(prePageButton);
+			nextPageButton=new ElasticButton('nextPage');
+			nextPageButton.addEventListener(MouseEvent.CLICK, nextPage);
+			nextPageButton.y=prePageButton.y;
+			nextPageButton.x=width - nextPageButton.width - 40;
+			contentContainer.addChild(nextPageButton);
+			judgePageButtonsState();
+		}
+
+		private function judgePageButtonsState(playEventComlete:Boolean=false):void
+		{
+			if (!playEventComlete)
+			{
+				if (!vo || !vo.pages || vo.pages.length == 1 || !currentPageVO || !currentPageVO.showNextButton)
+				{
+					prePageButton.visible=nextPageButton.visible=false;
+					return;
+				}
+			}
+			if (currentPageNum == 0)
+			{
+				prePageButton.visible=false;
+				nextPageButton.visible=true;
+			}
+			else if (currentPageNum == vo.pages.length - 1)
+			{
+				nextPageButton.visible=false;
+				prePageButton.visible=true;
+			}
+			else
+			{
+				nextPageButton.visible=prePageButton.visible=true;
+			}
 		}
 
 		private function initHotAreaContainer():void
@@ -884,6 +936,8 @@ package views.book
 
 		protected function clickHotAreaHandler(event:Event):void
 		{
+			if (!eventsVO.gameVO)
+				return;
 			var vo:HotAreaVO=hotAreaContainer.clickedVO;
 			if (vo.type == Const.FIND_WRONG)
 			{
@@ -893,10 +947,6 @@ package views.book
 				if (foundItem.length == tobeFoundedItems.length)
 				{
 					gameOverHandler(null);
-				}
-				if (pausing)
-				{
-					trace(vo.type);
 				}
 			}
 		}
@@ -948,15 +998,15 @@ package views.book
 			stage.removeEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
 		}
 
-		protected function keyDownHandler(event:KeyboardEvent):void
-		{
-			if (!currentPageVO)
-				return;
-			if (event.keyCode == Keyboard.LEFT)
-				prePage();
-			else if (event.keyCode == Keyboard.RIGHT)
-				nextPage();
-		}
+//		protected function keyDownHandler(event:KeyboardEvent):void
+//		{
+//			if (!currentPageVO)
+//				return;
+//			if (event.keyCode == Keyboard.LEFT)
+//				prePage();
+//			else if (event.keyCode == Keyboard.RIGHT)
+//				nextPage();
+//		}
 
 		override protected function dispose():void
 		{
@@ -966,11 +1016,13 @@ package views.book
 
 		public function stopPreview():void
 		{
+			if (playing)
+				show(0);
 			playing=false;
 			if (audioPlayer)
 				audioPlayer.stop();
-			if (intervalTimer)
-				intervalTimer.stop();
+			if (eventIntervalTimer)
+				eventIntervalTimer.stop();
 			clearPreview();
 			if (subtitle)
 			{
@@ -979,6 +1031,7 @@ package views.book
 			}
 			pc.playingVO=null;
 			currentPageVO=null;
+			playingSubtitle=null;
 			stopGameTimer();
 			clearGame();
 			hotAreaContainer.clear();
@@ -1061,13 +1114,11 @@ package views.book
 		private var painter:Sprite;
 		private var hotAreaContainer:HotAreaContainer;
 
-		/**
-		 * 当前页播放完成并处于暂停状态
-		 */
-		private var pausing:Boolean;
 		private var gameTimer:Timer;
 		private var pauseButton:Button;
 		private var gameResult:GameResultBox;
+		private var prePageButton:ElasticButton;
+		private var nextPageButton:ElasticButton;
 
 		private function showSubtitle():void
 		{

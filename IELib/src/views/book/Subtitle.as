@@ -52,6 +52,8 @@ package views.book
 				fontSize=value.fontSize;
 				text=value.text;
 				maxWidth=value.maxWidth;
+				if (useInPreview)
+					resize();
 			}
 		}
 
