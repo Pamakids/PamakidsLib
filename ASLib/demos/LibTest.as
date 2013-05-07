@@ -1,13 +1,24 @@
 package
 {
+	import com.greensock.TweenLite;
+	import com.greensock.plugins.TransformAroundPointPlugin;
+	import com.greensock.plugins.TweenPlugin;
 	import com.pamakids.manager.AssetsManager;
-
+	import com.pamakids.utils.BitmapDataUtil;
+	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	import flash.media.Camera;
+	import flash.media.CameraPosition;
+	import flash.media.Video;
 	import flash.utils.getQualifiedClassName;
-
+	
 	import org.despair2D.Despair;
 	import org.despair2D.StatsKai;
 	import org.despair2D.control.KeyboardManager;
@@ -15,11 +26,13 @@ package
 	import org.despair2D.renderer.ViewProxy;
 	import org.despair2D.resource.ILoader;
 	import org.despair2D.resource.LoaderManager;
-
+	
 	import states.ButtonState;
 	import states.ImageState;
 	import states.PanelState;
+	import states.RollawayState;
 	import states.State;
+
 
 	public class LibTest extends Sprite
 	{
@@ -37,7 +50,13 @@ package
 
 		}
 
-		private static var mStateList:Array=[ButtonState, ImageState, PanelState];
+		private static var mStateList:Array=
+		[
+			ButtonState, 
+			ImageState, 
+			PanelState,
+			RollawayState
+		];
 
 
 
@@ -72,6 +91,34 @@ package
 
 			trace('[init] - 初期化...')
 			this.changeState()
+				
+				
+			/*var bitmap:Bitmap = new Bitmap(new BitmapData(600,400,true,0xff333333))
+			this.addChild(bitmap)
+			stage.addEventListener(MouseEvent.MOUSE_MOVE,function(e:MouseEvent):void
+			{
+				//var p:point = bitmap.globalToLocal(new Point(stage.mouseX,))
+				BitmapDataUtil.erase(bitmap.bitmapData, bitmap.mouseX, bitmap.mouseY,2,5, 0.3)
+				
+			})*/
+				
+				/*var video:Video = new Video()
+			this.addChild(video)
+				
+			var camera:Camera
+			
+			camera = Camera.getCamera(CameraPosition.BACK)
+				
+			trace(Camera.isSupported)
+				
+			camera = Camera.getCamera()
+			if(camera)
+			{
+				trace('normal')
+				video.attachCamera(camera)
+				camera.setMode(320,240,30)
+			}*/
+			
 		}
 
 
