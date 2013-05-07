@@ -84,7 +84,7 @@ package com.pamakids.content
 
 		override public function set height(value:Number):void
 		{
-			this.height=value;
+			_height=value;
 		}
 
 	}
