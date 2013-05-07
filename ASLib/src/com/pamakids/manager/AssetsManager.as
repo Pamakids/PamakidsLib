@@ -37,7 +37,8 @@ package com.pamakids.manager
 
 		public function addLoadedCallback(callback:Function):void
 		{
-			loadedCallbacks.push(callback);
+			if (loadedCallbacks.indexOf(callback) == -1)
+				loadedCallbacks.push(callback);
 		}
 
 		private var themeURL:String;

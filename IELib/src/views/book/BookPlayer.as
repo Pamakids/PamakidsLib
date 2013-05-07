@@ -52,8 +52,6 @@ package views.book
 
 		public function BookPlayer(width:Number, height:Number)
 		{
-			backgroudAlpha=1;
-			backgroundColor=0x282828;
 			TweenPlugin.activate([MotionBlurPlugin, TransformAroundCenterPlugin, ShakeEffect]);
 			super(width, height, false, false);
 			pc=PC.i;
@@ -178,12 +176,12 @@ package views.book
 		protected function avatarCompleteHandler(event:Event):void
 		{
 			event.currentTarget.removeEventListener(Event.COMPLETE, avatarCompleteHandler);
-			pc.showVO(conversationVO, event.currentTarget as Avatar, avatarShownHandler);
+			pc.showVO(conversationVO, event.currentTarget as Avatar, avatarShownHandler, [conversationVO]);
 		}
 
-		private function avatarShownHandler():void
+		private function avatarShownHandler(vo:ConversationVO):void
 		{
-			handleAerlt();
+			handleAerlt(vo);
 			showAvatarSubtitle();
 		}
 
@@ -526,6 +524,8 @@ package views.book
 			if (!url || playingAlertDic[url])
 				return;
 			trace('playing alert', url, playingAlertDic[url]);
+			if (playingAlert)
+				hideAlertHandler();
 			playingAlertUrl=url;
 			playingAlertDic[url]=true;
 			lm.load(pc.getUrl(url), alertLoadedHandler);
@@ -540,7 +540,6 @@ package views.book
 			if (byteArray.position)
 				byteArray.position=0;
 			var alert:ConversationVO=CloneUtil.convertObject(byteArray.readObject(), ConversationVO);
-			playingAlert=alert;
 			conversationVO=alert;
 			if (alert.avatar)
 				playingAvatar=getAvatar(alert);
@@ -552,23 +551,23 @@ package views.book
 
 		private var hideAlertTimer:Timer;
 
-		private function handleAerlt():void
+		private function handleAerlt(vo:ConversationVO):void
 		{
-			if (playingAlert)
+			if (!vo.type)
+				return;
+			if (vo.soundPlayTime)
+				audioEffectPlayer.url=pc.getUrl(vo.sound);
+			playingAlert=vo;
+			if (vo.hideAfterMouseDown)
 			{
-				if (playingAlert.soundPlayTime)
-					audioEffectPlayer.url=pc.getUrl(playingAlert.sound);
-				if (playingAlert.hideAfterMouseDown)
-				{
-					stage.addEventListener(MouseEvent.MOUSE_DOWN, hideAlertHandler);
-				}
-				if (playingAlert.autoHideTime)
-				{
-					clearHideAlertTimer();
-					hideAlertTimer=new Timer(1000, playingAlert.autoHideTime);
-					hideAlertTimer.addEventListener(TimerEvent.TIMER_COMPLETE, hideAlertHandler);
-					hideAlertTimer.start();
-				}
+				stage.addEventListener(MouseEvent.MOUSE_DOWN, hideAlertHandler);
+			}
+			if (vo.autoHideTime)
+			{
+				clearHideAlertTimer();
+				hideAlertTimer=new Timer(1000, vo.autoHideTime);
+				hideAlertTimer.addEventListener(TimerEvent.TIMER_COMPLETE, hideAlertHandler);
+				hideAlertTimer.start();
 			}
 		}
 
@@ -590,7 +589,7 @@ package views.book
 				stage.removeEventListener(MouseEvent.MOUSE_DOWN, hideAlertHandler);
 			clearHideAlertTimer();
 			if (playingAlert.avatar)
-				pc.revertAvatar(playingAlert, revertedHandler);
+				pc.revertAvatar(playingAlert, revertedHandler, [playingAlertUrl]);
 			else
 				delete playingAlertDic[playingAlertUrl];
 			if (audioEffectPlayer.playing)
@@ -599,9 +598,9 @@ package views.book
 			subtitle.visible=false;
 		}
 
-		private function revertedHandler():void
+		private function revertedHandler(url:String):void
 		{
-			delete playingAlertDic[playingAlertUrl];
+			delete playingAlertDic[url];
 		}
 
 		private var isPlayingGame:Boolean;

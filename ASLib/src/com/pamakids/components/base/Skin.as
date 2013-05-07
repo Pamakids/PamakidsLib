@@ -14,7 +14,7 @@ package com.pamakids.components.base
 		public static var css:Dictionary=new Dictionary();
 
 		private var am:AssetsManager;
-		protected var styleName:String;
+		public var styleName:String;
 
 		public function Skin(styleName:String, width:Number=0, height:Number=0, enableBackground:Boolean=false, enableMask:Boolean=false)
 		{

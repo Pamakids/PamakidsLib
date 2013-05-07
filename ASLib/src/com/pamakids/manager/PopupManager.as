@@ -26,12 +26,12 @@ package com.pamakids.manager
 					TweenLite.to(maskSprite, 0.5, {alpha: 1});
 				}
 			}
-			parent.addChild(view);
 			if (center)
 			{
 				view.x=parent.width / 2 - view.width / 2;
 				view.y=parent.height / 2 - view.height / 2;
 			}
+			parent.addChild(view);
 		}
 
 		public static function removePopup(view:DisplayObject):void

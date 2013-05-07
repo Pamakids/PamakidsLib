@@ -22,6 +22,8 @@ package com.pamakids.components.base
 
 		protected function onStage(event:Event):void
 		{
+			if (autoDispose)
+				removeEventListener(Event.ADDED_TO_STAGE, onStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
 			init();
 		}

@@ -61,6 +61,30 @@ package views.game
 			}
 		}
 
+		override protected function dispose():void
+		{
+			for (var i:int; i < numChildren; i++)
+			{
+				var b:ElasticButton=getChildAt(i) as ElasticButton;
+				if (b)
+				{
+					switch (b.styleName)
+					{
+						case 'playAgain':
+							b.removeEventListener(MouseEvent.CLICK, playAgainHandler);
+							break;
+						case 'gameNext':
+							b.removeEventListener(MouseEvent.CLICK, nextPageHandler);
+							break;
+						case 'resumeGame':
+							b.removeEventListener(MouseEvent.CLICK, resumeGameHandler);
+							break;
+					}
+				}
+			}
+			super.dispose();
+		}
+
 		protected function nextPageHandler(event:MouseEvent):void
 		{
 			dispatchEvent(new Event('nextPage'));

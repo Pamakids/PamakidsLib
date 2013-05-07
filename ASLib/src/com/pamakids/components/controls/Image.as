@@ -55,6 +55,12 @@ package com.pamakids.components.controls
 			_source=value;
 		}
 
+		override public function set autoCenter(value:Boolean):void
+		{
+			super.autoCenter=value;
+			forceAutoFill=value;
+		}
+
 		protected function loadedHandler(bitmap:Bitmap):void
 		{
 			bitmap.smoothing=smoothing;
@@ -78,6 +84,8 @@ package com.pamakids.components.controls
 
 		override protected function autoSetSize(child:DisplayObject):void
 		{
+			if (autoCenter)
+				return;
 			if (autoFill || forceAutoFill)
 				setSize(child.width, child.height);
 		}
