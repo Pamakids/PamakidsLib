@@ -21,6 +21,24 @@ package com.pamakids.components.controls
 				forceAutoFill=true;
 		}
 
+		override public function set width(value:Number):void
+		{
+			super.width=value;
+			if (value)
+			{
+				autoFill=false;
+				forceAutoFill=false;
+				if (textField)
+					textField.wordWrap=true;
+			}
+			else
+			{
+				forceAutoFill=true;
+				if (textField)
+					textField.wordWrap=false;
+			}
+		}
+
 		private var _maxWidth:Number;
 		private var _text:String;
 		private var _fontSize:uint=12;
@@ -169,6 +187,10 @@ package com.pamakids.components.controls
 					setSize(textField.width, textField.height);
 				else
 					setSize(child.width > width ? child.width : width, child.height > height ? child.height : height);
+			}
+			else if (child == textField)
+			{
+				centerDisplayObject(textField);
 			}
 		}
 

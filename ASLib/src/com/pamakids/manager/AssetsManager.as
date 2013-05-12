@@ -143,7 +143,6 @@ package com.pamakids.manager
 					themeLoaded=true;
 					for each (var f:Function in loadedCallbacks)
 					{
-						trace(f);
 						f();
 					}
 				}

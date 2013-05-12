@@ -161,7 +161,7 @@ package com.pamakids.components.controls
 				{
 					background.height=height;
 				}
-				else if (forceAutoFill && background.getOriginalBitmapData().height > height)
+				else if (forceAutoFill || background.getOriginalBitmapData().height > height)
 				{
 					height=background.height;
 					centerDisplayObject(textField);
@@ -245,8 +245,16 @@ package com.pamakids.components.controls
 			}
 		}
 
+		override public function set width(value:Number):void
+		{
+			super.width=value;
+			autoSetSize(textField);
+		}
+
 		override protected function autoSetSize(child:DisplayObject):void
 		{
+			if (!child)
+				return;
 			if (autoFill || forceAutoFill)
 			{
 				if (textField && child == textField)

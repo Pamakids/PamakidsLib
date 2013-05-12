@@ -20,6 +20,7 @@ package com.pamakids.components.controls
 	 */
 	[Event(name="playing", type="flash.events.DataEvent")]
 	[Event(name="playComplete", type="flash.events.Event")]
+	[Event(name="error", type="flash.events.DataEvent")]
 	public class SoundPlayer extends EventDispatcher
 	{
 
@@ -161,15 +162,22 @@ package com.pamakids.components.controls
 			paused=false;
 			playing=true;
 			stopSoundChannel();
-			soundChannel=sound.play(currentPosition);
-			if (muted)
+			try
 			{
-				soundTransform=soundChannel.soundTransform;
-				soundTransform.volume=0;
-				soundChannel.soundTransform=soundTransform;
+				soundChannel=sound.play(currentPosition);
+				if (muted)
+				{
+					soundTransform=soundChannel.soundTransform;
+					soundTransform.volume=0;
+					soundChannel.soundTransform=soundTransform;
+				}
+				initIntervalTimer();
+				soundChannel.addEventListener(Event.SOUND_COMPLETE, playedHandler);
 			}
-			initIntervalTimer();
-			soundChannel.addEventListener(Event.SOUND_COMPLETE, playedHandler);
+			catch (error:Error)
+			{
+				dispatchEvent(new DataEvent('error', false, false, url));
+			}
 			trace('Sound Player play: ' + url);
 		}
 

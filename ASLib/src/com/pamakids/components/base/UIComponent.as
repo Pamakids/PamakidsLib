@@ -69,8 +69,11 @@ package com.pamakids.components.base
 
 		override public function set width(value:Number):void
 		{
-			_width=value;
-			resize();
+			if (_width != value)
+			{
+				_width=value;
+				resize();
+			}
 		}
 
 		private var _forceAutoFill:Boolean;
@@ -99,10 +102,10 @@ package com.pamakids.components.base
 
 		protected function resize():void
 		{
-			if (width || height)
+			if (_width || _height)
 			{
 				autoFill=forceAutoFill;
-				dispatchEvent(new ResizeEvent(width, height));
+				dispatchEvent(new ResizeEvent(_width, _height));
 			}
 			centerChildren();
 		}
@@ -150,8 +153,11 @@ package com.pamakids.components.base
 
 		override public function set height(value:Number):void
 		{
-			_height=value;
-			resize();
+			if (value != _height)
+			{
+				_height=value;
+				resize();
+			}
 		}
 
 		override public function get width():Number
