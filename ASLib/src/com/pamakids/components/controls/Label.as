@@ -21,6 +21,18 @@ package com.pamakids.components.controls
 				forceAutoFill=true;
 		}
 
+		public function get embedFonts():Boolean
+		{
+			return _embedFont;
+		}
+
+		public function set embedFonts(value:Boolean):void
+		{
+			_embedFont=value;
+			if (textField)
+				textField.embedFonts=value;
+		}
+
 		override public function set width(value:Number):void
 		{
 			super.width=value;
@@ -29,7 +41,10 @@ package com.pamakids.components.controls
 				autoFill=false;
 				forceAutoFill=false;
 				if (textField)
+				{
 					textField.wordWrap=true;
+					textField.width=value;
+				}
 			}
 			else
 			{
@@ -203,6 +218,8 @@ package com.pamakids.components.controls
 			}
 		}
 
+		private var _embedFont:Boolean;
+
 		protected function createTextField():void
 		{
 			var tf:TextFormat=new TextFormat();
@@ -214,8 +231,11 @@ package com.pamakids.components.controls
 			textField.autoSize=TextFieldAutoSize.LEFT;
 			if (!forceAutoFill)
 				textField.wordWrap=true;
+			textField.embedFonts=embedFonts;
 			textField.selectable=false;
 			textField.defaultTextFormat=tf;
+			if (width)
+				textField.width=width;
 			textField.text=text;
 			addChild(textField);
 		}

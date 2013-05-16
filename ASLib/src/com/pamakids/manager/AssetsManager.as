@@ -125,12 +125,15 @@ package com.pamakids.manager
 				for (var i:int=0; i < xml.SubTexture.length(); i++)
 				{
 					var o:Object={};
-					o.name=xml.SubTexture[i].@name.toString();
+					var nameString:String=xml.SubTexture[i].@name.toString();
 					o.x=int(xml.SubTexture[i].@x);
 					o.y=int(xml.SubTexture[i].@y);
 					o.width=parseFloat(xml.SubTexture[i].@width);
 					o.height=parseFloat(xml.SubTexture[i].@height);
 					o.bitmapName=name;
+					if (nameString.indexOf('/') != -1)
+						nameString=nameString.substr(nameString.lastIndexOf('/') + 1);
+					o.name=nameString;
 					textureData[o.name]=o;
 				}
 			}

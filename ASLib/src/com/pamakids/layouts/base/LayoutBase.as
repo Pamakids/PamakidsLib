@@ -73,7 +73,8 @@ package com.pamakids.layouts.base
 		public function set gap(value:Number):void
 		{
 			_gap=value;
-			update();
+			if (container)
+				update();
 		}
 
 		protected function onRemove(event:Event):void

@@ -45,6 +45,8 @@ package com.pamakids.components.base
 		 */
 		protected function dispose():void
 		{
+			while (numChildren)
+				removeChildAt(0);
 		}
 
 		/**

@@ -92,7 +92,8 @@ package com.pamakids.components.controls
 			}
 			barHeight=to;
 			bar.y=position;
-			TweenLite.to(this, 0.5, {alpha: 1});
+			if (alpha == 0)
+				alpha=1;
 		}
 
 		private function hideBar():void

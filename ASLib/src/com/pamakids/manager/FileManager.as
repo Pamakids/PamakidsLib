@@ -8,19 +8,19 @@ package com.pamakids.manager
 	public class FileManager
 	{
 
-		public static function readFile(path:String):Object
+		public static function readFile(path:String, fromAppDirectory:Boolean=false, readString:Boolean=false):Object
 		{
 			var o:Object;
 
 			try
 			{
-				var f:File=File.applicationStorageDirectory.resolvePath(path);
+				var f:File=fromAppDirectory ? File.applicationDirectory.resolvePath(path) : File.applicationStorageDirectory.resolvePath(path);
 				trace(f.nativePath);
 				if (!f.exists)
 					return o;
 				var fs:FileStream=new FileStream();
 				fs.open(f, FileMode.READ);
-				o=fs.readObject();
+				o=readString ? fs.readUTF() : fs.readObject();
 				fs.close();
 			}
 			catch (error:Error)

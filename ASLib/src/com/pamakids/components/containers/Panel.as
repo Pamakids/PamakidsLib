@@ -4,14 +4,15 @@ package com.pamakids.components.containers
 	import com.greensock.easing.Cubic;
 	import com.pamakids.components.base.Container;
 	import com.pamakids.components.base.Skin;
+	import com.pamakids.components.controls.ScrollBar;
 	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.layouts.ILayout;
+	import com.pamakids.utils.DPIUtil;
 
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	import com.pamakids.components.controls.ScrollBar;
 
 	public class Panel extends Skin
 	{
@@ -49,11 +50,13 @@ package com.pamakids.components.containers
 		}
 
 		private var contentPostion:Number=0;
+		private var friction:Number=0;
 
 		protected function mouseMoveHandler(event:MouseEvent):void
 		{
-			container.y=contentPostion - (downPoint.y - event.stageY);
-			trace(container.y, contentPostion, downPoint.y, event.stageY);
+			var moveDistance:Number=(downPoint.y - event.stageY) / DPIUtil.getDPIScale();
+			friction=moveDistance / height;
+			container.y=contentPostion - moveDistance * (1 - friction);
 			scrollBar.scrollTo(-container.y);
 		}
 
@@ -75,15 +78,24 @@ package com.pamakids.components.containers
 			{
 				contentPostion=container.y;
 			}
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
-			stage.removeEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+			removeStageListener();
 		}
 
 		override protected function dispose():void
 		{
+			removeStageListener();
 			container.removeEventListener(ResizeEvent.RESIZE, containerResizeHandler);
 			removeEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
 			super.dispose();
+		}
+
+		private function removeStageListener():void
+		{
+			if (stage)
+			{
+				stage.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
+				stage.removeEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+			}
 		}
 
 		private function initScrollBar():void

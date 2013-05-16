@@ -10,6 +10,7 @@ package com.pamakids.manager
 	import flash.net.URLLoader;
 	import flash.net.URLLoaderDataFormat;
 	import flash.net.URLRequest;
+	import flash.system.ApplicationDomain;
 	import flash.system.ImageDecodingPolicy;
 	import flash.system.LoaderContext;
 	import flash.utils.ByteArray;
@@ -62,6 +63,11 @@ package com.pamakids.manager
 		private var onCompleteDic:Dictionary; //加载完成后回调函数字典
 
 		private var savePathDic:Dictionary; //存储路径字典
+
+		public function loadText(url:String, onComplete:Function, savePath:String=''):void
+		{
+			load(url, onComplete, savePath, null, null, false, URLLoaderDataFormat.TEXT);
+		}
 
 		/**
 		 *  *
@@ -125,6 +131,7 @@ package com.pamakids.manager
 				//如果从程序缓存里找到了已加载的数据，则返回
 				if (b)
 				{
+					b.position=0;
 					params ? onComplete(b, params) : onComplete(b);
 					return;
 				}
@@ -183,8 +190,9 @@ package com.pamakids.manager
 		public function loadContentFromByteArray(byteArray:ByteArray, callback:Function):void
 		{
 			var l:Loader=new Loader();
-			var lc:LoaderContext=new LoaderContext();
-			lc.imageDecodingPolicy=ImageDecodingPolicy.ON_LOAD;
+			var lc:LoaderContext=new LoaderContext(false, ApplicationDomain.currentDomain, null);
+//			lc.imageDecodingPolicy=ImageDecodingPolicy.ON_LOAD;
+			lc.allowCodeImport=true;
 			loaderDic[l]=callback;
 			l.loadBytes(byteArray, lc);
 			l.contentLoaderInfo.addEventListener(Event.COMPLETE, contentLoadedHandler);

@@ -16,5 +16,10 @@ package com.pamakids.utils
 		{
 			return string ? string.substring(string.lastIndexOf('/') + 1, string.lastIndexOf('.')) : '';
 		}
+
+		public static function getType(string:String):String
+		{
+			return string ? string.substring(string.lastIndexOf('.')) : '';
+		}
 	}
 }

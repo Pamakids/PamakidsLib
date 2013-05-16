@@ -42,7 +42,7 @@ package com.pamakids.utils
 			if ((sourceDPI != DPI_160 && sourceDPI != DPI_240 && sourceDPI != DPI_320) ||
 				(targetDPI != DPI_160 && targetDPI != DPI_240 && targetDPI != DPI_320))
 			{
-				return NaN;
+				return 1;
 			}
 
 			return targetDPI / sourceDPI;

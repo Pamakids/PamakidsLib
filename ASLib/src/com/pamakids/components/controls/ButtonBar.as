@@ -5,6 +5,7 @@ package com.pamakids.components.controls
 	import com.pamakids.layouts.HLayout;
 	import com.pamakids.layouts.VLayout;
 	import com.pamakids.layouts.base.LayoutBase;
+	import com.pamakids.vo.ButtonVO;
 
 	import flash.events.MouseEvent;
 
@@ -18,8 +19,9 @@ package com.pamakids.components.controls
 		private var buttons:Array=[];
 
 		public var selectable:Boolean=true;
+		public var onlySelectedOne:Boolean=true;
 
-		public function ButtonBar(dataProvider:Array, direction:String=LayoutBase.HORIZONTAL, width:Number=0, height:Number=0)
+		public function ButtonBar(dataProvider:Array, direction:String="HORIZONTAL", width:Number=0, height:Number=0)
 		{
 			super(width, height);
 			this.dataProvider=dataProvider;
@@ -35,9 +37,9 @@ package com.pamakids.components.controls
 			layout.gap=gap;
 			layout.itemWidth=itemWidth;
 			layout.itemHeight=itemHeight;
-			for each (var o:Object in dataProvider)
+			for each (var o:ButtonVO in dataProvider)
 			{
-				var pb:Button=selectable ? new ToggleButton(o.name, o.selected, o.required) : new Button(o.name);
+				var pb:Button=selectable && o.selectable ? new ToggleButton(o.name, o.selected, o.required) : new Button(o.name);
 				buttons.push(pb);
 				pb.addEventListener(MouseEvent.CLICK, onClick);
 				pb.autoCenter=true;
@@ -45,10 +47,20 @@ package com.pamakids.components.controls
 			}
 		}
 
+		private var selectedItem:ToggleButton;
+
+		public function selectedIndex(index:int):void
+		{
+			if (selectedItem)
+				selectedItem.selected=false;
+			selectedItem=getChildAt(index) as ToggleButton;
+			selectedItem.selected=true;
+		}
+
 		protected function onClick(event:MouseEvent):void
 		{
-			dispatchEvent(new IndexEvent(buttons.indexOf(event.currentTarget)));
-			if (selectable)
+			dispatchEvent(new IndexEvent(buttons.indexOf(event.currentTarget), event.currentTarget));
+			if (selectable && onlySelectedOne)
 			{
 				for each (var pb:ToggleButton in buttons)
 				{
