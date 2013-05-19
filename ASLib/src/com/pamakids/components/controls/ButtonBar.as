@@ -20,6 +20,7 @@ package com.pamakids.components.controls
 
 		public var selectable:Boolean=true;
 		public var onlySelectedOne:Boolean=true;
+		public var clickable:Boolean=true;
 
 		public function ButtonBar(dataProvider:Array, direction:String="HORIZONTAL", width:Number=0, height:Number=0)
 		{
@@ -41,7 +42,8 @@ package com.pamakids.components.controls
 			{
 				var pb:Button=selectable && o.selectable ? new ToggleButton(o.name, o.selected, o.required) : new Button(o.name);
 				buttons.push(pb);
-				pb.addEventListener(MouseEvent.CLICK, onClick);
+				if (clickable)
+					pb.addEventListener(MouseEvent.CLICK, onClick);
 				pb.autoCenter=true;
 				addChild(pb);
 			}

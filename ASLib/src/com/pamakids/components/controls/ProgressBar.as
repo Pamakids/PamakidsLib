@@ -29,7 +29,10 @@ package com.pamakids.components.controls
 			_progress=value;
 			TweenLite.to(progressMask, 0.3, {width: width * value});
 			if (archor)
-				TweenLite.to(archor, 0.3, {x: progressMask.width - archor.width / 2});
+			{
+				var tox:Number=progressMask.width - archor.width / 2;
+				value == 1 ? tox : TweenLite.to(archor, 0.3, {x: tox});
+			}
 		}
 
 		/**
@@ -71,6 +74,14 @@ package com.pamakids.components.controls
 			archor.y=height / 2 - archor.height / 2;
 			archor.x=width - archor.width / 2;
 			addChild(archor);
+
+			bg=getBitmap(styleName + 'BG');
+			if (bg)
+			{
+				bg.x=width / 2 - bg.width / 2;
+				bg.y=height / 2 - bg.height / 2;
+				addChildAt(bg, 0);
+			}
 		}
 
 		override protected function init():void
@@ -86,6 +97,7 @@ package com.pamakids.components.controls
 
 		private var progressMask:Container;
 		private var archor:Bitmap;
+		private var bg:Bitmap;
 
 	}
 }

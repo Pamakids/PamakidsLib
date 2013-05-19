@@ -100,18 +100,23 @@ package com.pamakids.components.containers
 
 				var sb:Bitmap=getBitmap(styleName + 'Selected');
 
-				pagesBar=new ButtonBar(iconButtons);
-				pagesBar.addEventListener(ResizeEvent.RESIZE, positionBar);
-				pagesBar.forceAutoFill=true;
-				pagesBar.gap=8;
-				pagesBar.itemWidth=sb.width;
-				pagesBar.itemHeight=sb.height;
-				pagesBar.y=height + pagesBarOffset;
-				addChild(pagesBar);
-				sb.bitmapData.dispose();
-				pagesBar.selectedIndex(currentPage);
+				if (showPageIcon)
+				{
+					pagesBar=new ButtonBar(iconButtons);
+					pagesBar.addEventListener(ResizeEvent.RESIZE, positionBar);
+					pagesBar.forceAutoFill=true;
+					pagesBar.gap=8;
+					pagesBar.itemWidth=sb.width;
+					pagesBar.itemHeight=sb.height;
+					pagesBar.y=height + pagesBarOffset;
+					addChild(pagesBar);
+					sb.bitmapData.dispose();
+					pagesBar.selectedIndex(currentPage);
+				}
 			}
 		}
+
+		public var showPageIcon:Boolean=true;
 
 		protected function positionBar(event:ResizeEvent):void
 		{
@@ -137,12 +142,25 @@ package com.pamakids.components.containers
 			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 		}
 
+		override protected function dispose():void
+		{
+			super.dispose();
+			if (stage)
+			{
+				stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+			}
+		}
+
 		private var moving:Boolean;
 
 		protected function onMouseUp(event:MouseEvent):void
 		{
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-			stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+			if (stage)
+			{
+				stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+			}
 			var toValue:Number;
 			var next:Boolean=event.stageX - downValue > 0;
 

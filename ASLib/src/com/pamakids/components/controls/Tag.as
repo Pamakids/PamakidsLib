@@ -197,6 +197,8 @@ package com.pamakids.components.controls
 
 		override protected function centerDisplayObject(child:DisplayObject):void
 		{
+			if (!child)
+				return;
 			if (child == textField)
 			{
 				textField.x=paddingLeft;

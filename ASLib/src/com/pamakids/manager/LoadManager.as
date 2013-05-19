@@ -191,8 +191,9 @@ package com.pamakids.manager
 		{
 			var l:Loader=new Loader();
 			var lc:LoaderContext=new LoaderContext(false, ApplicationDomain.currentDomain, null);
-//			lc.imageDecodingPolicy=ImageDecodingPolicy.ON_LOAD;
+			lc.imageDecodingPolicy=ImageDecodingPolicy.ON_LOAD;
 			lc.allowCodeImport=true;
+			lc.allowLoadBytesCodeExecution=true;
 			loaderDic[l]=callback;
 			l.loadBytes(byteArray, lc);
 			l.contentLoaderInfo.addEventListener(Event.COMPLETE, contentLoadedHandler);
@@ -201,9 +202,10 @@ package com.pamakids.manager
 		private function getContentFromByteArray(byteArray:ByteArray, callbacks:Array=null, params:Array=null):void
 		{
 			var l:Loader=new Loader();
-			var lc:LoaderContext=new LoaderContext();
+			var lc:LoaderContext=new LoaderContext(false, ApplicationDomain.currentDomain, null);
 			lc.imageDecodingPolicy=ImageDecodingPolicy.ON_LOAD;
 			lc.allowCodeImport=true;
+//			lc.allowLoadBytesCodeExecution=true;
 			loaderDic[l]=callbacks;
 			l.loadBytes(byteArray, lc);
 			completeParamsDic[l]=params;

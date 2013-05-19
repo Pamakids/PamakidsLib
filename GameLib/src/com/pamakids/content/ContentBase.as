@@ -1,15 +1,61 @@
 package com.pamakids.content
 {
 	import flash.display.Sprite;
+	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
 	import flash.events.DataEvent;
+	import flash.events.Event;
+	import flash.events.KeyboardEvent;
+	import flash.ui.Keyboard;
 
 	public class ContentBase extends Sprite implements IContent
 	{
 		private var _width:Number;
 		private var _height:Number;
 
+		protected var isDebugMode:Boolean;
+
 		public function ContentBase()
 		{
+			if (stage)
+			{
+				stage.scaleMode=StageScaleMode.NO_SCALE;
+				stage.align=StageAlign.TOP_LEFT;
+				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+				isDebugMode=true;
+				init();
+			}
+			else
+			{
+				addEventListener(Event.ADDED_TO_STAGE, onStage);
+			}
+		}
+
+		public function get pause():Boolean
+		{
+			return _pause;
+		}
+
+		public function set pause(value:Boolean):void
+		{
+			_pause=value;
+		}
+
+		protected function onStage(event:Event):void
+		{
+			removeEventListener(Event.ADDED_TO_STAGE, onStage);
+			init();
+		}
+
+		protected function keyDownHandler(event:KeyboardEvent):void
+		{
+			if (event.keyCode == Keyboard.ENTER)
+			{
+				if (disposed)
+					init();
+				else
+					dispose();
+			}
 		}
 
 		/**
@@ -32,15 +78,18 @@ package com.pamakids.content
 		 */
 		protected function say(data:String):void
 		{
+			trace('Say:', data);
 			dispatchEvent(new DataEvent(DataEvent.DATA, false, false, data));
 		}
+
+		private var disposed:Boolean;
 
 		/**
 		 * 释放内容
 		 */
 		public function dispose():void
 		{
-
+			disposed=true;
 		}
 
 		private var _state:String;
@@ -66,6 +115,13 @@ package com.pamakids.content
 			this.width=width;
 			this.height=height;
 		}
+
+		protected function init():void
+		{
+			disposed=false;
+		}
+
+		private var _pause:Boolean;
 
 		override public function set width(value:Number):void
 		{
