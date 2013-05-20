@@ -10,22 +10,25 @@ package com.pamakids.manager
 		public static var parent:Sprite;
 		public static var maskSprite:Sprite;
 
-		public static function popup(view:DisplayObject, showMask:Boolean=true, fadeIn:Boolean=true, center:Boolean=true):void
+		public static function showMask(fadeIn:Boolean=true):void
 		{
-			if (showMask && !maskSprite)
+			maskSprite=new Sprite();
+			maskSprite.graphics.beginFill(0, 0.5);
+			maskSprite.graphics.drawRect(0, 0, parent.width, parent.height);
+			maskSprite.graphics.endFill();
+			var num:int=parent.numChildren ? parent.numChildren - 1 : 0;
+			parent.addChildAt(maskSprite, num);
+			if (fadeIn)
 			{
-				maskSprite=new Sprite();
-				maskSprite.graphics.beginFill(0, 0.5);
-				maskSprite.graphics.drawRect(0, 0, parent.width, parent.height);
-				maskSprite.graphics.endFill();
-				var num:int=parent.numChildren ? parent.numChildren - 1 : 0;
-				parent.addChildAt(maskSprite, num);
-				if (fadeIn)
-				{
-					maskSprite.alpha=0;
-					TweenLite.to(maskSprite, 0.5, {alpha: 1});
-				}
+				maskSprite.alpha=0;
+				TweenLite.to(maskSprite, 0.5, {alpha: 1});
 			}
+		}
+
+		public static function popup(view:DisplayObject, isShowMask:Boolean=true, fadeIn:Boolean=true, center:Boolean=true):void
+		{
+			if (isShowMask && !maskSprite)
+				showMask(isShowMask);
 			if (center)
 			{
 				view.x=parent.width / 2 - view.width / 2;
@@ -34,13 +37,18 @@ package com.pamakids.manager
 			parent.addChild(view);
 		}
 
-		public static function removePopup(view:DisplayObject):void
+		public static function clearMask():void
 		{
 			if (maskSprite)
 			{
 				parent.removeChild(maskSprite);
 				maskSprite=null;
 			}
+		}
+
+		public static function removePopup(view:DisplayObject):void
+		{
+			clearMask();
 			parent.removeChild(view);
 		}
 

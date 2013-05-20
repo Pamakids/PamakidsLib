@@ -7,6 +7,7 @@ package com.pamakids.components.containers
 	import com.pamakids.components.controls.ScrollBar;
 	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.layouts.ILayout;
+	import com.pamakids.layouts.base.LayoutBase;
 	import com.pamakids.utils.DPIUtil;
 
 	import flash.display.DisplayObject;
@@ -52,13 +53,22 @@ package com.pamakids.components.containers
 		private var contentPostion:Number=0;
 		private var friction:Number=0;
 
+		public var direction:String=LayoutBase.VERTICAL;
+
 		protected function mouseMoveHandler(event:MouseEvent):void
 		{
-			var moveDistance:Number=(downPoint.y - event.stageY) / DPIUtil.getDPIScale();
-			friction=moveDistance / height;
-			container.y=contentPostion - moveDistance * (1 - friction);
-			scrollBar.scrollTo(-container.y);
+			var dis:Number=direction == LayoutBase.VERTICAL ? downPoint.y - event.stageY : downPoint.x - event.stageX;
+			var moveDistance:Number=dis / DPIUtil.getDPIScale();
+			friction=Math.abs(moveDistance / height);
+			var toValue:Number=contentPostion - moveDistance * (1 - friction);
+			container.y=toValue;
+			scrollBar.scrollTo(-toValue);
 		}
+
+		/**
+		 * 自动缓动值
+		 */
+		private const TWEEN_VALUE:Number=58;
 
 		protected function mouseUpHandler(event:MouseEvent):void
 		{

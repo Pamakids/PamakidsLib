@@ -205,6 +205,8 @@ package com.pamakids.components.controls
 			}
 			else if (child == textField)
 			{
+				if (!height)
+					height=textField.height;
 				centerDisplayObject(textField);
 			}
 		}

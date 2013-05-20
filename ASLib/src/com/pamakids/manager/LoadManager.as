@@ -69,6 +69,11 @@ package com.pamakids.manager
 			load(url, onComplete, savePath, null, null, false, URLLoaderDataFormat.TEXT);
 		}
 
+		public function loadSWF(url:String, onComplete:Function, savePath:String=''):void
+		{
+			load(url, onComplete, savePath, null, null, false, SWF);
+		}
+
 		/**
 		 *  *
 		 * load（）：分为五部分

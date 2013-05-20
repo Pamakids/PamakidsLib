@@ -74,7 +74,7 @@ package com.pamakids.layouts.base
 		{
 			_gap=value;
 			if (container)
-				update();
+				delayUpdate();
 		}
 
 		protected function onRemove(event:Event):void
@@ -113,7 +113,7 @@ package com.pamakids.layouts.base
 			}
 			items.push(displayObject);
 			if (displayObject.width && displayObject.height)
-				update();
+				delayUpdate();
 			else
 				displayObject.addEventListener(Event.COMPLETE, itemCompleHandler);
 		}
@@ -121,7 +121,7 @@ package com.pamakids.layouts.base
 		protected function itemCompleHandler(event:Event):void
 		{
 			trace('itemCompleted');
-			update();
+			delayUpdate();
 		}
 
 		public function dispose():void
@@ -141,7 +141,7 @@ package com.pamakids.layouts.base
 				d.width=itemWidth;
 				d.height=itemHeight;
 			}
-			update();
+			delayUpdate();
 		}
 
 		public function removeItem(displayObject:DisplayObject):void
@@ -150,7 +150,14 @@ package com.pamakids.layouts.base
 				displayObject.removeEventListener(Event.COMPLETE, itemCompleHandler);
 			container.removeChild(displayObject);
 			items.splice(items.indexOf(displayObject), 1);
-			update();
+			delayUpdate();
+		}
+
+		private function delayUpdate():void
+		{
+//			update();
+			TweenLite.killDelayedCallsTo(update);
+			TweenLite.delayedCall(0.1, update);
 		}
 
 		public function update():void

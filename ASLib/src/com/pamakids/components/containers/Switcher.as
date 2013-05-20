@@ -186,7 +186,7 @@ package com.pamakids.components.containers
 		}
 
 		private var _currentPage:int;
-		private var pagesBar:ButtonBar;
+		public var pagesBar:ButtonBar;
 
 		protected function onMouseMove(event:MouseEvent):void
 		{
