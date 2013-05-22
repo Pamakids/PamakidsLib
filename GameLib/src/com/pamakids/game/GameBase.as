@@ -10,7 +10,6 @@ package com.pamakids.game
 	{
 		private var _data:Object;
 		private var _life:int;
-		private var _paused:Boolean;
 		private var _totalLife:int;
 		private var _totalTime:Number;
 
@@ -35,16 +34,6 @@ package com.pamakids.game
 		public function set life(value:int):void
 		{
 			_life=value;
-		}
-
-		public function get paused():Boolean
-		{
-			return _paused;
-		}
-
-		public function set paused(value:Boolean):void
-		{
-			_paused=value;
 		}
 
 		/**

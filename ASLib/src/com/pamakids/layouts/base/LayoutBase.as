@@ -116,6 +116,7 @@ package com.pamakids.layouts.base
 				delayUpdate();
 			else
 				displayObject.addEventListener(Event.COMPLETE, itemCompleHandler);
+			displayObject.visible=false;
 		}
 
 		protected function itemCompleHandler(event:Event):void
@@ -209,6 +210,7 @@ package com.pamakids.layouts.base
 				target.x=x;
 				target.y=y;
 			}
+			target.visible=true;
 		}
 
 		private var _width:Number;

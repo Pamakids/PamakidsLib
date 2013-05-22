@@ -45,7 +45,7 @@ package com.pamakids.helper
 		protected function mouseDownHandler(event:MouseEvent):void
 		{
 			downPoint=new Point(event.stageX, event.stageY);
-			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+			stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, false, 0, true);
 		}
 
 		protected function mouseUpHandler(event:MouseEvent):void
@@ -53,7 +53,8 @@ package com.pamakids.helper
 			var p:Point=new Point(event.stageX, event.stageY);
 			if (Point.distance(downPoint, p) < 38)
 				callback();
-			stage.removeEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+			if (stage)
+				stage.removeEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
 		}
 	}
 }

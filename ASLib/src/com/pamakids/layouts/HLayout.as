@@ -18,11 +18,15 @@ package com.pamakids.layouts
 		override public function update():void
 		{
 			var x:Number=0;
+			var tox:Number;
+			var toy:Number;
 			for each (var d:DisplayObject in items)
 			{
-				d.x=x + paddingLeft;
+				toy=d.y;
+				tox=x + paddingLeft;
 				if (verticalCenter && !autoFill)
-					d.y=(height - d.height) / 2;
+					toy=(height - d.height) / 2;
+				positionItem(d, tox, toy);
 				x=x + d.width + gap;
 			}
 			if (autoFill)

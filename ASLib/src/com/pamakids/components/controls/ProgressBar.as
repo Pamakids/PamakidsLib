@@ -30,7 +30,7 @@ package com.pamakids.components.controls
 			TweenLite.to(progressMask, 0.3, {width: width * value});
 			if (archor)
 			{
-				var tox:Number=progressMask.width - archor.width / 2;
+				var tox:Number=width * value - archor.width / 2;
 				value == 1 ? tox : TweenLite.to(archor, 0.3, {x: tox});
 			}
 		}

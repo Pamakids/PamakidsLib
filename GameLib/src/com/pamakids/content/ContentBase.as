@@ -56,6 +56,10 @@ package com.pamakids.content
 				else
 					dispose();
 			}
+			else if (event.keyCode == Keyboard.P)
+			{
+				pause=!pause;
+			}
 		}
 
 		/**
