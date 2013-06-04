@@ -1,5 +1,7 @@
 package com.pamakids.content
 {
+	import flash.display.Bitmap;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
@@ -28,6 +30,18 @@ package com.pamakids.content
 			else
 			{
 				addEventListener(Event.ADDED_TO_STAGE, onStage);
+			}
+		}
+
+		protected function clearChildren():void
+		{
+			while (numChildren)
+			{
+				var o:Object=removeChildAt(0);
+				if (o is MovieClip)
+					(o as MovieClip).stop();
+				else if (o is Bitmap)
+					(o as Bitmap).bitmapData.dispose();
 			}
 		}
 
@@ -83,10 +97,10 @@ package com.pamakids.content
 		protected function say(data:String):void
 		{
 			trace('Say:', data);
-			dispatchEvent(new DataEvent(DataEvent.DATA, false, false, data));
+			dispatchEvent(new DataEvent(DataEvent.DATA, true, false, data));
 		}
 
-		private var disposed:Boolean;
+		protected var disposed:Boolean;
 
 		/**
 		 * 释放内容

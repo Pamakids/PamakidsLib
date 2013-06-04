@@ -4,6 +4,7 @@ package com.pamakids.components.controls
 
 	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 
 	public class Button extends Skin
 	{
@@ -45,12 +46,15 @@ package com.pamakids.components.controls
 				event.stopImmediatePropagation();
 		}
 
+		private var downPoint:Point;
+
 		protected function onMouseDown(event:MouseEvent):void
 		{
 			if (enable)
 			{
 				if (downState)
 					upState.visible=false;
+				downPoint=new Point(event.stageX, event.stageY);
 				stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			}
 			else
@@ -59,8 +63,17 @@ package com.pamakids.components.controls
 			}
 		}
 
+		/**
+		 * 按下后移动超出38像素
+		 */
+		protected var downAndMoved:Boolean;
+
 		protected function onMouseUp(event:MouseEvent):void
 		{
+			var p:Point=new Point(event.stageX, event.stageY);
+			var distance:Number=Point.distance(downPoint, p);
+			if (distance > 38)
+				downAndMoved=true;
 			upState.visible=true;
 			stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 		}
@@ -68,7 +81,6 @@ package com.pamakids.components.controls
 		override protected function dispose():void
 		{
 			super.dispose();
-			removeEventListener(MouseEvent.CLICK, onClick);
 			removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 		}
 

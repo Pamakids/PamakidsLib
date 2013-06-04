@@ -22,6 +22,8 @@ package com.pamakids.particle
 			easeFunction=bezierVo.easeFunction
 
 			var list:Array=bezierVo.bezierPoints
+				if(!list)
+					return;
 			var i:int, l:int=list.length / 2
 			while (i < l)
 			{
@@ -88,6 +90,8 @@ package com.pamakids.particle
 
 		private function playTween():void
 		{
+			if(!mBitmapData)
+				return;
 			var r:Number, d:Number
 			var sprite:BitmapSprite
 

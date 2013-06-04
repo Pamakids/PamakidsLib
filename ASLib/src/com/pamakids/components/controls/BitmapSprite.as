@@ -82,10 +82,10 @@ package com.pamakids.components.controls
 				removeChildAt(0)
 			}
 			m_bitmap.bitmapData.dispose()
-			m_bitmap.bitmapData=null
-			m_bitmap=null
 			this.alpha=this.scaleX=this.scaleY=1
 			this.x=this.y=0
+			rotation=0;
+			this.visible=true;
 
 			cachedList[cachedLength++]=this
 		}

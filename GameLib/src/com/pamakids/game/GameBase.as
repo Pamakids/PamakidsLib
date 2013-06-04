@@ -69,6 +69,7 @@ package com.pamakids.game
 		public function set totalLife(value:int):void
 		{
 			_totalLife=value;
+			_life=value;
 		}
 
 		public function get totalTime():Number

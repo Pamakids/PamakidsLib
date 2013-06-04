@@ -61,7 +61,6 @@ package com.pamakids.components.controls
 
 		protected function onClick(event:MouseEvent):void
 		{
-			dispatchEvent(new IndexEvent(buttons.indexOf(event.currentTarget), event.currentTarget));
 			if (selectable && onlySelectedOne)
 			{
 				for each (var pb:ToggleButton in buttons)
@@ -70,6 +69,7 @@ package com.pamakids.components.controls
 						pb.selected=false;
 				}
 			}
+			dispatchEvent(new IndexEvent(buttons.indexOf(event.currentTarget), event.currentTarget));
 		}
 
 		override protected function dispose():void

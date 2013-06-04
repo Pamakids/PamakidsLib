@@ -2,6 +2,7 @@ package com.pamakids.components.base
 {
 	import com.pamakids.filters.ColorFilter;
 	import com.pamakids.manager.AssetsManager;
+	import com.pamakids.utils.DPIUtil;
 
 	import flash.display.Bitmap;
 	import flash.utils.Dictionary;
@@ -16,11 +17,17 @@ package com.pamakids.components.base
 		private var am:AssetsManager;
 		public var styleName:String;
 
+		/**
+		 * 不同DPI的缩放比
+		 */
+		protected var dpiScale:Number;
+
 		public function Skin(styleName:String, width:Number=0, height:Number=0, enableBackground:Boolean=false, enableMask:Boolean=false)
 		{
 			this.styleName=styleName;
 			am=AssetsManager.instance;
 			super(width, height, enableBackground, enableMask);
+			dpiScale=DPIUtil.getDPIScale();
 		}
 
 		protected function getBitmap(name:String):Bitmap

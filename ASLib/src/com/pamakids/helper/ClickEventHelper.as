@@ -50,11 +50,11 @@ package com.pamakids.helper
 
 		protected function mouseUpHandler(event:MouseEvent):void
 		{
+			if (stage)
+				stage.removeEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
 			var p:Point=new Point(event.stageX, event.stageY);
 			if (Point.distance(downPoint, p) < 38)
 				callback();
-			if (stage)
-				stage.removeEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
 		}
 	}
 }

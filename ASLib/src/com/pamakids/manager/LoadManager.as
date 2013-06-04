@@ -104,7 +104,7 @@ package com.pamakids.manager
 			var b:ByteArray;
 
 			//如果有存储路径，先去本地缓存找是否有
-			if (savePath) //一个return会一直load下去,两个return条件会更严密?
+			if (savePath)
 			{
 				var cachedData:Object=formate == BITMAP ? FileManager.readFileByteArray(savePath) : FileManager.readFile(savePath);
 				if (cachedData is ByteArray)

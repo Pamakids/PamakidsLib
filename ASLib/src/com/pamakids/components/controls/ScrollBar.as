@@ -59,34 +59,34 @@ package com.pamakids.components.controls
 			barHeight=bh;
 		}
 
-		private var storeBarHeight:Number=0;
+		private var recordedBarHeight:Number=0;
 		private var restoring:Boolean;
 		private var extra:Number;
 		private var scaleRect:Rectangle;
 
 		public function scrollTo(position:Number):void
 		{
-			if (!storeBarHeight)
-				storeBarHeight=barHeight;
+			if (!recordedBarHeight)
+				recordedBarHeight=barHeight;
 			var to:Number=barHeight;
 			if (position < 0)
 			{
-				to=storeBarHeight + position;
+				to=recordedBarHeight + position;
 				to=to < MIN_BAR_HEIGHT ? MIN_BAR_HEIGHT : to;
 				position=0;
 			}
 			else if (position > 0)
 			{
-				extra=position * percent + storeBarHeight - height;
+				extra=position * percent + recordedBarHeight - height;
 				if (extra > 0)
 				{
-					to=storeBarHeight - extra;
+					to=recordedBarHeight - extra;
 					to=to < MIN_BAR_HEIGHT ? MIN_BAR_HEIGHT : to;
 					position=height - to;
 				}
 				else
 				{
-					to=storeBarHeight;
+					to=recordedBarHeight;
 					position=position * percent;
 				}
 			}
@@ -94,6 +94,8 @@ package com.pamakids.components.controls
 			bar.y=position;
 			if (alpha == 0)
 				alpha=1;
+			TweenLite.killDelayedCallsTo(hideBar);
+			TweenLite.delayedCall(0.5, hideBar);
 		}
 
 		private function hideBar():void
@@ -103,12 +105,12 @@ package com.pamakids.components.controls
 
 		public function restore():void
 		{
-			if (!storeBarHeight)
+			if (!recordedBarHeight)
 				return;
-			TweenLite.to(this, 0.5, {barHeight: storeBarHeight, ease: Cubic.easeOut, onComplete: hideBar});
+			TweenLite.to(this, 0.5, {barHeight: recordedBarHeight, ease: Cubic.easeOut, onComplete: hideBar});
 			if (bar.y && extra > 0)
-				TweenLite.to(bar, 0.5, {y: height - storeBarHeight, ease: Cubic.easeOut, onComplete: hideBar});
-			storeBarHeight=0;
+				TweenLite.to(bar, 0.5, {y: height - recordedBarHeight, ease: Cubic.easeOut, onComplete: hideBar});
+			recordedBarHeight=0;
 		}
 
 		override protected function resize():void
@@ -120,16 +122,12 @@ package com.pamakids.components.controls
 
 		override protected function updateSkin():void
 		{
+			super.updateSkin();
 			barBitmapData=getBitmap(styleName).bitmapData;
 			if (!width)
 				width=barBitmapData.width;
 			if (!height)
 				height=barBitmapData.height;
-			if (bar)
-			{
-				bar.bitmapData.dispose();
-				removeChild(bar);
-			}
 			bar=new ScaleBitmap(barBitmapData, 'auto', true);
 			bar.scale9Grid=new Rectangle(5, 5, 5, 5);
 			addChild(bar);

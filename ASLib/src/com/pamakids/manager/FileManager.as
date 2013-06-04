@@ -3,6 +3,7 @@ package com.pamakids.manager
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	import flash.system.Capabilities;
 	import flash.utils.ByteArray;
 
 	public class FileManager
@@ -10,6 +11,9 @@ package com.pamakids.manager
 
 		public static function readFile(path:String, fromAppDirectory:Boolean=false, readString:Boolean=false):Object
 		{
+			if (Capabilities.playerType != 'Desktop')
+				return null;
+
 			var o:Object;
 
 			try
@@ -32,6 +36,9 @@ package com.pamakids.manager
 
 		public static function readFileByteArray(path:String):ByteArray
 		{
+			if (Capabilities.playerType != 'Desktop')
+				return null;
+
 			var o:ByteArray;
 
 			try
@@ -60,6 +67,8 @@ package com.pamakids.manager
 		 */
 		public static function saveFile(path:String, fileObject:Object):File
 		{
+			if (Capabilities.playerType != 'Desktop')
+				return null;
 			createDirectory(path);
 			var fs:FileStream=new FileStream();
 			var file:File=File.applicationStorageDirectory.resolvePath(path);
@@ -83,6 +92,8 @@ package com.pamakids.manager
 
 		private static function createDirectory(path:String):void
 		{
+			if (Capabilities.playerType != 'Desktop')
+				return;
 			var directory:String=path.match(new RegExp('.*(?=/)'))[0]; //a
 			var file:File=File.applicationStorageDirectory.resolvePath(directory);
 			if (!file.exists)
@@ -94,6 +105,8 @@ package com.pamakids.manager
 
 		public static function copyTo(source:File, toPath:String, overrite:Boolean=true):void
 		{
+			if (Capabilities.playerType != 'Desktop')
+				return;
 			var toFile:File=new File(toPath);
 			if (source.nativePath != toFile.nativePath)
 			{
@@ -110,6 +123,8 @@ package com.pamakids.manager
 
 		public static function deleteFile(path:String):void
 		{
+			if (Capabilities.playerType != 'Desktop')
+				return;
 			var f:File=new File(path);
 			try
 			{

@@ -8,7 +8,6 @@ package com.pamakids.components.containers
 	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.layouts.HLayout;
 	import com.pamakids.layouts.ILayout;
-	import com.pamakids.utils.DPIUtil;
 	import com.pamakids.vo.ButtonVO;
 
 	import flash.display.Bitmap;
@@ -19,7 +18,6 @@ package com.pamakids.components.containers
 	public class Switcher extends Skin
 	{
 		private var container:Container;
-		private var dpiScale:Number;
 
 		public function Switcher(width:Number=0, height:Number=0, styleName:String='switcher')
 		{
@@ -27,7 +25,6 @@ package com.pamakids.components.containers
 			container.forceAutoFill=true;
 			addChild(container);
 			backgroudAlpha=0;
-			dpiScale=DPIUtil.getDPIScale();
 			super(styleName, width, height, true);
 		}
 
@@ -132,9 +129,9 @@ package com.pamakids.components.containers
 
 		protected function onMouseDown(event:MouseEvent):void
 		{
-			if (moving || !dataProvider || dataProvider.length == 1)
+			if (!dataProvider || dataProvider.length == 1)
 				return;
-			moving=true;
+//			moving=true;
 			downValue=isHorizontal ? event.stageX : event.stageY;
 			recordValue=isHorizontal ? container.x : container.y;
 
@@ -152,7 +149,7 @@ package com.pamakids.components.containers
 			}
 		}
 
-		private var moving:Boolean;
+//		private var moving:Boolean;
 
 		protected function onMouseUp(event:MouseEvent):void
 		{
@@ -175,14 +172,22 @@ package com.pamakids.components.containers
 				{
 					currentPage=next ? currentPage - 1 : currentPage + 1;
 					toValue=-currentPage * width;
-					TweenLite.to(container, 0.8, {x: toValue, ease: Cubic.easeOut, onComplete: movingComplete});
+					TweenLite.to(container, 0.3, {x: toValue, ease: Cubic.easeOut, onUpdate: updateMove, onComplete: movingComplete});
 				}
 			}
 		}
 
+		private function updateMove():void
+		{
+			if (isHorizontal)
+				recordValue=container.x;
+			else
+				recordValue=container.y;
+		}
+
 		private function movingComplete():void
 		{
-			moving=false;
+//			moving=false;
 		}
 
 		private var _currentPage:int;
