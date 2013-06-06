@@ -46,6 +46,12 @@ package com.pamakids.manager
 			}
 		}
 
+		public static function clear():void
+		{
+			while (parent.numChildren)
+				parent.removeChildAt(0);
+		}
+
 		public static function removePopup(view:DisplayObject):void
 		{
 			clearMask();

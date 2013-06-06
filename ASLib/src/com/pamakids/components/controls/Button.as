@@ -34,7 +34,10 @@ package com.pamakids.components.controls
 			}
 			downState=getBitmap(styleName + 'Down');
 			if (downState)
+			{
+				downState.visible=false;
 				addChild(downState);
+			}
 			addEventListener(MouseEvent.CLICK, onClick);
 			addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 			addChild(upState);
@@ -53,7 +56,10 @@ package com.pamakids.components.controls
 			if (enable)
 			{
 				if (downState)
+				{
 					upState.visible=false;
+					downState.visible=true;
+				}
 				downPoint=new Point(event.stageX, event.stageY);
 				stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			}
@@ -75,6 +81,8 @@ package com.pamakids.components.controls
 			if (distance > 38)
 				downAndMoved=true;
 			upState.visible=true;
+			if (downState)
+				downState.visible=false;
 			stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 		}
 

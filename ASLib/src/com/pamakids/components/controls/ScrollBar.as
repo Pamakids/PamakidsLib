@@ -129,7 +129,9 @@ package com.pamakids.components.controls
 			if (!height)
 				height=barBitmapData.height;
 			bar=new ScaleBitmap(barBitmapData, 'auto', true);
-			bar.scale9Grid=new Rectangle(5, 5, 5, 5);
+			var btw:Number=barBitmapData.width;
+			var bth:Number=barBitmapData.height;
+			bar.scale9Grid=new Rectangle(btw / 2 - 1, bth / 2 - 1, 1, 1);
 			addChild(bar);
 		}
 

@@ -27,6 +27,8 @@ package com.pamakids.components.controls
 		public function set progress(value:Number):void
 		{
 			_progress=value;
+			if (!progressMask)
+				return;
 			TweenLite.to(progressMask, 0.3, {width: width * value});
 			if (archor)
 			{

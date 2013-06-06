@@ -53,11 +53,12 @@ package com.pamakids.components.controls
 			if (selectedState) //条件
 				selectedState.visible=value;
 			upState.visible=!value;
+			if (downState)
+				downState.visible=value;
 		}
 
 		override protected function onMouseDown(event:MouseEvent):void
 		{
-
 			super.onMouseDown(event);
 
 			if (!required)
@@ -70,6 +71,8 @@ package com.pamakids.components.controls
 		{
 			super.onMouseUp(event);
 			upState.visible=!selected;
+			if (downState)
+				downState.visible=selected;
 		}
 	}
 }

@@ -3,13 +3,13 @@ package com.pamakids.vo
 
 	public class ButtonVO
 	{
-		public function ButtonVO(name:String, selected:String='', required:Boolean=false, centerFill:Boolean=false, sl:Boolean=true)
+		public function ButtonVO(name:String, selected:String='', required:Boolean=false, centerFill:Boolean=false, selectable:Boolean=true)
 		{
 			this.name=name;
 			this.selected=selected;
 			this.required=required;
 			this.centerFill=centerFill;
-			this.selectable=sl;
+			this.selectable=selectable;
 		}
 
 		/**
