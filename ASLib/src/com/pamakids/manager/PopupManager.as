@@ -25,7 +25,7 @@ package com.pamakids.manager
 			}
 		}
 
-		public static function popup(view:DisplayObject, isShowMask:Boolean=true, fadeIn:Boolean=true, center:Boolean=true):void
+		public static function popup(view:DisplayObject, isShowMask:Boolean=true, center:Boolean=true):void
 		{
 			if (isShowMask && !maskSprite)
 				showMask(isShowMask);
@@ -50,6 +50,7 @@ package com.pamakids.manager
 		{
 			while (parent.numChildren)
 				parent.removeChildAt(0);
+			maskSprite=null;
 		}
 
 		public static function removePopup(view:DisplayObject):void

@@ -2,6 +2,7 @@ package com.pamakids.layouts.base
 {
 	import com.greensock.TweenLite;
 	import com.pamakids.components.base.Container;
+	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.layouts.ILayout;
 
 	import flash.display.DisplayObject;
@@ -113,10 +114,20 @@ package com.pamakids.layouts.base
 			}
 			items.push(displayObject);
 			if (displayObject.width && displayObject.height)
+			{
 				delayUpdate();
+			}
 			else
+			{
 				displayObject.addEventListener(Event.COMPLETE, itemCompleHandler);
+				displayObject.addEventListener(ResizeEvent.RESIZE, itemResizedHandler);
+			}
 			displayObject.visible=false;
+		}
+
+		protected function itemResizedHandler(event:Event):void
+		{
+			delayUpdate();
 		}
 
 		protected function itemCompleHandler(event:Event):void
@@ -129,6 +140,13 @@ package com.pamakids.layouts.base
 		{
 			container.removeEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 			container=null;
+			for each (var displayObject:DisplayObject in items)
+			{
+				if (displayObject.hasEventListener(Event.COMPLETE))
+					displayObject.removeEventListener(Event.COMPLETE, itemCompleHandler);
+				if (displayObject.hasEventListener(ResizeEvent.RESIZE))
+					displayObject.removeEventListener(ResizeEvent.RESIZE, itemResizedHandler);
+			}
 			items.length=0;
 		}
 
@@ -149,6 +167,8 @@ package com.pamakids.layouts.base
 		{
 			if (displayObject.hasEventListener(Event.COMPLETE))
 				displayObject.removeEventListener(Event.COMPLETE, itemCompleHandler);
+			if (displayObject.hasEventListener(ResizeEvent.RESIZE))
+				displayObject.removeEventListener(ResizeEvent.RESIZE, itemResizedHandler);
 			container.removeChild(displayObject);
 			items.splice(items.indexOf(displayObject), 1);
 			delayUpdate();

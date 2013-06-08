@@ -38,6 +38,17 @@ package com.pamakids.layouts
 				}
 				container.setSize(contentWidth, contentHeight);
 			}
+			else if (horizontalCenter && d)
+			{
+				var cw:Number;
+				cw=d.x + d.width;
+				var sx:Number=width / 2 - cw / 2;
+				for each (d in items)
+				{
+					d.x=sx;
+					sx=sx + d.width + gap;
+				}
+			}
 		}
 	}
 }
