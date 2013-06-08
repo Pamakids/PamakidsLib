@@ -33,7 +33,7 @@ package com.pamakids.components.controls
 			if (archor)
 			{
 				var tox:Number=width * value - archor.width / 2;
-				value == 1 ? tox : TweenLite.to(archor, 0.3, {x: tox});
+				value == 1 ? archor.x=tox : TweenLite.to(archor, 0.3, {x: tox});
 			}
 		}
 

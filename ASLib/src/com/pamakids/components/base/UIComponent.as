@@ -20,6 +20,17 @@ package com.pamakids.components.base
 			addEventListener(Event.ADDED_TO_STAGE, onStage);
 		}
 
+		public function get enabled():Boolean
+		{
+			return _enabled;
+		}
+
+		public function set enabled(value:Boolean):void
+		{
+			_enabled=value;
+			mouseChildren=mouseEnabled=value;
+		}
+
 		protected function onStage(event:Event):void
 		{
 			if (autoDispose)
@@ -166,5 +177,7 @@ package com.pamakids.components.base
 		{
 			return _width;
 		}
+
+		private var _enabled:Boolean;
 	}
 }
