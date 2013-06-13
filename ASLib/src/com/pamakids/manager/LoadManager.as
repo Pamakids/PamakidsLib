@@ -74,6 +74,11 @@ package com.pamakids.manager
 			load(url, onComplete, savePath, null, null, false, SWF);
 		}
 
+		public function loadImage(url:String, onComplete:Function, savePath:String=''):void
+		{
+			load(url, onComplete, savePath, null, null, false, BITMAP);
+		}
+
 		/**
 		 *  *
 		 * load（）：分为五部分

@@ -105,6 +105,7 @@ package com.pamakids.vo
 		{
 			if (!ba || !ba.length)
 				return;
+			ba.position=0;
 			var o:Object=ba.readObject() as Object
 
 			startX=o.startX
