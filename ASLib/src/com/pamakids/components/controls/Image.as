@@ -20,10 +20,10 @@ package com.pamakids.components.controls
 	public class Image extends Container
 	{
 
-		public function Image(width:Number=0, height:Number=0, scaleMode:String=BitmapDataUtil.RESIZE_LETTERBOX)
+		public function Image(width:Number=0, height:Number=0, scaleMode:String=BitmapDataUtil.RESIZE_LETTERBOX, enableBakcgournd:Boolean=false)
 		{
 			this.scaleMode=scaleMode;
-			super(width, height);
+			super(width, height, enableBakcgournd);
 		}
 
 		private var _source:Object;

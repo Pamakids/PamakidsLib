@@ -39,9 +39,15 @@ package com.pamakids.content
 			{
 				var o:Object=removeChildAt(0);
 				if (o is MovieClip)
+				{
 					(o as MovieClip).stop();
+				}
 				else if (o is Bitmap)
-					(o as Bitmap).bitmapData.dispose();
+				{
+					var b:Bitmap=o as Bitmap;
+					if (b.bitmapData)
+						b.bitmapData.dispose();
+				}
 			}
 		}
 

@@ -19,6 +19,7 @@ package com.pamakids.components.controls
 			super(width, height);
 			if (!width && !height)
 				forceAutoFill=true;
+			cacheAsBitmap=true;
 		}
 
 		public function get embedFonts():Boolean
