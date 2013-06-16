@@ -106,6 +106,17 @@ package com.pamakids.content
 			dispatchEvent(new DataEvent(DataEvent.DATA, true, false, data));
 		}
 
+		/**
+		 * 记录交互点名称和百分比
+		 * @param id 交互点ID
+		 * @param percent 如果是动画，则需要记录动画播放的完成度，为方便记录需要转换为0-100的整数
+		 *
+		 */
+		protected function record(id:String, percent:int=100):void
+		{
+			dispatchEvent(new InteractiveEvent(id, percent));
+		}
+
 		protected var disposed:Boolean;
 
 		/**

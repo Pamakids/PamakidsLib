@@ -109,6 +109,13 @@ package com.pamakids.components.controls
 				var num:String=prefix + rollNumbers.shift().toString();
 				tf1.y == height ? tf1.text=num : tf2.text=num;
 			}
+			else if (rollNumbers.length == 2)
+			{
+				var num1:String=prefix + rollNumbers.shift().toString();
+				var num2:String=prefix + rollNumbers.shift().toString();
+				tf1.text=tf1.y == height ? num2 : num1;
+				tf2.text=tf2.y == height ? num2 : num1;
+			}
 			else
 			{
 				tf1.text=prefix + rollNumbers.shift().toString();
