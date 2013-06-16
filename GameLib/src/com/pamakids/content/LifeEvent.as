@@ -28,5 +28,6 @@ package com.pamakids.content
 		public var life:uint;
 		public var fromX:Number;
 		public var fromY:Number;
+		public var callback:Function;
 	}
 }

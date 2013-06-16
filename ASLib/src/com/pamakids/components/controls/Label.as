@@ -75,7 +75,7 @@ package com.pamakids.components.controls
 				forceAutoFill=true;
 				if (textField)
 					removeChild(textField);
-				createTextField();
+				addChild(createTextField());
 				updateFormat();
 			}
 			_maxWidth=value;
@@ -216,14 +216,14 @@ package com.pamakids.components.controls
 		{
 			if (!textField)
 			{
-				createTextField();
+				addChild(createTextField());
 				adjust();
 			}
 		}
 
 		private var _embedFont:Boolean;
 
-		protected function createTextField():void
+		protected function createTextField():TextField
 		{
 			var tf:TextFormat=new TextFormat();
 			tf.size=fontSize;
@@ -240,7 +240,7 @@ package com.pamakids.components.controls
 			if (width)
 				textField.width=width;
 			textField.text=text;
-			addChild(textField);
+			return textField;
 		}
 	}
 }
