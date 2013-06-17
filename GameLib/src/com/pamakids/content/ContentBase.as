@@ -1,5 +1,7 @@
 package com.pamakids.content
 {
+	import com.greensock.TweenMax;
+
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -59,6 +61,14 @@ package com.pamakids.content
 		public function set pause(value:Boolean):void
 		{
 			_pause=value;
+			if (value)
+			{
+				TweenMax.pauseAll();
+			}
+			else
+			{
+				TweenMax.resumeAll();
+			}
 		}
 
 		protected function onStage(event:Event):void
