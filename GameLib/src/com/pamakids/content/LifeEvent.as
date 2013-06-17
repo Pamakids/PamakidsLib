@@ -22,6 +22,8 @@ package com.pamakids.content
 		public function LifeEvent(life:uint, fromX:Number, fromY:Number, type:String="GOT_LIFE")
 		{
 			this.life=life;
+			this.fromX=fromX;
+			this.fromY=fromY;
 			super(type);
 		}
 
