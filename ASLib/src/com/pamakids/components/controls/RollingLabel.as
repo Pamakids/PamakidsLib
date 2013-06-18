@@ -42,7 +42,7 @@ package com.pamakids.components.controls
 			moveTextFields();
 		}
 
-		public var prefix:String;
+		public var prefix:String="";
 
 		override protected function dispose():void
 		{
@@ -72,9 +72,12 @@ package com.pamakids.components.controls
 			var textValue:int=rollNumbers.length ? rollNumbers[rollNumbers.length - 1] : parseInt(text);
 			for (var i:int=1; i <= value; i++)
 			{
-				rollNumbers.push(textValue + value);
+				rollNumbers.push(textValue + i);
 			}
-			moveTextFields();
+			if (!isMoving)
+			{
+				moveTextFields();
+			}
 			text=(textValue + value).toString();
 		}
 
@@ -107,10 +110,22 @@ package com.pamakids.components.controls
 			}
 		}
 
+		public var endFunction:Function;
+		private var isMoving:Boolean;
+
 		private function moveTextFields():void
 		{
 			if (!rollNumbers.length)
+			{
+				acceleration=1;
+				isMoving=false;
+				if (endFunction)
+				{
+					endFunction();
+				}
 				return;
+			}
+			isMoving=true;
 			if (tf1.y < 0)
 				tf1.y=height;
 			if (tf2.y < 0)
