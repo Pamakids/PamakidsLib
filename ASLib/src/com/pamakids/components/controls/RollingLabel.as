@@ -67,6 +67,17 @@ package com.pamakids.components.controls
 			setSize(event.currentTarget.width, event.currentTarget.height);
 		}
 
+		public function add(value:int):void
+		{
+			var textValue:int=rollNumbers.length ? rollNumbers[rollNumbers.length - 1] : parseInt(text);
+			for (var i:int=1; i <= value; i++)
+			{
+				rollNumbers.push(textValue + value);
+			}
+			moveTextFields();
+			text=(textValue + value).toString();
+		}
+
 		private function initRollNumbers():void
 		{
 			rollNumbers=new Vector.<Number>();
@@ -145,7 +156,6 @@ package com.pamakids.components.controls
 				addChild(maskSprite);
 				mask=maskSprite;
 			}
-			trace(width);
 			maskSprite.graphics.beginFill(0);
 			maskSprite.graphics.drawRect(0, 0, width, height);
 			maskSprite.graphics.endFill();
