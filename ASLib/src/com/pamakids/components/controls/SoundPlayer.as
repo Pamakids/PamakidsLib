@@ -135,7 +135,8 @@ package com.pamakids.components.controls
 			{
 				playing=false;
 				soundTransform=soundChannel.soundTransform;
-				TweenLite.to(soundTransform, 0.8, {volume: 0, onComplete: pausedHandler, onUpdate: pausingHandler});
+//				TweenLite.to(soundTransform, 0.8, {volume: 0, onComplete: pausedHandler, onUpdate: pausingHandler});
+				pausedHandler();
 			}
 			if (internalTimer)
 				internalTimer.stop();

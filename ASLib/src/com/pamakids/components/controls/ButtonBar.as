@@ -33,6 +33,8 @@ package com.pamakids.components.controls
 				layout=new VLayout();
 		}
 
+		public var stopMouseDown:Boolean;
+
 		override protected function init():void
 		{
 			layout.gap=gap;
@@ -44,9 +46,16 @@ package com.pamakids.components.controls
 				buttons.push(pb);
 				if (clickable)
 					pb.addEventListener(MouseEvent.CLICK, onClick);
+				if (stopMouseDown)
+					pb.addEventListener(MouseEvent.MOUSE_DOWN, stopMouseDownHandler);
 				pb.autoCenter=true;
 				addChild(pb);
 			}
+		}
+
+		protected function stopMouseDownHandler(event:MouseEvent):void
+		{
+			event.stopImmediatePropagation();
 		}
 
 		private var selectedItem:ToggleButton;
@@ -77,6 +86,7 @@ package com.pamakids.components.controls
 			for each (var pb:ToggleButton in buttons)
 			{
 				pb.removeEventListener(MouseEvent.CLICK, onClick);
+				pb.removeEventListener(MouseEvent.MOUSE_DOWN, stopMouseDownHandler);
 			}
 			buttons.length=0;
 			buttons=null;

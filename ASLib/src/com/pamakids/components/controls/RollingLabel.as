@@ -67,6 +67,8 @@ package com.pamakids.components.controls
 			setSize(event.currentTarget.width, event.currentTarget.height);
 		}
 
+		private var hasAddedValue:Boolean;
+
 		public function add(value:int):void
 		{
 			var textValue:int=rollNumbers.length ? rollNumbers[rollNumbers.length - 1] : parseInt(text);
@@ -76,6 +78,7 @@ package com.pamakids.components.controls
 			}
 			if (!isMoving)
 			{
+				hasAddedValue=true;
 				moveTextFields();
 			}
 			text=(textValue + value).toString();
@@ -119,10 +122,8 @@ package com.pamakids.components.controls
 			{
 				acceleration=1;
 				isMoving=false;
-				if (endFunction)
-				{
+				if (endFunction && hasAddedValue)
 					endFunction();
-				}
 				return;
 			}
 			isMoving=true;
