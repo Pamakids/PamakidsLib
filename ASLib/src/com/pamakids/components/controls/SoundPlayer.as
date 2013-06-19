@@ -238,6 +238,7 @@ package com.pamakids.components.controls
 		 */
 		public function stop():void
 		{
+			paused = false;
 			if (!playing)
 				return;
 			try
