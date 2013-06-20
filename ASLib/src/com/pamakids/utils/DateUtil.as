@@ -37,5 +37,17 @@ package com.pamakids.utils
 
 			return result;
 		}
+
+		public static function getDateString(todayOffset:int=0, monthOffset:int=0):String
+		{
+			var dateString:String;
+
+			var date:Date=new Date();
+			date.date+=todayOffset;
+			date.month+=monthOffset;
+			dateString=date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+
+			return dateString;
+		}
 	}
 }

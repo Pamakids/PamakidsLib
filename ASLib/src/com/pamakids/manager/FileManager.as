@@ -9,7 +9,7 @@ package com.pamakids.manager
 	public class FileManager
 	{
 
-		public static function readFile(path:String, fromAppDirectory:Boolean=false, readString:Boolean=false):Object
+		public static function readFile(path:String, fromAppDirectory:Boolean=false, readString:Boolean=false, uncompress:Boolean=false):Object
 		{
 			if (Capabilities.playerType != 'Desktop')
 				return null;
@@ -24,7 +24,17 @@ package com.pamakids.manager
 					return o;
 				var fs:FileStream=new FileStream();
 				fs.open(f, FileMode.READ);
-				o=readString ? fs.readUTF() : fs.readObject();
+				if (!uncompress)
+				{
+					o=readString ? fs.readUTF() : fs.readObject();
+				}
+				else
+				{
+					var b:ByteArray=new ByteArray();
+					fs.readBytes(b);
+					b.uncompress();
+					o=b.readObject();
+				}
 				fs.close();
 			}
 			catch (error:Error)
@@ -65,7 +75,7 @@ package com.pamakids.manager
 		 * @param path 文件路径，必须是dir/subdir/filename.extendtion的格式，切忌不能以/开头
 		 * @param file 存储文件的数据
 		 */
-		public static function saveFile(path:String, fileObject:Object):File
+		public static function saveFile(path:String, fileObject:Object, compress:Boolean=false):File
 		{
 			if (Capabilities.playerType != 'Desktop')
 				return null;
@@ -75,6 +85,13 @@ package com.pamakids.manager
 			try
 			{
 				fs.open(file, FileMode.WRITE);
+				if (compress)
+				{
+					var b:ByteArray=new ByteArray();
+					b.writeObject(fileObject);
+					b.compress();
+					fileObject=b;
+				}
 				if (fileObject is ByteArray)
 					fs.writeBytes(fileObject as ByteArray)
 				else if (fileObject is String)

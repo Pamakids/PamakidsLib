@@ -30,6 +30,21 @@ package com.pamakids.manager
 
 		private static var _instance:LoadManager;
 
+		public function get errorHandler():Function
+		{
+			return _errorHandler;
+		}
+
+		private var errorHandlers:Array;
+
+		public function set errorHandler(value:Function):void
+		{
+			_errorHandler=value;
+			if (!errorHandlers)
+				errorHandlers=[];
+			errorHandlers.push(value);
+		}
+
 		public static function get instance():LoadManager
 		{
 			if (!_instance)
@@ -48,7 +63,7 @@ package com.pamakids.manager
 			bigDataFormates=[BITMAP, SWF];
 		}
 
-		public var errorHandler:Function;
+		private var _errorHandler:Function;
 
 		private var completeParamsDic:Dictionary; //加载完成后回调函数的参数字典
 
@@ -231,8 +246,14 @@ package com.pamakids.manager
 			delete loaderFormate[u];
 			delete savePathDic[u];
 			delete completeParamsDic[u];
-			if (errorHandler != null)
-				errorHandler();
+			if (errorHandlers)
+			{
+				for each (var f:Function in errorHandlers)
+				{
+					f();
+				}
+				errorHandlers=null;
+			}
 		}
 
 		private function onBinaryLoaded(event:Event):void
