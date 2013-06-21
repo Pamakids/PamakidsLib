@@ -32,11 +32,11 @@ package com.pamakids.components.controls
 		{
 			initRollNumbers();
 			tf1=createTextField();
-			tf1.addEventListener(ResizeEvent.RESIZE, resizeHandler);
+//			tf1.addEventListener(ResizeEvent.RESIZE, resizeHandler);
 			tf1.text=prefix + rollNumbers[0].toString();
 			addChild(tf1);
 			tf2=createTextField();
-			tf2.addEventListener(ResizeEvent.RESIZE, resizeHandler);
+//			tf2.addEventListener(ResizeEvent.RESIZE, resizeHandler);
 			addChild(tf2);
 			tf2.y=height;
 			moveTextFields();
@@ -57,6 +57,7 @@ package com.pamakids.components.controls
 
 		override protected function autoSetSize(child:DisplayObject):void
 		{
+			trace(child.width, width);
 			var changed:Boolean=child.width > width || child.height > height;
 			if (changed)
 				setSize(child.width > width ? child.width : width, child.height > height ? child.height : height);
@@ -148,6 +149,8 @@ package com.pamakids.components.controls
 				tf1.text=prefix + rollNumbers.shift().toString();
 				tf2.text=prefix + rollNumbers.shift().toString();
 			}
+			autoSetSize(tf1);
+			autoSetSize(tf2);
 			var duration:Number=!rollNumbers.length ? 1 : 0.55 - 0.5 * acceleration;
 			var ease:Function=!rollNumbers.length ? Elastic.easeOut : Cubic.easeOut;
 			TweenMax.allTo([tf1, tf2], duration, {y: "-" + height, ease: ease}, 0, moveTextFields);
@@ -175,6 +178,8 @@ package com.pamakids.components.controls
 			maskSprite.graphics.beginFill(0);
 			maskSprite.graphics.drawRect(0, 0, width, height);
 			maskSprite.graphics.endFill();
+			trace("w---------" + this.width)
+			trace("w---------" + this.width)
 		}
 	}
 }
