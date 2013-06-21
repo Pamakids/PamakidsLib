@@ -12,6 +12,7 @@ package com.pamakids.game
 		private var _life:int;
 		private var _totalLife:int;
 		private var _totalTime:Number;
+		public var hasPreLoad:Boolean;
 
 		/**
 		 * 游戏其它初始化数据值
@@ -46,8 +47,9 @@ package com.pamakids.game
 
 		/**
 		 * 游戏开始
+		 * @param force 如果为true,直接开始开始不显示preloader
 		 */
-		public function start():void
+		public function start(force:Boolean=false):void
 		{
 
 		}
