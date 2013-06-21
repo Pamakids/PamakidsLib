@@ -114,7 +114,7 @@ package com.pamakids.components.controls
 
 		private function adjust():void
 		{
-			if (textField && width > textField.width)
+			if (textField && (width > textField.width || autoCenter))
 				centerDisplayObject(textField);
 		}
 
