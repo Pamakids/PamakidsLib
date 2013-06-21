@@ -23,6 +23,11 @@ package com.pamakids.utils
 			return cachePath;
 		}
 
+		public static function getExtenion(s:String):String
+		{
+			return s ? s.substr(s.lastIndexOf('.')) : '';
+		}
+
 		public static function getUrlDir(url:String):String
 		{
 			if (!isHttp(url))
