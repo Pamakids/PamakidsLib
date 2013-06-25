@@ -37,6 +37,11 @@ package com.pamakids.manager
 			parent.addChild(view);
 		}
 
+		public static function get hasPopup():Boolean
+		{
+			return parent.numChildren != 0;
+		}
+
 		public static function clearMask():void
 		{
 			if (maskSprite)

@@ -14,12 +14,23 @@ package com.pamakids.components.base
 			super(width, height);
 		}
 
-		public var backgroudAlpha:Number=0;
+		private var _backgroudAlpha:Number=0;
 		public var backgroundColor:uint=0;
 		private var _enableBackground:Boolean;
 		private var _enableMask:Boolean;
 		private var _layout:ILayout;
 		private var maskSprite:Sprite;
+
+		public function get backgroudAlpha():Number
+		{
+			return _backgroudAlpha;
+		}
+
+		public function set backgroudAlpha(value:Number):void
+		{
+			_backgroudAlpha=value;
+			drawBackground();
+		}
 
 		override public function addChild(child:DisplayObject):DisplayObject
 		{

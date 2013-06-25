@@ -12,9 +12,11 @@ package com.pamakids.components.containers
 
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 
 	[Event(name="clickItem", type="com.pamakids.events.IndexEvent")]
+	[Event(name="moved", type="flash.events.Event")]
 	public class Switcher extends Skin
 	{
 		private var container:Container;
@@ -78,6 +80,11 @@ package com.pamakids.components.containers
 			updateSkin();
 		}
 
+		public function get currentItem():Object
+		{
+			return container.getChildAt(currentPage);
+		}
+
 		override protected function updateSkin():void
 		{
 			if (pagesBar)
@@ -86,7 +93,9 @@ package com.pamakids.components.containers
 				removeChild(pagesBar);
 			}
 
-			if (dataProvider && dataProvider.length > 1)
+			var sb:Bitmap=getBitmap(styleName + 'Selected');
+
+			if (dataProvider && dataProvider.length > 1 && sb)
 			{
 				var iconButtons:Array=[];
 				for each (var o:Object in dataProvider)
@@ -94,8 +103,6 @@ package com.pamakids.components.containers
 					var bvo:ButtonVO=new ButtonVO(styleName + 'Normal', styleName + 'Selected', true, true);
 					iconButtons.push(bvo);
 				}
-
-				var sb:Bitmap=getBitmap(styleName + 'Selected');
 
 				if (showPageIcon)
 				{
@@ -187,7 +194,7 @@ package com.pamakids.components.containers
 
 		private function movingComplete():void
 		{
-//			moving=false;
+			dispatchEvent(new Event('moved'));
 		}
 
 		private var _currentPage:int;
