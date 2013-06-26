@@ -11,6 +11,9 @@ package com.pamakids.content
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
+	import flash.utils.getTimer;
+
+	import avmplus.getQualifiedClassName;
 
 	public class ContentBase extends Sprite implements IContent
 	{
@@ -63,10 +66,12 @@ package com.pamakids.content
 			_pause=value;
 			if (value)
 			{
+				passedTime+=getTimer() - initTime;
 				TweenMax.pauseAll();
 			}
 			else
 			{
+				initTime=getTimer();
 				TweenMax.resumeAll();
 			}
 		}
@@ -119,12 +124,12 @@ package com.pamakids.content
 		/**
 		 * 记录交互点名称和百分比
 		 * @param id 交互点ID
-		 * @param percent 如果是动画，则需要记录动画播放的完成度，为方便记录需要转换为0-100的整数
+		 * @param value 记录触发交互点的间隔时间等值
 		 *
 		 */
-		protected function record(id:String, percent:int=100):void
+		protected function record(id:String, value:int=0):void
 		{
-			dispatchEvent(new InteractiveEvent(id, percent));
+			dispatchEvent(new InteractiveEvent(id, value));
 		}
 
 		protected var disposed:Boolean;
@@ -135,6 +140,7 @@ package com.pamakids.content
 		public function dispose():void
 		{
 			disposed=true;
+			record('time:' + getQualifiedClassName(this), getTimer() - initTime + passedTime);
 		}
 
 		private var _state:String;
@@ -161,9 +167,13 @@ package com.pamakids.content
 			this.height=height;
 		}
 
+		protected var initTime:int;
+		private var passedTime:int;
+
 		protected function init():void
 		{
 			disposed=false;
+			initTime=getTimer();
 		}
 
 		private var _pause:Boolean;

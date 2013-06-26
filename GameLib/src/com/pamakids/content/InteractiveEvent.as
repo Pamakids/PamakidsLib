@@ -11,15 +11,12 @@ package com.pamakids.content
 		 */
 		public var id:String;
 
-		/**
-		 * 如果是动画，则需要记录动画播放的完成度，为方便记录需要转换为0-100的整数
-		 */
-		public var percent:int;
+		public var value:int;
 
-		public function InteractiveEvent(id:String, percent:int=100)
+		public function InteractiveEvent(id:String, value:int=0)
 		{
 			this.id=id;
-			this.percent=percent;
+			this.value=value;
 			super(INTERACTIVE);
 		}
 	}
