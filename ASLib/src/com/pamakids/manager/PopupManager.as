@@ -25,6 +25,8 @@ package com.pamakids.manager
 			}
 		}
 
+		private static var popups:Array=[];
+
 		public static function popup(view:DisplayObject, isShowMask:Boolean=true, center:Boolean=true):void
 		{
 			if (isShowMask && !maskSprite)
@@ -35,11 +37,12 @@ package com.pamakids.manager
 				view.y=parent.height / 2 - view.height / 2;
 			}
 			parent.addChild(view);
+			popups.push(view);
 		}
 
 		public static function get hasPopup():Boolean
 		{
-			return parent.numChildren != 0;
+			return popups.length;
 		}
 
 		public static function clearMask():void
@@ -62,6 +65,7 @@ package com.pamakids.manager
 		{
 			clearMask();
 			parent.removeChild(view);
+			popups.splice(popups.indexOf(view), 1);
 		}
 
 	}
