@@ -42,7 +42,8 @@ package com.pamakids.manager
 			_errorHandler=value;
 			if (!errorHandlers)
 				errorHandlers=[];
-			errorHandlers.push(value);
+			if (value)
+				errorHandlers.push(value);
 		}
 
 		public static function get instance():LoadManager
