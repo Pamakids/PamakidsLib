@@ -176,6 +176,6 @@ package com.pamakids.components.base
 			return _width;
 		}
 
-		private var _enabled:Boolean;
+		private var _enabled:Boolean=true;
 	}
 }

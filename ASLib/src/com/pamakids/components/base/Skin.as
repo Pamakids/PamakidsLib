@@ -66,21 +66,5 @@ package com.pamakids.components.base
 		{
 			return am.themeLoaded;
 		}
-
-		private var _enable:Boolean=true;
-
-		public function get enable():Boolean
-		{
-			return _enable;
-		}
-
-		public function set enable(value:Boolean):void
-		{
-			_enable=value;
-			if (!value)
-				filters=[ColorFilter.getDisableFilter()];
-			else
-				filters=[];
-		}
 	}
 }

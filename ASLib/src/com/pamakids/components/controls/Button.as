@@ -45,7 +45,7 @@ package com.pamakids.components.controls
 
 		protected function onClick(event:MouseEvent):void
 		{
-			if (!enable)
+			if (!enabled)
 				event.stopImmediatePropagation();
 		}
 
@@ -53,7 +53,7 @@ package com.pamakids.components.controls
 
 		protected function onMouseDown(event:MouseEvent):void
 		{
-			if (enable)
+			if (enabled)
 			{
 				if (downState)
 				{
