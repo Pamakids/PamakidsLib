@@ -140,7 +140,7 @@ package com.pamakids.content
 		public function dispose():void
 		{
 			disposed=true;
-			record('time:' + getQualifiedClassName(this), getTimer() - initTime + passedTime);
+			record('content_time:' + getQualifiedClassName(this), getTimer() - initTime + passedTime);
 		}
 
 		private var _state:String;
