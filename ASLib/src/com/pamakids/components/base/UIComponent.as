@@ -5,6 +5,7 @@ package com.pamakids.components.base
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.utils.getTimer;
 
 	/**
 	 * 控件基类
@@ -63,6 +64,7 @@ package com.pamakids.components.base
 		 */
 		protected function init():void
 		{
+			startTime=getTimer();
 		}
 
 		public function get forceAutoFill():Boolean
@@ -176,6 +178,7 @@ package com.pamakids.components.base
 			return _width;
 		}
 
-		private var _enabled:Boolean=true;
+		private var _enabled:Boolean;
+		protected var startTime:int;
 	}
 }
