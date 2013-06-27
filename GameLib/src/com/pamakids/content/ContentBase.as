@@ -1,6 +1,7 @@
 package com.pamakids.content
 {
 	import com.greensock.TweenMax;
+	import com.greensock.events.UserBehaviorEvent;
 
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
@@ -140,7 +141,10 @@ package com.pamakids.content
 		public function dispose():void
 		{
 			disposed=true;
-			record('content_time:' + getQualifiedClassName(this), getTimer() - initTime + passedTime);
+			var e:UserBehaviorEvent=new UserBehaviorEvent("content_time", "页面停留时间");
+			e.value=getTimer()-initTime+ passedTime;
+			e.needCrtContent=true;
+//			record('content_time:' + getQualifiedClassName(this), getTimer() - initTime + passedTime);
 		}
 
 		private var _state:String;
@@ -168,7 +172,7 @@ package com.pamakids.content
 		}
 
 		protected var initTime:int;
-		private var passedTime:int;
+		protected var passedTime:int;
 
 		protected function init():void
 		{
