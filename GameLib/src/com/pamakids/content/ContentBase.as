@@ -142,7 +142,7 @@ package com.pamakids.content
 		{
 			disposed=true;
 			var e:UserBehaviorEvent=new UserBehaviorEvent("content_time", "页面停留时间");
-			e.value=getTimer()-initTime+ passedTime;
+			e.value=getTimer() - initTime + passedTime;
 			e.needCrtContent=true;
 //			record('content_time:' + getQualifiedClassName(this), getTimer() - initTime + passedTime);
 		}

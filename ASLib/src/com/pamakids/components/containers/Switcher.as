@@ -14,6 +14,7 @@ package com.pamakids.components.containers
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.utils.getTimer;
 
 	[Event(name="clickItem", type="com.pamakids.events.IndexEvent")]
 	[Event(name="moved", type="flash.events.Event")]
@@ -133,12 +134,16 @@ package com.pamakids.components.containers
 		public var pagesBarOffset:Number=-8;
 		private var downValue:Number;
 		private var recordValue:Number;
+		public var disableInterval:int;
+		private var downTime:int;
 
 		protected function onMouseDown(event:MouseEvent):void
 		{
 			if (!dataProvider || dataProvider.length == 1)
 				return;
-//			moving=true;
+			if (disableInterval && getTimer() - downTime < disableInterval)
+				return;
+			downTime=getTimer();
 			downValue=isHorizontal ? event.stageX : event.stageY;
 			recordValue=isHorizontal ? container.x : container.y;
 
@@ -155,8 +160,6 @@ package com.pamakids.components.containers
 				stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			}
 		}
-
-//		private var moving:Boolean;
 
 		protected function onMouseUp(event:MouseEvent):void
 		{
