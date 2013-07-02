@@ -141,10 +141,12 @@ package com.pamakids.content
 		public function dispose():void
 		{
 			disposed=true;
-			var e:UserBehaviorEvent=new UserBehaviorEvent("content_time", "页面停留时间");
-			e.value=getTimer() - initTime + passedTime;
-			e.needCrtContent=true;
-//			record('content_time:' + getQualifiedClassName(this), getTimer() - initTime + passedTime);
+//			var e:UserBehaviorEvent=new UserBehaviorEvent("content_time", "页面停留时间");
+//			e.value=getTimer() - initTime + passedTime;
+//			e.needCrtContent=true;
+//			dispatchEvent(e);
+			record('content_time:' + getQualifiedClassName(this), getTimer() - initTime + passedTime);
+			removeEventListener(Event.ACTIVATE, onRefreshingTime);
 		}
 
 		private var _state:String;
@@ -178,6 +180,13 @@ package com.pamakids.content
 		{
 			disposed=false;
 			initTime=getTimer();
+			this.addEventListener(Event.ACTIVATE, onRefreshingTime);
+		}
+
+		protected function onRefreshingTime(event:Event):void
+		{
+			initTime=getTimer()-initTime;
+			trace(this)
 		}
 
 		private var _pause:Boolean;
