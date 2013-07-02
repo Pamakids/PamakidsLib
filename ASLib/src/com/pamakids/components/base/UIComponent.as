@@ -57,6 +57,7 @@ package com.pamakids.components.base
 		 */
 		protected function dispose():void
 		{
+			removeEventListener(Event.ACTIVATE, onRefreshingTime);
 		}
 
 		/**
@@ -65,6 +66,12 @@ package com.pamakids.components.base
 		protected function init():void
 		{
 			startTime=getTimer();
+			addEventListener(Event.ACTIVATE, onRefreshingTime);
+		}
+
+		protected function onRefreshingTime(event:Event):void
+		{
+			startTime=getTimer()-startTime;
 		}
 
 		public function get forceAutoFill():Boolean
