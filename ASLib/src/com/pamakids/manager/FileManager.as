@@ -19,7 +19,6 @@ package com.pamakids.manager
 			try
 			{
 				var f:File=fromAppDirectory ? File.applicationDirectory.resolvePath(path) : File.applicationStorageDirectory.resolvePath(path);
-				trace(f.nativePath);
 				if (!f.exists)
 					return o;
 				var fs:FileStream=new FileStream();
@@ -72,13 +71,15 @@ package com.pamakids.manager
 
 		/**
 		 * 保存文件
-		 * @param path 文件路径，必须是dir/subdir/filename.extendtion的格式，切忌不能以/开头
+		 * @param path 文件路径，必须是dir/subdir/filename.extendtion的格式
 		 * @param file 存储文件的数据
 		 */
 		public static function saveFile(path:String, fileObject:Object, compress:Boolean=false):File
 		{
 			if (Capabilities.playerType != 'Desktop')
 				return null;
+			if (path.charAt(0) == '/')
+				path=path.substr(1);
 			createDirectory(path);
 			var fs:FileStream=new FileStream();
 			var file:File=File.applicationStorageDirectory.resolvePath(path);
