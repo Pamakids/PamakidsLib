@@ -145,7 +145,7 @@ package com.pamakids.manager
 			if (u)
 			{
 				arr=loaderDic[u];
-				if (arr.indexOf(onComplete) == -1)
+				if (arr && arr.indexOf(onComplete) == -1)
 					arr.push(onComplete);
 				return;
 			}

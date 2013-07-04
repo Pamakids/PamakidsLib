@@ -38,7 +38,7 @@ package com.pamakids.utils
 			return result;
 		}
 
-		public static function getDateString(todayOffset:int=0, monthOffset:int=0):String
+		public static function getDateString(todayOffset:int=0, monthOffset:int=0, includeHMS:Boolean=false):String
 		{
 			var dateString:String;
 
@@ -46,6 +46,8 @@ package com.pamakids.utils
 			date.date+=todayOffset;
 			date.month+=monthOffset;
 			dateString=date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+			if (includeHMS)
+				dateString+='-' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 
 			return dateString;
 		}

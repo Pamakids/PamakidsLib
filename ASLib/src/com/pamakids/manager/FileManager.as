@@ -112,7 +112,10 @@ package com.pamakids.manager
 		{
 			if (Capabilities.playerType != 'Desktop')
 				return;
-			var directory:String=path.match(new RegExp('.*(?=/)'))[0]; //a
+			var arr:Array=path.match(new RegExp('.*(?=/)'));
+			if (!arr || !arr.length)
+				return;
+			var directory:String=arr[0]; //a
 			var file:File=File.applicationStorageDirectory.resolvePath(directory);
 			if (!file.exists)
 			{
