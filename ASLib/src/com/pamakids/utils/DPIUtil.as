@@ -26,6 +26,7 @@ package com.pamakids.utils
 		public static function getRuntimeDPI():Number
 		{
 			var dpi:Number=Capabilities.screenDPI;
+//			return 169;
 			if (Capabilities.screenResolutionX > 2000 || Capabilities.screenResolutionY > 2000)
 				return DPI_320;
 			if (dpi < 200)
@@ -46,6 +47,28 @@ package com.pamakids.utils
 			}
 
 			return targetDPI / sourceDPI;
+		}
+
+		public static function getAndroidSize():Array
+		{
+			var w:int=Math.max(Capabilities.screenResolutionX, Capabilities.screenResolutionY);
+			var h:int=Math.min(Capabilities.screenResolutionX, Capabilities.screenResolutionY);
+//			w=1280;
+//			h=800;
+			var scale:Number=0;
+			var offsetX:Number=0
+			var offsetY:Number=0;
+			if (h/768>w/1024)
+			{
+				scale=w/1024;
+				offsetY=(h-768*scale)/2;
+			}
+			else
+			{
+				scale=h/768;
+				offsetX=(w-1024*scale)/2;
+			}
+			return [scale,offsetX,offsetY];
 		}
 
 	}

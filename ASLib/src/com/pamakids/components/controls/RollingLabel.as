@@ -3,7 +3,6 @@ package com.pamakids.components.controls
 	import com.greensock.TweenMax;
 	import com.greensock.easing.Cubic;
 	import com.greensock.easing.Elastic;
-	import com.pamakids.events.ResizeEvent;
 
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -123,7 +122,7 @@ package com.pamakids.components.controls
 			{
 				acceleration=1;
 				isMoving=false;
-				if (endFunction && hasAddedValue)
+				if (endFunction!=null && hasAddedValue)
 					endFunction();
 				return;
 			}

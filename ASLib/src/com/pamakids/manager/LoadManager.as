@@ -42,7 +42,7 @@ package com.pamakids.manager
 			_errorHandler=value;
 			if (!errorHandlers)
 				errorHandlers=[];
-			if (value)
+			if (value!=null)
 				errorHandlers.push(value);
 		}
 
