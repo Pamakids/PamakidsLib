@@ -1,9 +1,11 @@
 package com.pamakids.manager
 {
 	import com.greensock.TweenLite;
+	import com.pamakids.utils.StringUtil;
 
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
+	import flash.utils.getQualifiedClassName;
 
 	public class PopupManager
 	{
@@ -36,13 +38,19 @@ package com.pamakids.manager
 				view.x=parent.width / 2 - view.width / 2;
 				view.y=parent.height / 2 - view.height / 2;
 			}
-			parent.addChild(view);
-			popups.push(view);
+			if (parent.contains(view))
+				parent.setChildIndex(view, parent.numChildren - 1);
+			else
+			{
+				parent.addChildAt(view, parent.numChildren - 1);
+				popups.push(view);
+			}
+			view.visible=true;
 		}
 
 		public static function get hasPopup():Boolean
 		{
-			return popups.length;
+			return popups.length>0;
 		}
 
 		public static function clearMask():void
@@ -64,8 +72,14 @@ package com.pamakids.manager
 		public static function removePopup(view:DisplayObject):void
 		{
 			clearMask();
-			parent.removeChild(view);
-			popups.splice(popups.indexOf(view), 1);
+			var cls:String=getQualifiedClassName(view);
+			if (cls.indexOf("ShareWindow")>=0)
+				view.visible=false;
+			else
+			{
+				parent.removeChild(view);
+				popups.splice(popups.indexOf(view), 1);
+			}
 		}
 
 	}

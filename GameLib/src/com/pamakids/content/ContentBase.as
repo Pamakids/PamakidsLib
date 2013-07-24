@@ -1,7 +1,6 @@
 package com.pamakids.content
 {
 	import com.greensock.TweenMax;
-	import com.greensock.events.UserBehaviorEvent;
 
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
