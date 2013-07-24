@@ -49,6 +49,9 @@ package com.pamakids.utils
 			return targetDPI / sourceDPI;
 		}
 
+		/**
+		 * array[scale,offsetX,offsetY]
+		 * */
 		public static function getAndroidSize():Array
 		{
 			var w:int=Math.max(Capabilities.screenResolutionX, Capabilities.screenResolutionY);
