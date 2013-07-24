@@ -18,7 +18,20 @@ package com.pamakids.components.base
 			if (!width && !height)
 				autoFill=true;
 			setSize(width, height);
+			startTime=getTimer();
 			addEventListener(Event.ADDED_TO_STAGE, onStage);
+		}
+
+		public function get startTime():int
+		{
+			if (!hasEventListener(Event.ACTIVATE))
+				addEventListener(Event.ACTIVATE, onRefreshingTime);
+			return _startTime;
+		}
+
+		public function set startTime(value:int):void
+		{
+			_startTime=value;
 		}
 
 		public function get enabled():Boolean
@@ -65,13 +78,11 @@ package com.pamakids.components.base
 		 */
 		protected function init():void
 		{
-			startTime=getTimer();
-			addEventListener(Event.ACTIVATE, onRefreshingTime);
 		}
 
 		protected function onRefreshingTime(event:Event):void
 		{
-			startTime=getTimer()-startTime;
+			startTime=getTimer() - startTime;
 		}
 
 		public function get forceAutoFill():Boolean
@@ -186,6 +197,6 @@ package com.pamakids.components.base
 		}
 
 		private var _enabled:Boolean=true;
-		protected var startTime:int;
+		private var _startTime:int;
 	}
 }
