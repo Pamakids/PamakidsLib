@@ -38,6 +38,24 @@ package com.pamakids.utils
 			return result;
 		}
 
+		public static function getInDays(from:Date, end:Date):int
+		{
+			var nd:Date=new Date(from.fullYear, from.month, from.date);
+			for (var i:int=1; i < 365; i++)
+			{
+				if (nd.getFullYear() == end.getFullYear() && nd.getMonth() == end.getMonth() && nd.getDate() == end.getDate())
+					break;
+				nd.date++;
+			}
+
+			return i;
+		}
+
+		public static function isInDates(from:Date, end:Date, date:Date):Boolean
+		{
+			return date.time >= from.time && date.time <= end.time;
+		}
+
 		public static function getDateString(todayOffset:int=0, monthOffset:int=0, includeHMS:Boolean=false):String
 		{
 			var dateString:String;
@@ -50,6 +68,25 @@ package com.pamakids.utils
 				dateString+='-' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
 
 			return dateString;
+		}
+
+		public static function get24Times():Array
+		{
+			var s:String;
+			var ac:Array=[];
+			for (var i:int; i < 24; i++)
+			{
+				if (i < 10)
+				{
+					s='0' + i + ':00';
+				}
+				else
+				{
+					s=i + ':00';
+				}
+				ac.push(s);
+			}
+			return ac;
 		}
 	}
 }
