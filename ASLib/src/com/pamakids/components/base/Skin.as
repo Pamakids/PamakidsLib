@@ -42,13 +42,21 @@ package com.pamakids.components.base
 			am=null;
 		}
 
+		protected function disposeBitmap(bitmap:Object):void
+		{
+			if (bitmap as Bitmap)
+			{
+				bitmap.bitmapData.dispose();
+				if (bitmap.parent)
+					bitmap.parent.removeChild(bitmap);
+			}
+		}
+
 		private function clearChildren():void
 		{
 			while (numChildren)
 			{
-				var bitmap:Bitmap=removeChildAt(0) as Bitmap;
-				if (bitmap)
-					bitmap.bitmapData.dispose();
+				disposeBitmap(removeChildAt(0));
 			}
 		}
 

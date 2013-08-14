@@ -15,11 +15,22 @@ package com.pamakids.components.base
 		}
 
 		private var _backgroudAlpha:Number=0;
-		public var backgroundColor:uint=0;
+		private var _backgroundColor:uint=0;
 		private var _enableBackground:Boolean;
 		private var _enableMask:Boolean;
 		private var _layout:ILayout;
 		private var maskSprite:Sprite;
+
+		public function get backgroundColor():uint
+		{
+			return _backgroundColor;
+		}
+
+		public function set backgroundColor(value:uint):void
+		{
+			_backgroundColor=value;
+			drawBackground();
+		}
 
 		public function get backgroudAlpha():Number
 		{
@@ -101,7 +112,7 @@ package com.pamakids.components.base
 			drawMask();
 		}
 
-		private function drawBackground():void
+		protected function drawBackground():void
 		{
 			if (!width || !height || !enableBackground) //条件
 				return;

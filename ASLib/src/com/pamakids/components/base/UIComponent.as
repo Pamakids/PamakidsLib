@@ -158,10 +158,12 @@ package com.pamakids.components.base
 			return super.addChild(child);
 		}
 
+		public var centerOffsetY:int;
+
 		protected function centerDisplayObject(child:DisplayObject):void
 		{
 			child.x=width / 2 - child.width / 2;
-			child.y=height / 2 - child.height / 2;
+			child.y=height / 2 - child.height / 2 + centerOffsetY;
 		}
 
 		protected function autoSetSize(child:DisplayObject):void

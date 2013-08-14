@@ -9,6 +9,7 @@ package com.pamakids.manager
 	import flash.geom.Rectangle;
 	import flash.net.URLLoaderDataFormat;
 	import flash.utils.Dictionary;
+	import flash.utils.getDefinitionByName;
 
 	public class AssetsManager extends Singleton
 	{
@@ -41,6 +42,11 @@ package com.pamakids.manager
 				loadedCallbacks.push(callback);
 		}
 
+		public function registAsset(name:String, bitmapOrClass:Object):void
+		{
+			bitmapDic[name]=bitmapOrClass is Class ? new bitmapOrClass : bitmapOrClass;
+		}
+
 		private var themeURL:String;
 
 		public function loadTheme(url:String):void
@@ -53,7 +59,17 @@ package com.pamakids.manager
 
 		private function loadedThemeInfoHandler(themeStr:String):void
 		{
-			var theme:Object=JSON.parse(themeStr);
+			var J:Object=getDefinitionByName('JSON') as Class;
+			var theme:Object;
+			if (J)
+			{
+				theme=J.parse(themeStr);
+			}
+			else
+			{
+				J=getDefinitionByName('com.adobe.serialization.json.JSON') as Class;
+				theme=J.decode(themeStr);
+			}
 			var dir:String=theme.dir;
 			if (isHttpTheme)
 				dir=URLUtil.getUrlDir(themeURL) + dir;

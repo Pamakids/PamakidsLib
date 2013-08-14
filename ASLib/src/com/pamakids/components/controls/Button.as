@@ -1,5 +1,6 @@
 package com.pamakids.components.controls
 {
+	import com.greensock.TweenLite;
 	import com.pamakids.components.base.Skin;
 
 	import flash.display.DisplayObject;
@@ -10,20 +11,61 @@ package com.pamakids.components.controls
 	{
 		protected var upState:DisplayObject;
 		protected var downState:DisplayObject;
+		protected var overState:DisplayObject;
 		private var _enable:Boolean=true;
+
+		private var _label:String;
 
 		public function Button(styleName:String)
 		{
 			super(styleName, 0, 0, true, false);
+			buttonMode=true;
 			updateSkin();
+		}
+
+		public var color:uint;
+		public var fontSize:int=14;
+
+		override protected function init():void
+		{
+			if (label)
+				setLabel();
+		}
+
+		private function setLabel():void
+		{
+			if (!labelControl)
+			{
+				labelControl=new Label(label);
+				labelControl.mouseChildren=labelControl.mouseEnabled=false;
+				labelControl.fontSize=fontSize;
+				labelControl.color=color;
+				addChild(labelControl);
+			}
+			else
+			{
+				labelControl.text=label;
+			}
+			centerDisplayObject(labelControl);
+		}
+
+		public function get label():String
+		{
+			return _label;
+		}
+
+		public function set label(value:String):void
+		{
+			_label=value;
+			if (labelControl)
+				labelControl.text=value;
 		}
 
 		override protected function updateSkin():void
 		{
-			if (upState)
-				removeChild(upState);
-			if (downState)
-				removeChild(downState);
+			disposeBitmap(upState);
+			disposeBitmap(downState);
+			disposeBitmap(overState);
 
 			upState=getBitmap(styleName + 'Up');
 			if (!upState)
@@ -32,6 +74,13 @@ package com.pamakids.components.controls
 				if (!upState)
 					throw new Error("Can't find asset：" + styleName);
 			}
+			addChild(upState);
+			overState=getBitmap(styleName + 'Over');
+			if (overState)
+			{
+				overState.alpha=0;
+				addChild(overState);
+			}
 			downState=getBitmap(styleName + 'Down');
 			if (downState)
 			{
@@ -39,8 +88,21 @@ package com.pamakids.components.controls
 				addChild(downState);
 			}
 			addEventListener(MouseEvent.CLICK, onClick);
+			addEventListener(MouseEvent.ROLL_OVER, onOver);
+			addEventListener(MouseEvent.ROLL_OUT, onOut);
 			addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-			addChild(upState);
+		}
+
+		protected function onOut(event:MouseEvent):void
+		{
+			if (overState)
+				TweenLite.to(overState, 0.3, {alpha: 0});
+		}
+
+		protected function onOver(event:MouseEvent):void
+		{
+			if (overState && !event.buttonDown)
+				TweenLite.to(overState, 0.3, {alpha: 1});
 		}
 
 		protected function onClick(event:MouseEvent):void
@@ -73,6 +135,7 @@ package com.pamakids.components.controls
 		 * 按下后移动超出38像素
 		 */
 		protected var downAndMoved:Boolean;
+		private var labelControl:Label;
 
 		protected function onMouseUp(event:MouseEvent):void
 		{

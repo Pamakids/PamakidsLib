@@ -38,6 +38,9 @@ package com.pamakids.utils
 			return result;
 		}
 
+		/**
+		 * 获取开始到结束之间的天数
+		 */
 		public static function getInDays(from:Date, end:Date):int
 		{
 			var nd:Date=new Date(from.fullYear, from.month, from.date);
@@ -47,7 +50,6 @@ package com.pamakids.utils
 					break;
 				nd.date++;
 			}
-
 			return i;
 		}
 
@@ -86,6 +88,33 @@ package com.pamakids.utils
 				}
 				ac.push(s);
 			}
+			return ac;
+		}
+
+		public static function getNianYue(date:Date):String
+		{
+			return date.fullYear + '年' + (date.month + 1) + '月';
+		}
+
+		public static function getDateData(date:Date):Array
+		{
+			var ac:Array=[];
+
+			var td:Date=new Date(date.fullYear, (date.month + 1), 0);
+			var i:int=1;
+			var d:Date=new Date(date.fullYear, date.month, i);
+			for (var j:int=0; j < d.day; j++)
+			{
+				ac.push(null);
+			}
+			ac.push(d);
+			i++;
+			for (i; i <= td.date; i++)
+			{
+				d=new Date(date.fullYear, date.month, i);
+				ac.push(d);
+			}
+
 			return ac;
 		}
 	}

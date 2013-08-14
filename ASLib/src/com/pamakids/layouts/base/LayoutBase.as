@@ -28,10 +28,25 @@ package com.pamakids.layouts.base
 		public function LayoutBase(container:Container=null)
 		{
 			if (container)
-			{
 				this.container=container;
-				this.container.addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
-			}
+		}
+
+		private var _useVirtualLayout:Boolean;
+
+		public function get useVirtualLayout():Boolean
+		{
+			return _useVirtualLayout;
+		}
+
+		public function set useVirtualLayout(value:Boolean):void
+		{
+			if (_useVirtualLayout && value)
+				clearVirtualLayoutCache();
+			_useVirtualLayout=value;
+		}
+
+		public function clearVirtualLayoutCache():void
+		{
 		}
 
 		public function get height():Number

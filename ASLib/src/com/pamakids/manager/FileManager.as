@@ -1,72 +1,89 @@
 package com.pamakids.manager
 {
-	import flash.filesystem.File;
-	import flash.filesystem.FileMode;
-	import flash.filesystem.FileStream;
-	import flash.system.Capabilities;
 	import flash.utils.ByteArray;
+	import flash.utils.getDefinitionByName;
 
 	public class FileManager
 	{
 
+		private static function get File():Class
+		{
+			return getDefinitionByName('flash.filesystem.File') as Class;
+		}
+
+		private static function get FileMode():Class
+		{
+			return getDefinitionByName('flash.filesystem.FileMode') as Class;
+		}
+
+		private static function get FileStream():Class
+		{
+			return getDefinitionByName('flash.filesystem.FileStream') as Class;
+		}
+
 		public static function readFile(path:String, fromAppDirectory:Boolean=false, readString:Boolean=false, uncompress:Boolean=false):Object
 		{
-			if (Capabilities.playerType != 'Desktop')
-				return null;
-
-			var o:Object;
-
-			try
+			if (File)
 			{
-				var f:File=fromAppDirectory ? File.applicationDirectory.resolvePath(path) : File.applicationStorageDirectory.resolvePath(path);
-				if (!f.exists)
-					return o;
-				var fs:FileStream=new FileStream();
-				fs.open(f, FileMode.READ);
-				if (!uncompress)
-				{
-					o=readString ? fs.readUTF() : fs.readObject();
-				}
-				else
-				{
-					var b:ByteArray=new ByteArray();
-					fs.readBytes(b);
-					b.uncompress();
-					o=b.readObject();
-				}
-				fs.close();
-			}
-			catch (error:Error)
-			{
-			}
+				var o:Object;
 
-			return o;
+				try
+				{
+					var f:Object=fromAppDirectory ? File.applicationDirectory.resolvePath(path) : File.applicationStorageDirectory.resolvePath(path);
+					if (!f.exists)
+						return o;
+					var fs:Object=new FileStream();
+					fs.open(f, FileMode.READ);
+					if (!uncompress)
+					{
+						o=readString ? fs.readUTF() : fs.readObject();
+					}
+					else
+					{
+						var b:ByteArray=new ByteArray();
+						fs.readBytes(b);
+						b.uncompress();
+						o=b.readObject();
+					}
+					fs.close();
+				}
+				catch (error:Error)
+				{
+				}
+
+				return o;
+			}
+			return null;
 		}
 
 		public static function readFileByteArray(path:String):ByteArray
 		{
-			if (Capabilities.playerType != 'Desktop')
+			if (File)
+			{
+				var o:ByteArray;
+
+				try
+				{
+					var f:Object=File.applicationStorageDirectory.resolvePath(path);
+					if (!f.exists)
+						return o;
+					trace("Read File ByteArray:" + f.nativePath);
+					var fs:Object=new FileStream();
+					fs.open(f, FileMode.READ);
+					o=new ByteArray()
+					fs.readBytes(o);
+					fs.close();
+				}
+				catch (error:Error)
+				{
+				}
+				return o;
+			}
+			else
+			{
 				return null;
-
-			var o:ByteArray;
-
-			try
-			{
-				var f:File=File.applicationStorageDirectory.resolvePath(path);
-				if (!f.exists)
-					return o;
-				trace("Read File ByteArray:" + f.nativePath);
-				var fs:FileStream=new FileStream();
-				fs.open(f, FileMode.READ);
-				o=new ByteArray()
-				fs.readBytes(o);
-				fs.close();
-			}
-			catch (error:Error)
-			{
 			}
 
-			return o;
 		}
 
 		/**
@@ -74,49 +91,51 @@ package com.pamakids.manager
 		 * @param path 文件路径，必须是dir/subdir/filename.extendtion的格式
 		 * @param file 存储文件的数据
 		 */
-		public static function saveFile(path:String, fileObject:Object, compress:Boolean=false):File
+		public static function saveFile(path:String, fileObject:Object, compress:Boolean=false):Object
 		{
-			if (Capabilities.playerType != 'Desktop')
-				return null;
-			if (path.charAt(0) == '/')
-				path=path.substr(1);
-			createDirectory(path);
-			var fs:FileStream=new FileStream();
-			var file:File=File.applicationStorageDirectory.resolvePath(path);
-			try
+			if (File)
 			{
-				fs.open(file, FileMode.WRITE);
-				if (compress)
+				if (path.charAt(0) == '/')
+					path=path.substr(1);
+				createDirectory(path);
+				var fs:Object=new FileStream();
+				var file:Object=File.applicationStorageDirectory.resolvePath(path);
+				try
 				{
-					var b:ByteArray=new ByteArray();
-					b.writeObject(fileObject);
-					b.compress();
-					fileObject=b;
+					fs.open(file, FileMode.WRITE);
+					if (compress)
+					{
+						var b:ByteArray=new ByteArray();
+						b.writeObject(fileObject);
+						b.compress();
+						fileObject=b;
+					}
+					if (fileObject is ByteArray)
+						fs.writeBytes(fileObject as ByteArray)
+					else if (fileObject is String)
+						fs.writeUTFBytes(fileObject as String);
+					else
+						fs.writeObject(fileObject);
+					fs.close();
 				}
-				if (fileObject is ByteArray)
-					fs.writeBytes(fileObject as ByteArray)
-				else if (fileObject is String)
-					fs.writeUTFBytes(fileObject as String);
-				else
-					fs.writeObject(fileObject);
-				fs.close();
+				catch (error:Error)
+				{
+					trace('save file error', error);
+				}
+				return file;
 			}
-			catch (error:Error)
-			{
-				trace('save file error', error);
-			}
-			return file;
+			return null;
 		}
 
 		private static function createDirectory(path:String):void
 		{
-			if (Capabilities.playerType != 'Desktop')
+			if (!File)
 				return;
 			var arr:Array=path.match(new RegExp('.*(?=/)'));
 			if (!arr || !arr.length)
 				return;
 			var directory:String=arr[0]; //a
-			var file:File=File.applicationStorageDirectory.resolvePath(directory);
+			var file:Object=File.applicationStorageDirectory.resolvePath(directory);
 			if (!file.exists)
 			{
 				trace("FileCache - Directory not found, create it !");
@@ -124,11 +143,11 @@ package com.pamakids.manager
 			}
 		}
 
-		public static function copyTo(source:File, toPath:String, overrite:Boolean=true):void
+		public static function copyTo(source:Object, toPath:String, overrite:Boolean=true):void
 		{
-			if (Capabilities.playerType != 'Desktop')
+			if (!File)
 				return;
-			var toFile:File=new File(toPath);
+			var toFile:Object=new File(toPath);
 			if (source.nativePath != toFile.nativePath)
 			{
 				try
@@ -144,9 +163,9 @@ package com.pamakids.manager
 
 		public static function deleteFile(path:String):void
 		{
-			if (Capabilities.playerType != 'Desktop')
+			if (!File)
 				return;
-			var f:File=new File(path);
+			var f:Object=new File(path);
 			try
 			{
 				if (f.exists)

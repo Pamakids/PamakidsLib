@@ -18,5 +18,7 @@ package com.pamakids.layouts
 		function set width(value:Number):void;
 		function set height(value:Number):void;
 		function setAnimation(duration:Number, vars:Object, tweenX:Boolean=true, tweeny:Boolean=true):void;
+		function get useVirtualLayout():Boolean;
+		function set useVirtualLayout(value:Boolean):void;
 	}
 }

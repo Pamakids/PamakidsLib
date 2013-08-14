@@ -33,7 +33,7 @@ package com.pamakids.components.controls
 			return _source;
 		}
 
-		private var content:Bitmap;
+		public var content:Bitmap;
 		private var lm:LoadManager;
 		private var scaleMode:String;
 		public var smoothing:Boolean=true;
