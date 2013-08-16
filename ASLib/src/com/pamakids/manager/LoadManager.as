@@ -81,9 +81,9 @@ package com.pamakids.manager
 			load(url, onComplete, savePath, null, null, false, URLLoaderDataFormat.TEXT);
 		}
 
-		public function loadSWF(url:String, onComplete:Function, savePath:String='', loadingCallback:Function=null):void
+		public function loadSWF(url:String, onComplete:Function=null, savePath:String='', loadingCallback:Function=null):void
 		{
-			load(url, onComplete, savePath, null, loadingCallback, false, SWF);
+			load(url, onComplete != null ? onComplete : function(o:Object):void {}, savePath, null, loadingCallback, false, SWF);
 		}
 
 		public function loadImage(url:String, onComplete:Function, savePath:String='', loadingCallback:Function=null):void
@@ -183,12 +183,13 @@ package com.pamakids.manager
 		}
 
 		public var allLoadingHandler:Function;
-		private var tobeLoadedBytes:Object={};
-		private var loadedBytes:Object={};
+		private var tobeLoadedBytes:Dictionary=new Dictionary();
+		private var loadedBytes:Dictionary=new Dictionary();
+		private var startLoad:int;
 
 		public function clearLoading():void
 		{
-			loadedNum=0;
+			startLoad=0;
 			allLoadingHandler=null;
 			clearObject(tobeLoadedBytes);
 			clearObject(loadedBytes);
@@ -208,8 +209,14 @@ package com.pamakids.manager
 			var u:URLLoader=event.currentTarget as URLLoader;
 			if (loadingCallbackDic[u])
 				loadingCallbackDic[u](event.bytesLoaded, event.bytesTotal);
+			if (event.bytesLoaded == event.bytesTotal)
+			{
+				u.removeEventListener(ProgressEvent.PROGRESS, loadingHandler);
+			}
 			if (allLoadingHandler != null)
 			{
+				if (!tobeLoadedBytes[u])
+					startLoad++;
 				tobeLoadedBytes[u]=event.bytesTotal;
 				loadedBytes[u]=event.bytesLoaded;
 				var toload:Number=0;
@@ -222,9 +229,8 @@ package com.pamakids.manager
 				{
 					loaded+=loN;
 				}
-
 				if (allLoadingHandler.length == 3)
-					allLoadingHandler(loaded, toload, loadedNum);
+					allLoadingHandler(loaded, toload, startLoad);
 				else if (allLoadingHandler.length == 2)
 					allLoadingHandler(loaded, toload);
 				else if (allLoadingHandler.length == 1)
@@ -307,8 +313,6 @@ package com.pamakids.manager
 			}
 		}
 
-		private var loadedNum:int;
-
 		private function onBinaryLoaded(event:Event):void
 		{
 			var u:URLLoader=event.target as URLLoader;
@@ -318,8 +322,8 @@ package com.pamakids.manager
 				delete loadingCallbackDic[u];
 				delete loadedBytes[u];
 				delete tobeLoadedBytes[u];
+				u.removeEventListener(ProgressEvent.PROGRESS, loadingHandler);
 			}
-			loadedNum++;
 			u.removeEventListener(Event.COMPLETE, onBinaryLoaded);
 			var f:Function;
 			var arr:Array=loaderDic[u];
@@ -343,6 +347,7 @@ package com.pamakids.manager
 			{
 				if (loadingDic[key] == u)
 				{
+					trace('Loaded Asset URL:' + key);
 					if (!savePath && bigDataFormates.indexOf(formate) == -1)
 						loadedDic[key]=u.data;
 					delete loadingDic[key];
