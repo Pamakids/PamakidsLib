@@ -11,7 +11,7 @@ package com.pamakids.manager
 	import flash.utils.Dictionary;
 
 	/**
-	 * 声音管理类 
+	 * 声音管理类
 	 * 根据配置文件自动匹配，可加入绑定声音，也可根据配置文件动态加载，操作的时候只需记住id即可
 	 * 方便迁移到服务器，可方便更新和替换
 	 * {
@@ -24,7 +24,7 @@ package com.pamakids.manager
 	 * pause
 	 * resume
 	 * @author mani
-	 */	
+	 */
 	public class SoundManager extends Singleton
 	{
 		private var sounds:Vector.<Sound>;
@@ -82,7 +82,7 @@ package com.pamakids.manager
 			var o:Object=config[id];
 			if (playingSounds[id])
 			{
-				if (playingPosition[id] != null)
+				if (playingPosition[id])
 				{
 					o=playingSounds[id];
 					s=o.sound;
@@ -242,8 +242,8 @@ package com.pamakids.manager
 		}
 
 		/**
-		 * 清空并停止所有声音 
-		 */		
+		 * 清空并停止所有声音
+		 */
 		public function clearAll():void
 		{
 			var id:String;
@@ -253,7 +253,6 @@ package com.pamakids.manager
 			}
 			for (id in sounds)
 			{
-				if(
 				clear(id);
 			}
 		}
