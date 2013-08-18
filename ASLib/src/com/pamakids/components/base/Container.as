@@ -107,9 +107,12 @@ package com.pamakids.components.base
 
 		override protected function resize():void
 		{
+			if (sizeChanged)
+			{
+				drawBackground();
+				drawMask();
+			}
 			super.resize();
-			drawBackground();
-			drawMask();
 		}
 
 		protected function drawBackground():void
@@ -129,12 +132,14 @@ package com.pamakids.components.base
 			if (!enableMask || !width || !height)
 				return;
 			if (!maskSprite)
+			{
 				maskSprite=new Sprite();
+				super.addChild(maskSprite);
+			}
 			maskSprite.graphics.clear();
 			maskSprite.graphics.beginFill(0);
 			maskSprite.graphics.drawRect(0, 0, width, height);
 			maskSprite.graphics.endFill();
-			super.addChild(maskSprite);
 			mask=maskSprite;
 		}
 	}

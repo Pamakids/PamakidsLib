@@ -27,21 +27,21 @@ package com.pamakids.manager
 	 */
 	public class SoundManager extends Singleton
 	{
-		private var sounds:Vector.<Sound>;
+		private var sounds:Dictionary;
 		private var playingSounds:Dictionary;
-		private var loadingSounds:Vector.<Sound>;
+		private var loadingSounds:Dictionary;
 		/**
 		 * 记录声音播放位置，方便暂停后继续播放
 		 */
-		private var playingPosition:Vector.<Number>;
-		private var config:Object;
+		private var playingPosition:Dictionary;
+		private var config:Object={};
 
 		public function SoundManager()
 		{
-			sounds=new Vector.<Sound>();
+			sounds=new Dictionary();
 			playingSounds=new Dictionary();
-			loadingSounds=new Vector.<Sound>();
-			playingPosition=new Vector.<Number>();
+			loadingSounds=new Dictionary();
+			playingPosition=new Dictionary();
 		}
 
 		public static function get instance():SoundManager
@@ -69,6 +69,17 @@ package com.pamakids.manager
 		public function addSound(id:String, sound:Sound):void
 		{
 			sounds[id]=sound;
+		}
+
+		/**
+		 * 直接播放未配置的url
+		 * @param url
+		 * @param loops
+		 */
+		public function playUrl(url:String, loops:int=0):void
+		{
+			config[url]={url: url, loops: loops};
+			play(url);
 		}
 
 		/**
@@ -147,6 +158,8 @@ package com.pamakids.manager
 
 		private function clearLoading(s:Sound):String
 		{
+			if (!s)
+				return '';
 			for (var id:String in loadingSounds)
 			{
 				if (loadingSounds[id] == s)
@@ -181,7 +194,7 @@ package com.pamakids.manager
 		 */
 		public function stop(id:String):void
 		{
-			if (loadingSounds)
+			if (loadingSounds[id])
 			{
 				try
 				{

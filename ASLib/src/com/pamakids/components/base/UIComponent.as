@@ -97,12 +97,14 @@ package com.pamakids.components.base
 
 		private var _height:Number;
 		private var _width:Number;
+		protected var sizeChanged:Boolean;
 
 		override public function set width(value:Number):void
 		{
 			if (_width != value)
 			{
 				_width=value;
+				sizeChanged=true;
 				resize();
 			}
 		}
@@ -136,7 +138,11 @@ package com.pamakids.components.base
 			if (_width || _height)
 			{
 				autoFill=forceAutoFill;
-				dispatchEvent(new ResizeEvent(_width, _height));
+				if (sizeChanged)
+				{
+					sizeChanged=false;
+					dispatchEvent(new ResizeEvent(_width, _height));
+				}
 			}
 			centerChildren();
 		}
@@ -174,6 +180,8 @@ package com.pamakids.components.base
 
 		public function setSize(width:Number, height:Number):void
 		{
+			if (width != _width || height != _height)
+				sizeChanged=true;
 			_width=width;
 			_height=height;
 			resize();
@@ -189,6 +197,7 @@ package com.pamakids.components.base
 			if (value != _height)
 			{
 				_height=value;
+				sizeChanged=true;
 				resize();
 			}
 		}
