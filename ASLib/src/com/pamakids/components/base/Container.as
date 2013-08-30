@@ -99,6 +99,13 @@ package com.pamakids.components.base
 			return super.removeChild(child);
 		}
 
+		override public function removeChildAt(index:int):DisplayObject
+		{
+			if (layout)
+				layout.removeItem(getChildAt(index));
+			return super.removeChildAt(index);
+		}
+
 		override protected function init():void
 		{
 			drawBackground();
@@ -127,7 +134,9 @@ package com.pamakids.components.base
 			graphics.endFill();
 		}
 
-		private function drawMask():void
+		protected var maskTarget:Sprite;
+
+		protected function drawMask():void
 		{
 			if (!enableMask || !width || !height)
 				return;
@@ -140,7 +149,10 @@ package com.pamakids.components.base
 			maskSprite.graphics.beginFill(0);
 			maskSprite.graphics.drawRect(0, 0, width, height);
 			maskSprite.graphics.endFill();
-			mask=maskSprite;
+			if (!maskTarget)
+				maskTarget=this;
+			maskTarget.mask=maskSprite;
+			trace(maskTarget);
 		}
 	}
 }

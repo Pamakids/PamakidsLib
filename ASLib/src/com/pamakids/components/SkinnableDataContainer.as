@@ -1,8 +1,9 @@
 package com.pamakids.components
 {
+	import com.pamakids.components.base.Container;
 	import com.pamakids.components.base.Skin;
-	import com.pamakids.components.base.UIComponent;
 	import com.pamakids.components.interfaces.IItemRendererOwner;
+	import com.pamakids.layouts.ILayout;
 	import com.pamakids.layouts.VLayout;
 
 	public class SkinnableDataContainer extends Skin implements IItemRendererOwner
@@ -43,19 +44,25 @@ package com.pamakids.components
 			renderer.data=data;
 		}
 		private var _dataProvider:Array;
+		protected var container:Container;
+		public var contentLayout:ILayout;
 
 		override protected function init():void
 		{
 			super.init();
 			if (!layout)
 				layout=new VLayout();
-
+			if (!container)
+				container=this;
+			if (!contentLayout)
+				contentLayout=new VLayout();
+			container.layout=contentLayout;
 			if (dataProvider)
 			{
 				for each (var data:Object in dataProvider)
 				{
 					var item:ItemRenderer=new itemRender();
-					addChild(item);
+					container.addChild(item);
 				}
 			}
 		}

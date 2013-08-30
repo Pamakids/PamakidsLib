@@ -70,6 +70,7 @@ package com.pamakids.manager
 				J=getDefinitionByName('com.adobe.serialization.json.JSON') as Class;
 				theme=J.decode(themeStr);
 			}
+			parseCSS(theme);
 			var dir:String=theme.dir;
 			if (isHttpTheme)
 				dir=URLUtil.getUrlDir(themeURL) + dir;
@@ -97,13 +98,38 @@ package com.pamakids.manager
 			}
 		}
 
+		private var css:Dictionary;
+
+		private function parseCSS(theme:Object):void
+		{
+			if (theme.css)
+			{
+				css=new Dictionary();
+				for (var p:String in theme.css)
+				{
+					css[p]=theme.css[p];
+				}
+			}
+		}
+
+		public function getStyle(name:String, cssID:String):Object
+		{
+			return css[cssID][name];
+		}
+
+		public function addAsset(name:String, bitmap:Bitmap):void
+		{
+			bitmapDic[name]=bitmap;
+		}
+
 		public function getAsset(name:String, type:String='image'):Bitmap
 		{
 			var asset:Bitmap;
 
 			if (bitmapDic[name])
 			{
-				asset=bitmapDic[name];
+				var b:Bitmap=bitmapDic[name];
+				asset=new Bitmap(b.bitmapData);
 			}
 			else
 			{
@@ -142,6 +168,7 @@ package com.pamakids.manager
 				{
 					var o:Object={};
 					var nameString:String=xml.SubTexture[i].@name.toString();
+					trace(nameString);
 					o.x=int(xml.SubTexture[i].@x);
 					o.y=int(xml.SubTexture[i].@y);
 					o.width=parseFloat(xml.SubTexture[i].@width);

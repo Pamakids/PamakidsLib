@@ -1,6 +1,7 @@
 package com.pamakids.components.controls
 {
 
+
 	public class Style
 	{
 		public static var embedFonts:Boolean=true;
@@ -10,6 +11,5 @@ package com.pamakids.components.controls
 		 */
 		public static var cacheAsBitmap:Boolean=true;
 		public static const MAIN_COLOR:uint=0x806F5D;
-
 	}
 }

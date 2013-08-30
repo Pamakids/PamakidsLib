@@ -16,9 +16,9 @@ package com.pamakids.components.controls
 
 		private var _label:String;
 
-		public function Button(styleName:String)
+		public function Button(styleName:String, width:Number=0, height:Number=0)
 		{
-			super(styleName, 0, 0, true, false);
+			super(styleName, width, height, true, false);
 			buttonMode=true;
 			updateSkin();
 		}
@@ -80,6 +80,8 @@ package com.pamakids.components.controls
 			{
 				overState.alpha=0;
 				addChild(overState);
+				addEventListener(MouseEvent.ROLL_OVER, onOver);
+				addEventListener(MouseEvent.ROLL_OUT, onOut);
 			}
 			downState=getBitmap(styleName + 'Down');
 			if (downState)
@@ -88,21 +90,25 @@ package com.pamakids.components.controls
 				addChild(downState);
 			}
 			addEventListener(MouseEvent.CLICK, onClick);
-			addEventListener(MouseEvent.ROLL_OVER, onOver);
-			addEventListener(MouseEvent.ROLL_OUT, onOut);
 			addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 		}
 
 		protected function onOut(event:MouseEvent):void
 		{
 			if (overState)
+			{
 				TweenLite.to(overState, 0.3, {alpha: 0});
+				upState.visible=true;
+			}
 		}
 
 		protected function onOver(event:MouseEvent):void
 		{
 			if (overState && !event.buttonDown)
+			{
 				TweenLite.to(overState, 0.3, {alpha: 1});
+				upState.visible=false;
+			}
 		}
 
 		protected function onClick(event:MouseEvent):void

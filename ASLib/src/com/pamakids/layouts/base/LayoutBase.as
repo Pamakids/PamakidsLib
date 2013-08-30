@@ -184,7 +184,6 @@ package com.pamakids.layouts.base
 				displayObject.removeEventListener(Event.COMPLETE, itemCompleHandler);
 			if (displayObject.hasEventListener(ResizeEvent.RESIZE))
 				displayObject.removeEventListener(ResizeEvent.RESIZE, itemResizedHandler);
-			container.removeChild(displayObject);
 			items.splice(items.indexOf(displayObject), 1);
 			delayUpdate();
 		}

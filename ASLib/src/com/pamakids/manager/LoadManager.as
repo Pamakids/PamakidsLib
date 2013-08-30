@@ -83,7 +83,9 @@ package com.pamakids.manager
 
 		public function loadSWF(url:String, onComplete:Function=null, savePath:String='', loadingCallback:Function=null):void
 		{
-			load(url, onComplete != null ? onComplete : function(o:Object):void {}, savePath, null, loadingCallback, false, SWF);
+			load(url, onComplete != null ? onComplete : function(o:Object):void
+			{
+			}, savePath, null, loadingCallback, false, SWF);
 		}
 
 		public function loadImage(url:String, onComplete:Function, savePath:String='', loadingCallback:Function=null):void

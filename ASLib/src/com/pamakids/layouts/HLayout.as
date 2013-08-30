@@ -17,38 +17,46 @@ package com.pamakids.layouts
 
 		override public function update():void
 		{
-			var x:Number=0;
-			var tox:Number;
-			var toy:Number;
-			for each (var d:DisplayObject in items)
+			if (items.length)
 			{
-				toy=d.y;
-				tox=x + paddingLeft;
-				if (verticalCenter && !autoFill)
-					toy=(height - d.height) / 2;
-				positionItem(d, tox, toy);
-				x=x + d.width + gap;
-			}
-			if (autoFill)
-			{
-				if (d)
+				var x:Number=0;
+				var tox:Number;
+				var toy:Number;
+				for each (var d:DisplayObject in items)
 				{
-					contentHeight=d.height;
-					contentWidth=d.x + d.width;
+					toy=d.y;
+					tox=x + paddingLeft;
+					if (verticalCenter && !autoFill)
+						toy=(height - d.height) / 2;
+					positionItem(d, tox, toy);
+					x=x + d.width + gap;
 				}
-				container.setSize(contentWidth, contentHeight);
-			}
-			else if (horizontalCenter && d)
-			{
-				var cw:Number;
-				cw=d.x + d.width;
-				var sx:Number=width / 2 - cw / 2;
-				for each (d in items)
+				if (autoFill)
 				{
-					d.x=sx;
-					sx=sx + d.width + gap;
+					if (d)
+					{
+						contentHeight=d.height;
+						contentWidth=d.x + d.width;
+					}
+					container.setSize(contentWidth, contentHeight);
+				}
+				else if (horizontalCenter && d)
+				{
+					var cw:Number;
+					cw=d.x + d.width;
+					var sx:Number=width / 2 - cw / 2;
+					for each (d in items)
+					{
+						d.x=sx;
+						sx=sx + d.width + gap;
+					}
 				}
 			}
+			else if (autoFill)
+			{
+				container.setSize(0, 0);
+			}
+
 		}
 	}
 }

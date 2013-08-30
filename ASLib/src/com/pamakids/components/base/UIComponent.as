@@ -45,12 +45,15 @@ package com.pamakids.components.base
 			mouseChildren=mouseEnabled=value;
 		}
 
+		protected var inited:Boolean;
+
 		protected function onStage(event:Event):void
 		{
 			if (autoDispose)
 				removeEventListener(Event.ADDED_TO_STAGE, onStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
 			init();
+			inited=true;
 		}
 
 		public var autoDispose:Boolean=true;
@@ -97,7 +100,7 @@ package com.pamakids.components.base
 
 		private var _height:Number;
 		private var _width:Number;
-		protected var sizeChanged:Boolean;
+		protected var sizeChanged:Boolean=true;
 
 		override public function set width(value:Number):void
 		{

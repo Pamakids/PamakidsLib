@@ -55,6 +55,22 @@ package com.pamakids.components
 		public function set data(value:Object):void
 		{
 			_data=value;
+			renderData();
+		}
+
+		/**
+		 * 渲染数据
+		 */
+		protected function renderData():void
+		{
+			if (inited)
+			{
+				if (label)
+				{
+					labelHolder=new Label(label);
+					addChild(labelHolder);
+				}
+			}
 		}
 
 		private var _itemIndex:int;
@@ -64,12 +80,8 @@ package com.pamakids.components
 
 		override protected function init():void
 		{
-			if (label)
-			{
-				labelHolder=new Label(label);
-				addChild(labelHolder);
-			}
 			super.init();
+			renderData();
 		}
 
 	}

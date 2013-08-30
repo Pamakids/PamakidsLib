@@ -5,6 +5,7 @@ package com.pamakids.components.containers
 	import com.pamakids.components.base.Container;
 	import com.pamakids.components.base.Skin;
 	import com.pamakids.components.controls.ButtonBar;
+	import com.pamakids.events.IndexEvent;
 	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.layouts.HLayout;
 	import com.pamakids.layouts.ILayout;
@@ -21,6 +22,10 @@ package com.pamakids.components.containers
 	public class Switcher extends Skin
 	{
 		private var container:Container;
+		/**
+		 * 禁用拖拽，主要用于网页
+		 */
+		public var disableDrag:Boolean;
 
 		public function Switcher(width:Number=0, height:Number=0, styleName:String='switcher')
 		{
@@ -28,7 +33,9 @@ package com.pamakids.components.containers
 			container.forceAutoFill=true;
 			addChild(container);
 			backgroudAlpha=0;
-			super(styleName, width, height, true);
+			super(styleName, width, height, true, true);
+			maskTarget=container;
+			drawMask();
 		}
 
 		private var isHorizontal:Boolean=true;
@@ -40,9 +47,15 @@ package com.pamakids.components.containers
 
 		public function set currentPage(value:int):void
 		{
+			if (value < 0)
+				value=0;
+			else if (value >= dataProvider.length)
+				value=dataProvider.length - 1;
 			_currentPage=value;
-			if (pagesBar)
+			if (!disableDrag || pagesBar)
 				pagesBar.selectedIndex(value);
+			if (disableDrag)
+				TweenLite.to(container, 0.3, {x: -currentPage * width, ease: Cubic.easeOut, onComplete: movingComplete});
 		}
 
 		override public function set layout(value:ILayout):void
@@ -64,10 +77,36 @@ package com.pamakids.components.containers
 		public function set dataProvider(value:Array):void
 		{
 			_dataProvider=value;
+			if (inited)
+				fillData();
 		}
 
 		override protected function init():void
 		{
+			super.init();
+			if (!itemRendererClass)
+			{
+				throw new Error('ItemRendererClass can not be null');
+				return;
+			}
+			if (!layout)
+			{
+				var h:HLayout=new HLayout();
+				h.width=width;
+				h.height=height;
+				container.layout=h;
+			}
+			fillData();
+			if (!disableDrag)
+				addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+		}
+
+		private function fillData():void
+		{
+			if (!dataProvider)
+				return;
+			while (container.numChildren)
+				container.removeChildAt(0);
 			for each (var o:Object in dataProvider)
 			{
 				var item:Object=new itemRendererClass();
@@ -77,7 +116,8 @@ package com.pamakids.components.containers
 				item.height=height;
 				container.addChild(item as DisplayObject);
 			}
-			addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+			_currentPage=0;
+			container.x=0;
 			updateSkin();
 		}
 
@@ -109,6 +149,7 @@ package com.pamakids.components.containers
 				{
 					pagesBar=new ButtonBar(iconButtons);
 					pagesBar.addEventListener(ResizeEvent.RESIZE, positionBar);
+					pagesBar.addEventListener(IndexEvent.INDEX, indexChangedHandler);
 					pagesBar.forceAutoFill=true;
 					pagesBar.gap=8;
 					pagesBar.itemWidth=sb.width;
@@ -119,6 +160,11 @@ package com.pamakids.components.containers
 					pagesBar.selectedIndex(currentPage);
 				}
 			}
+		}
+
+		protected function indexChangedHandler(event:IndexEvent):void
+		{
+			currentPage=event.index;
 		}
 
 		public var showPageIcon:Boolean=true;

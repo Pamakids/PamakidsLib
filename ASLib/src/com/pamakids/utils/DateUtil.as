@@ -117,5 +117,10 @@ package com.pamakids.utils
 
 			return ac;
 		}
+
+		public static function clone(date:Date):Date
+		{
+			return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
+		}
 	}
 }
