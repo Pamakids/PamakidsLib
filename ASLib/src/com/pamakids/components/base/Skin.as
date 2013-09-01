@@ -38,16 +38,22 @@ package com.pamakids.components.base
 			return am.getStyle(name, cssID);
 		}
 
-		protected function getColor(name:String):uint
+		protected function getColor(name:String='', id:String=''):uint
 		{
-			var style:Object=am.getStyle(name, cssID);
+			if (!id)
+				id=cssID;
+			if (!name)
+				return uint(am.getStyle('color', id));
+			var style:Object=am.getStyle(name, id);
 			if (style.hasOwnProperty('color'))
 				return uint(style['color']);
 			return uint(style);
 		}
 
-		protected function getFontSize(name:String):uint
+		protected function getFontSize(name:String=''):uint
 		{
+			if (!name)
+				return uint(am.getStyle('fontSize', cssID));
 			var style:Object=am.getStyle(name, cssID);
 			if (style.hasOwnProperty('fontSize'))
 				return uint(style['fontSize']);

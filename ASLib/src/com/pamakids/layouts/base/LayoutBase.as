@@ -25,10 +25,8 @@ package com.pamakids.layouts.base
 		public static const VERTICAL:String="VERTICAL";
 		protected var items:Array=[];
 
-		public function LayoutBase(container:Container=null)
+		public function LayoutBase()
 		{
-			if (container)
-				this.container=container;
 		}
 
 		private var _useVirtualLayout:Boolean;
@@ -200,6 +198,18 @@ package com.pamakids.layouts.base
 
 		}
 
+		public function updateAll():void
+		{
+			if (container)
+			{
+				items.length=0;
+				for (var i:int; i < container.numChildren; i++)
+				{
+					addItem(container.getChildAt(i));
+				}
+			}
+		}
+
 		private var tweenX:Boolean=true;
 		private var tweenY:Boolean=true;
 		private var animationVars:Object;
@@ -252,7 +262,7 @@ package com.pamakids.layouts.base
 
 		public function get autoFill():Boolean
 		{
-			return container.autoFill;
+			return container ? container.autoFill : false;
 		}
 
 	}

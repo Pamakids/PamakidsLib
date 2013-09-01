@@ -168,7 +168,6 @@ package com.pamakids.manager
 				{
 					var o:Object={};
 					var nameString:String=xml.SubTexture[i].@name.toString();
-					trace(nameString);
 					o.x=int(xml.SubTexture[i].@x);
 					o.y=int(xml.SubTexture[i].@y);
 					o.width=parseFloat(xml.SubTexture[i].@width);

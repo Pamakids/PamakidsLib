@@ -1,13 +1,16 @@
 package com.pamakids.components
 {
-	import com.pamakids.components.base.Container;
+	import com.pamakids.components.base.Skin;
 	import com.pamakids.components.controls.Label;
 
-	public class ItemRenderer extends Container
+	import flash.events.Event;
+
+	[Event(name="changed", type="flash.events.Event")]
+	public class ItemRenderer extends Skin
 	{
 		public function ItemRenderer(width:Number=0, height:Number=0, enableBackground:Boolean=false, enableMask:Boolean=false)
 		{
-			super(width, height, enableBackground, enableMask);
+			super('', width, height, enableBackground, enableMask);
 		}
 
 		private var _data:Object;
@@ -33,8 +36,9 @@ package com.pamakids.components
 			if (value == _label)
 				return;
 			_label=value;
-			if (labelHolder)
-				labelHolder.text=value;
+			renderData();
+//			if (labelHolder)
+//				labelHolder.text=value;
 		}
 
 		public function get selected():Boolean
@@ -42,9 +46,14 @@ package com.pamakids.components
 			return _selected;
 		}
 
+		private var changed:Boolean;
+
 		public function set selected(value:Boolean):void
 		{
+			changed=value != _selected;
 			_selected=value;
+			if (changed)
+				dispatchEvent(new Event('changed'));
 		}
 
 		public function get data():Object
@@ -63,12 +72,16 @@ package com.pamakids.components
 		 */
 		protected function renderData():void
 		{
+			while (numChildren)
+			{
+				removeChildAt(0);
+			}
 			if (inited)
 			{
 				if (label)
 				{
-					labelHolder=new Label(label);
-					addChild(labelHolder);
+					labelDisplay=new Label(label);
+					addChild(labelDisplay);
 				}
 			}
 		}
@@ -76,7 +89,7 @@ package com.pamakids.components
 		private var _itemIndex:int;
 		private var _label:String;
 		private var _selected:Boolean;
-		protected var labelHolder:Label;
+		protected var labelDisplay:Label;
 
 		override protected function init():void
 		{

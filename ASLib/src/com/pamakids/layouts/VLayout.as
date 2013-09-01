@@ -1,6 +1,5 @@
 package com.pamakids.layouts
 {
-	import com.pamakids.components.base.Container;
 	import com.pamakids.layouts.base.LayoutBase;
 
 	import flash.display.DisplayObject;
@@ -10,9 +9,9 @@ package com.pamakids.layouts
 		private var verticalCenter:Boolean;
 		private var horizentalCenter:Boolean=true;
 
-		public function VLayout(container:Container=null)
+		public function VLayout(gap:int=0)
 		{
-			super(container);
+			this.gap=gap;
 		}
 
 		override public function update():void

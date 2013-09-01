@@ -7,6 +7,7 @@ package com.pamakids.layouts
 	public interface ILayout
 	{
 		function update():void;
+		function updateAll():void;
 		function measure():void;
 		function addItem(displayObject:DisplayObject):void;
 		function removeItem(displayObject:DisplayObject):void;

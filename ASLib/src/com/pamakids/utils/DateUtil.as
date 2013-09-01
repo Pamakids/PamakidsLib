@@ -43,6 +43,8 @@ package com.pamakids.utils
 		 */
 		public static function getInDays(from:Date, end:Date):int
 		{
+			if (!from || !end)
+				return 0;
 			var nd:Date=new Date(from.fullYear, from.month, from.date);
 			for (var i:int=1; i < 365; i++)
 			{
@@ -51,6 +53,20 @@ package com.pamakids.utils
 				nd.date++;
 			}
 			return i;
+		}
+
+		/**
+		 * 判断两个日期是否相等
+		 * @param date1 日期1
+		 * @param date2 日期2
+		 * @param judgeAll 判断日期的所有部分，默认为false，只判断年月日
+		 * @return
+		 */
+		public static function dateIsEqual(date1:Date, date2:Date, judgeAll:Boolean=false):Boolean
+		{
+			if (!date1 || !date2)
+				return false;
+			return date1.fullYear == date2.fullYear && date1.month == date2.month && date1.date == date2.date;
 		}
 
 		public static function isInDates(from:Date, end:Date, date:Date):Boolean

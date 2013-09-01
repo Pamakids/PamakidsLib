@@ -1,6 +1,5 @@
 package com.pamakids.layouts
 {
-	import com.pamakids.components.base.Container;
 	import com.pamakids.layouts.base.LayoutBase;
 
 	import flash.display.DisplayObject;
@@ -10,9 +9,9 @@ package com.pamakids.layouts
 		public var verticalCenter:Boolean=true; //为什么这里要写默认值 而下面的没呢?
 		public var horizontalCenter:Boolean;
 
-		public function HLayout(container:Container=null)
+		public function HLayout(gap:int=0)
 		{
-			super(container);
+			this.gap=gap;
 		}
 
 		override public function update():void

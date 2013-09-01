@@ -89,7 +89,10 @@ package com.pamakids.components.base
 		{
 			_layout=value;
 			if (value)
+			{
 				value.container=this;
+				value.updateAll();
+			}
 		}
 
 		override public function removeChild(child:DisplayObject):DisplayObject
@@ -114,11 +117,11 @@ package com.pamakids.components.base
 
 		override protected function resize():void
 		{
-			if (sizeChanged)
-			{
-				drawBackground();
-				drawMask();
-			}
+//			if (sizeChanged)
+//			{
+			drawBackground();
+			drawMask();
+//			}
 			super.resize();
 		}
 

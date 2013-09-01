@@ -1,6 +1,5 @@
 package com.pamakids.layouts
 {
-	import com.pamakids.components.base.Container;
 	import com.pamakids.layouts.base.LayoutBase;
 
 	import flash.display.DisplayObject;
@@ -12,9 +11,8 @@ package com.pamakids.layouts
 		private var numColumns:int
 		private var horizentalCenter:Boolean=true;
 
-		public function TileLayout(numColumns:int, verticalGap:Number=0, horizontalGap:Number=0, container:Container=null)
+		public function TileLayout(numColumns:int, verticalGap:Number=0, horizontalGap:Number=0)
 		{
-			super(container);
 			this.numColumns=numColumns
 			this.verticalGap=verticalGap
 			this.horizontalGap=horizontalGap
@@ -32,7 +30,7 @@ package com.pamakids.layouts
 			for (i=0; i < l; i++)
 			{
 				item=items[i];
-				if (horizentalCenter && !xoffset)
+				if (horizentalCenter && !xoffset && width && !container.forceAutoFill)
 					xoffset=(width - (item.width * numColumns) - horizontalGap * (numColumns - 1)) / 2;
 				x=xoffset + (i % numColumns) * (horizontalGap + item.width);
 				y=int(i / numColumns) * (verticalGap + item.height);
@@ -41,8 +39,9 @@ package com.pamakids.layouts
 
 			if (autoFill && l > 0)
 			{
-				contentHeight=(verticalGap + item.height) * Math.ceil(l / numColumns) - verticalGap
-				contentWidth=(horizontalGap + item.width) * numColumns - horizontalGap
+				contentHeight=(verticalGap + item.height) * Math.ceil(l / numColumns) - verticalGap;
+				contentWidth=(horizontalGap + item.width) * numColumns - horizontalGap;
+				trace(contentWidth, contentHeight, 'tl');
 				container.setSize(contentWidth, contentHeight);
 			}
 		}

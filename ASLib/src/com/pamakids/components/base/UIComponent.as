@@ -43,17 +43,18 @@ package com.pamakids.components.base
 		{
 			_enabled=value;
 			mouseChildren=mouseEnabled=value;
+			alpha=.5;
 		}
 
 		protected var inited:Boolean;
 
 		protected function onStage(event:Event):void
 		{
+			inited=true;
 			if (autoDispose)
 				removeEventListener(Event.ADDED_TO_STAGE, onStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
 			init();
-			inited=true;
 		}
 
 		public var autoDispose:Boolean=true;
