@@ -41,7 +41,6 @@ package com.pamakids.layouts
 			{
 				contentHeight=(verticalGap + item.height) * Math.ceil(l / numColumns) - verticalGap;
 				contentWidth=(horizontalGap + item.width) * numColumns - horizontalGap;
-				trace(contentWidth, contentHeight, 'tl');
 				container.setSize(contentWidth, contentHeight);
 			}
 		}

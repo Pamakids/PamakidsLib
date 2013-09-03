@@ -117,13 +117,15 @@ package com.pamakids.components.base
 
 		override protected function resize():void
 		{
-//			if (sizeChanged)
-//			{
-			drawBackground();
-			drawMask();
-//			}
+			if (sizeChanged)
+			{
+				drawBackground();
+				drawMask();
+			}
 			super.resize();
 		}
+
+		protected var lineColor:uint;
 
 		protected function drawBackground():void
 		{
@@ -132,7 +134,10 @@ package com.pamakids.components.base
 
 			graphics.clear();
 			graphics.beginFill(backgroundColor, backgroudAlpha);
-			graphics.lineStyle(0, 0, 0);
+			if (!lineColor)
+				graphics.lineStyle(0, 0, 0);
+			else
+				graphics.lineStyle(1, lineColor);
 			graphics.drawRect(0, 0, width, height);
 			graphics.endFill();
 		}

@@ -5,7 +5,7 @@ package com.pamakids.components
 
 	import flash.events.Event;
 
-	[Event(name="changed", type="flash.events.Event")]
+	[Event(name="change", type="flash.events.Event")]
 	public class ItemRenderer extends Skin
 	{
 		public function ItemRenderer(width:Number=0, height:Number=0, enableBackground:Boolean=false, enableMask:Boolean=false)
@@ -53,7 +53,7 @@ package com.pamakids.components
 			changed=value != _selected;
 			_selected=value;
 			if (changed)
-				dispatchEvent(new Event('changed'));
+				dispatchEvent(new Event(Event.CHANGE, true));
 		}
 
 		public function get data():Object

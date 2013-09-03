@@ -12,6 +12,7 @@ package com.pamakids.components.controls
 	import com.pamakids.utils.DateUtil;
 
 	import flash.display.Bitmap;
+	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -25,19 +26,20 @@ package com.pamakids.components.controls
 	 * @author mani
 	 *
 	 */
+	[Event(name="change", type="flash.events.Event")]
 	public class Calendar extends SkinnableDataContainer
 	{
 		public static const BOOK_MODE:int=0;
 
 		public function Calendar(width:Number=0, height:Number=0, styleName:String='', enableBackground:Boolean=false)
 		{
+			super(styleName, width, height, true);
 			backgroudAlpha=1;
-			backgroundColor=0xF8F3F0;
+			backgroundColor=getColor('backgroundColor');
 			labelFunction=function(d:Date):String
 			{
 				return d ? d.date.toString() : '';
 			}
-			super(styleName, width, height, true);
 		}
 
 		public var maxBookMonthes:int;
@@ -64,6 +66,9 @@ package com.pamakids.components.controls
 
 		public function set month(value:int):void
 		{
+			var d:Date=new Date(today.fullYear, today.month);
+			d.month=value;
+			var dp:Array=DateUtil.getDateData(d);
 			if (mode == BOOK_MODE)
 			{
 				if (value <= today.getMonth())
@@ -78,40 +83,52 @@ package com.pamakids.components.controls
 				}
 				if (maxBookMonthes && value - today.month > maxBookMonthes)
 					return;
-			}
-			_month=value;
-			var d:Date=new Date(today.fullYear, today.month);
-			d.month=value;
-			dataProvider=DateUtil.getDateData(d);
-			var i:int;
-			var dd:Date;
-			if (booked)
-			{
-				for (i; i < booked.length; i++)
+				var dd:Date;
+				var i:int;
+				endLoop: for each (d in dp)
 				{
-					var bd:Date=booked[i];
-					for each (dd in dataProvider)
+					i=0;
+					for (i; i < selectedDates.length; i++)
 					{
-						if (DateUtil.dateIsEqual(bd, dd))
-							booked[i]=dd;
+						dd=selectedDates[i];
+						if (DateUtil.dateIsEqual(dd, d))
+						{
+							selectedDates[i]=d;
+							continue endLoop;
+						}
 					}
-				}
-			}
-			if (checkedIn)
-			{
-				i=0;
-				for (i; i < checkedIn.length; i++)
-				{
-					var cd:Date=checkedIn[i];
-					for each (dd in dataProvider)
+					if (booked)
 					{
-						if (DateUtil.dateIsEqual(cd, dd))
-							checkedIn[i]=dd;
+						i=0;
+						for (i; i < booked.length; i++)
+						{
+							dd=booked[i];
+							if (DateUtil.dateIsEqual(d, dd))
+							{
+								booked[i]=d;
+								continue endLoop;
+							}
+						}
+					}
+					if (checkedIn)
+					{
+						i=0;
+						for (i; i < checkedIn.length; i++)
+						{
+							dd=checkedIn[i];
+							if (DateUtil.dateIsEqual(d, dd))
+							{
+								checkedIn[i]=d;
+								continue endLoop;
+							}
+						}
 					}
 				}
 			}
 			if (title)
 				title.text=DateUtil.getNianYue(d);
+			dataProvider=dp;
+			_month=value;
 		}
 
 		/**
@@ -122,25 +139,33 @@ package com.pamakids.components.controls
 		 * 已入住的不可选择的日期
 		 */
 		public var checkedIn:Array;
+		private var borderLine:Sprite;
 
 		override public function updateRenderer(renderer:ItemRenderer, itemIndex:int, data:Object):void
 		{
 			super.updateRenderer(renderer, itemIndex, data);
 			var id:Date=data as Date;
 			var rd:DateRender=renderer as DateRender;
-			if (DateUtil.dateIsEqual(id, today))
-				rd.isToday=true;
-			else if (id && id.time < today.time)
+			if (id && id.time < today.time && !DateUtil.dateIsEqual(id, today))
 				renderer.enabled=false;
-			else
-				rd.updateStatus(booked, checkedIn);
-			if (!renderer.hasEventListener("changed"))
-				renderer.addEventListener("changed", changedHandler);
+			else if (selectedDates.indexOf(data) != -1)
+				renderer.selected=true;
+			else if (!rd.updateStatus(booked, checkedIn) && DateUtil.dateIsEqual(id, today))
+				rd.isToday=true;
+			if (!renderer.hasEventListener(Event.CHANGE))
+				renderer.addEventListener(Event.CHANGE, changedHandler);
 		}
+
+		public var selectedDates:Array=[];
 
 		protected function changedHandler(event:Event):void
 		{
 			var dr:DateRender=event.currentTarget as DateRender;
+			if (dr.selected)
+				selectedDates.push(dr.data);
+			else if (selectedDates.indexOf(dr.data) != -1)
+				selectedDates.splice(selectedDates.indexOf(dr.data), 1);
+			trace(dr.selected, selectedDates);
 		}
 
 		protected function flipHandler(event:MouseEvent):void
@@ -162,7 +187,27 @@ package com.pamakids.components.controls
 			initTitleGroup();
 			initDateGroup();
 			initInfoGroup();
+			lineColor=getColor('titleGroup');
 			super.init();
+		}
+
+//		private function initBorder():void
+//		{
+//			borderLine=new Sprite();
+//			borderLine.graphics.lineStyle(1, getColor('titleGroup'));
+//			updateBorder();
+//			addChild(borderLine);
+//		}
+//
+		private function updateBorder():void
+		{
+//			drawBackground();
+//			var g:Graphics=graphics;
+//			g.clear();
+//			g.moveTo(-1, titleGroup.height);
+//			g.lineTo(-1, height);
+//			g.lineTo(width + 1, height + 1);
+//			g.lineTo(width + 1, titleGroup.height);
 		}
 
 		private function initInfoGroup():void
@@ -188,9 +233,11 @@ package com.pamakids.components.controls
 		private function initDateGroup():void
 		{
 			container=new Container();
+			container.visible=false;
 			container.addEventListener(ResizeEvent.RESIZE, contaierResizedHandler);
 			addChild(container);
 			layout=new VLayout(10);
+			layout.paddingBottom=10;
 			layout.gap=10;
 			contentLayout=new TileLayout(7, 2, 2);
 			itemRender=DateRender;
@@ -198,7 +245,9 @@ package com.pamakids.components.controls
 
 		protected function contaierResizedHandler(event:Event):void
 		{
-			trace(container.width, container.height);
+			trace(container.width, container.height, Math.random());
+			container.visible=true;
+			updateBorder();
 		}
 
 		protected function moveHandler(event:MouseEvent):void
@@ -352,18 +401,22 @@ class DateRender extends ItemRenderer
 		}
 	}
 
-	public function updateStatus(booked:Array, checkedIn:Array):void
+	public function updateStatus(booked:Array, checkedIn:Array):Boolean
 	{
+		var b:Boolean;
 		if (booked && booked.indexOf(data) != -1)
 		{
+			b=true;
 			backgroudAlpha=1;
 			backgroundColor=getColor('booked');
 		}
 		else if (checkedIn && checkedIn.indexOf(data) != -1)
 		{
+			b=true;
 			backgroudAlpha=1;
 			backgroundColor=getColor('checked_in');
 		}
+		return b;
 	}
 
 	protected function labelResizedHandler(event:ResizeEvent):void
@@ -381,7 +434,7 @@ class DateRender extends ItemRenderer
 				if (getFontSize())
 					labelDisplay.fontSize=getFontSize();
 				if (getColor())
-					labelDisplay.color=getColor();
+					labelDisplay.color=selected ? getColor('selectedFontColor') : getColor();
 				labelDisplay.addEventListener(ResizeEvent.RESIZE, labelResizedHandler);
 				addChild(labelDisplay);
 			}

@@ -84,6 +84,9 @@ package com.pamakids.components.base
 		{
 		}
 
+		public var minHeight:Number;
+		public var minWidth:Number;
+
 		protected function onRefreshingTime(event:Event):void
 		{
 			startTime=getTimer() - startTime;
@@ -184,6 +187,10 @@ package com.pamakids.components.base
 
 		public function setSize(width:Number, height:Number):void
 		{
+			if (minWidth && width < minWidth)
+				width=minWidth;
+			if (minHeight && height < minHeight)
+				height=minHeight;
 			if (width != _width || height != _height)
 				sizeChanged=true;
 			_width=width;

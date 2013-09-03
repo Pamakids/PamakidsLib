@@ -14,7 +14,7 @@ package com.pamakids.layouts.base
 		public var paddingLeft:Number=0;
 		public var paddingRight:Number=0;
 		public var paddingTop:Number=0;
-		public var paddingBottom:Number=0;
+		private var _paddingBottom:Number=0;
 		private var _itemWidth:Number=0;
 		private var _itemHeight:Number=0;
 		protected var _container:Container;
@@ -30,6 +30,16 @@ package com.pamakids.layouts.base
 		}
 
 		private var _useVirtualLayout:Boolean;
+
+		public function get paddingBottom():Number
+		{
+			return _paddingBottom;
+		}
+
+		public function set paddingBottom(value:Number):void
+		{
+			_paddingBottom=value;
+		}
 
 		public function get useVirtualLayout():Boolean
 		{

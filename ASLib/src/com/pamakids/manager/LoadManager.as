@@ -259,9 +259,14 @@ package com.pamakids.manager
 				for each (var f:Function in callbacks)
 				{
 					if (bitmap)
+					{
 						returnContent=new Bitmap(bitmap.bitmapData.clone());
+						bitmap.bitmapData.dispose();
+					}
 					else
+					{
 						returnContent=l.content;
+					}
 					params ? f(returnContent, params) : f(returnContent);
 				}
 			}
