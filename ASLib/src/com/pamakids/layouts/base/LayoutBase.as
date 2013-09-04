@@ -161,6 +161,7 @@ package com.pamakids.layouts.base
 
 		public function dispose():void
 		{
+			TweenLite.killTweensOf(this);
 			container.removeEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 			container=null;
 			for each (var displayObject:DisplayObject in items)
@@ -264,7 +265,12 @@ package com.pamakids.layouts.base
 				target.x=x;
 				target.y=y;
 			}
-			target.visible=true;
+			if (target.width && target.height)
+				target.visible=true;
+			else
+				TweenLite.delayedCall(1, function(t:DisplayObject):void {
+					t.visible=true;
+				}, [target], true);
 		}
 
 		private var _width:Number;

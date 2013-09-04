@@ -25,7 +25,7 @@ package com.pamakids.layouts
 				{
 					toy=d.y;
 					tox=x + paddingLeft;
-					if (verticalCenter && !autoFill)
+					if (verticalCenter && !autoFill && height)
 						toy=(height - d.height) / 2;
 					positionItem(d, tox, toy);
 					x=x + d.width + gap;

@@ -233,7 +233,7 @@ package com.pamakids.components.controls
 		private function initDateGroup():void
 		{
 			container=new Container();
-			container.visible=false;
+//			container.visible=false;
 			container.addEventListener(ResizeEvent.RESIZE, contaierResizedHandler);
 			addChild(container);
 			layout=new VLayout(10);
@@ -246,8 +246,10 @@ package com.pamakids.components.controls
 		protected function contaierResizedHandler(event:Event):void
 		{
 			trace(container.width, container.height, Math.random());
-			container.visible=true;
+//			TweenLite.delayedCall(1, function():void {
+//				container.visible=true;
 			updateBorder();
+//			}, null, true);
 		}
 
 		protected function moveHandler(event:MouseEvent):void

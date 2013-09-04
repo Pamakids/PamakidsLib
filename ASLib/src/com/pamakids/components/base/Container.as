@@ -21,6 +21,13 @@ package com.pamakids.components.base
 		private var _layout:ILayout;
 		private var maskSprite:Sprite;
 
+//		override public function set visible(value:Boolean):void
+//		{
+//			if (value)
+//				trace(this);
+//			super.visible=value;
+//		}
+
 		public function get backgroundColor():uint
 		{
 			return _backgroundColor;
@@ -47,9 +54,15 @@ package com.pamakids.components.base
 		{
 			if (layout)
 				layout.addItem(child);
-			if (autoCenter)
+			else if (autoCenter)
 				centerDisplayObject(child);
 			return super.addChild(child);
+		}
+
+		override protected function autoSetSize(child:DisplayObject):void
+		{
+			if (!layout)
+				super.autoSetSize(child);
 		}
 
 		public function get enableBackground():Boolean

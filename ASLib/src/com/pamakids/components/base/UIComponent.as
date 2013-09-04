@@ -22,6 +22,21 @@ package com.pamakids.components.base
 			addEventListener(Event.ADDED_TO_STAGE, onStage);
 		}
 
+		/**
+		 * 根据子项最大宽高设置宽高
+		 */
+		public function get autoFill():Boolean
+		{
+			return _autoFill;
+		}
+
+		public function set autoFill(value:Boolean):void
+		{
+			if (forceAutoFill)
+				value=forceAutoFill;
+			_autoFill=value;
+		}
+
 		public function get startTime():int
 		{
 			if (!hasEventListener(Event.ACTIVATE))
@@ -117,10 +132,7 @@ package com.pamakids.components.base
 		}
 
 		private var _forceAutoFill:Boolean;
-		/**
-		 * 根据子项最大宽高设置宽高
-		 */
-		public var autoFill:Boolean;
+		private var _autoFill:Boolean;
 
 		/**
 		 * 将所有子项自动居中

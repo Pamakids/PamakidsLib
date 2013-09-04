@@ -94,6 +94,7 @@ package com.pamakids.components.base
 		override protected function init():void
 		{
 			TweenLite.delayedCall(1, addCallback);
+			super.init();
 		}
 
 		private function addCallback():void
