@@ -1,5 +1,6 @@
 package com.pamakids.layouts
 {
+	import com.greensock.TweenLite;
 	import com.pamakids.layouts.base.LayoutBase;
 
 	import flash.display.DisplayObject;
@@ -9,9 +10,10 @@ package com.pamakids.layouts
 		private var verticalCenter:Boolean;
 		private var horizentalCenter:Boolean=true;
 
-		public function VLayout(gap:int=0)
+		public function VLayout(gap:int=0, forceAutoFill:Boolean=false)
 		{
 			this.gap=gap;
+			this.forceAutoFill=forceAutoFill;
 		}
 
 		override public function update():void
@@ -19,25 +21,30 @@ package com.pamakids.layouts
 			var elementY:Number=0;
 			var x:Number;
 			var y:Number;
-			var elementReady:Boolean;
 			for each (var element:DisplayObject in items)
 			{
 				elementReady=element.width && element.height;
+				allReady=elementReady;
 				if (elementReady)
 				{
 					y=elementY + paddingTop;
-					if (horizentalCenter)
+					if (horizentalCenter && width)
 						x=(width - element.width) / 2;
+					else
+						TweenLite.delayedCall(1, function(element:DisplayObject):void {
+							element.x=(width - element.width) / 2;
+						}, [element], true);
 					positionItem(element, x, y);
 					elementY=elementY + element.height + gap;
+					caculateMax(element);
 				}
 			}
-			if (autoFill)
+			if (autoFill || forceAutoFill || !width)
 			{
-				if (elementReady)
+				if (allReady)
 				{
-					contentHeight=element.height + element.y + paddingBottom + paddingTop;
-					contentWidth=element.width + paddingLeft + paddingRight;
+					contentHeight=element.height + element.y + paddingBottom;
+					contentWidth=maxElementWidth + paddingLeft + paddingRight;
 					container.setSize(contentWidth, contentHeight);
 				}
 			}

@@ -320,6 +320,25 @@ package com.pamakids.manager
 			}
 		}
 
+		public function cancelLoad(url:String):void
+		{
+			var u:URLLoader=loadingDic[url];
+			if (u)
+			{
+				try
+				{
+					u.close();
+					u.removeEventListener(Event.COMPLETE, onBinaryLoaded);
+				}
+				catch (error:Error)
+				{
+
+				}
+				delete loadingDic[url];
+				delete loaderDic[u];
+			}
+		}
+
 		private function onBinaryLoaded(event:Event):void
 		{
 			var u:URLLoader=event.target as URLLoader;

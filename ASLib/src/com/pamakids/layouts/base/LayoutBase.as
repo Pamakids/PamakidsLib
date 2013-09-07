@@ -21,9 +21,20 @@ package com.pamakids.layouts.base
 		public var contentWidth:Number=0;
 		public var contentHeight:Number=0;
 
+		protected var elementReady:Boolean;
+		protected var allReady:Boolean=true;
+		protected var maxElementWidth:Number;
+		protected var maxElementHeight:Number;
+
 		public static const HORIZONTAL:String="HORIZONTAL";
 		public static const VERTICAL:String="VERTICAL";
 		protected var items:Array=[];
+
+		protected function caculateMax(element:DisplayObject):void
+		{
+			maxElementWidth=maxElementWidth > element.width ? maxElementWidth : element.width;
+			maxElementHeight=maxElementHeight > element.height ? maxElementHeight : element.height;
+		}
 
 		public function LayoutBase()
 		{
@@ -275,6 +286,8 @@ package com.pamakids.layouts.base
 
 		private var _width:Number;
 		private var _height:Number;
+
+		protected var forceAutoFill:Boolean;
 
 		public function get autoFill():Boolean
 		{

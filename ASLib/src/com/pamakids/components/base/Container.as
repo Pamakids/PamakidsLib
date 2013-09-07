@@ -130,11 +130,11 @@ package com.pamakids.components.base
 
 		override protected function resize():void
 		{
-			if (sizeChanged)
-			{
-				drawBackground();
-				drawMask();
-			}
+//			if (sizeChanged)
+//			{
+			drawBackground();
+			drawMask();
+//			}
 			super.resize();
 		}
 

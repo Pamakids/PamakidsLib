@@ -191,41 +191,28 @@ package com.pamakids.components.controls
 			super.init();
 		}
 
-//		private function initBorder():void
-//		{
-//			borderLine=new Sprite();
-//			borderLine.graphics.lineStyle(1, getColor('titleGroup'));
-//			updateBorder();
-//			addChild(borderLine);
-//		}
-//
-		private function updateBorder():void
-		{
-//			drawBackground();
-//			var g:Graphics=graphics;
-//			g.clear();
-//			g.moveTo(-1, titleGroup.height);
-//			g.lineTo(-1, height);
-//			g.lineTo(width + 1, height + 1);
-//			g.lineTo(width + 1, titleGroup.height);
-		}
-
 		private function initInfoGroup():void
 		{
 			var info:Container=new Container();
 			info.forceAutoFill=true;
 			info.layout=new HLayout(5);
-			var checked:Container=new Container(16, 16, true);
+			var checked:Container=new Container(13, 13, true);
 			checked.backgroundColor=getColor('checked_in', 'DateRender');
 			checked.backgroudAlpha=1;
 			info.addChild(checked);
 			var l:Label=new Label('已入住');
 			info.addChild(l);
-			var booked:Container=new Container(16, 16, true);
-			booked.backgroundColor=getColor('booked', 'DateRender');
+			var booked:Container=new Container(13, 13, true);
+			booked.backgroundColor=getColor('booked', 'DateRender')
 			booked.backgroudAlpha=1;
 			info.addChild(booked);
 			l=new Label('已预定');
+			info.addChild(l);
+			var selected:Container=new Container(13, 13, true);
+			selected.backgroundColor=getColor('selectedBackgroundColor', 'DateRender');
+			selected.backgroudAlpha=1;
+			info.addChild(selected);
+			l=new Label('已选择');
 			info.addChild(l);
 			addChild(info);
 		}
@@ -233,10 +220,9 @@ package com.pamakids.components.controls
 		private function initDateGroup():void
 		{
 			container=new Container();
-//			container.visible=false;
 			container.addEventListener(ResizeEvent.RESIZE, contaierResizedHandler);
 			addChild(container);
-			layout=new VLayout(10);
+			layout=new VLayout(10, true);
 			layout.paddingBottom=10;
 			layout.gap=10;
 			contentLayout=new TileLayout(7, 2, 2);
@@ -246,10 +232,6 @@ package com.pamakids.components.controls
 		protected function contaierResizedHandler(event:Event):void
 		{
 			trace(container.width, container.height, Math.random());
-//			TweenLite.delayedCall(1, function():void {
-//				container.visible=true;
-			updateBorder();
-//			}, null, true);
 		}
 
 		protected function moveHandler(event:MouseEvent):void
