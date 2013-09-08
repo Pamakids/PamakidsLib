@@ -12,7 +12,6 @@ package com.pamakids.components.controls
 	import com.pamakids.utils.DateUtil;
 
 	import flash.display.Bitmap;
-	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -58,6 +57,40 @@ package com.pamakids.components.controls
 		private var title:Label;
 		private var titleGroup:Container;
 		private var weekGroup:Container;
+
+		/**
+		 * 已预定的不可选择的日期
+		 */
+		public function get booked():Array
+		{
+			return _booked;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set booked(value:Array):void
+		{
+			_booked=value;
+			renderData();
+		}
+
+		/**
+		 * 已入住的不可选择的日期
+		 */
+		public function get checkedIn():Array
+		{
+			return _checkedIn;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set checkedIn(value:Array):void
+		{
+			_checkedIn=value;
+			renderData();
+		}
 
 		public function get month():int
 		{
@@ -131,14 +164,8 @@ package com.pamakids.components.controls
 			_month=value;
 		}
 
-		/**
-		 * 已预定的不可选择的日期
-		 */
-		public var booked:Array;
-		/**
-		 * 已入住的不可选择的日期
-		 */
-		public var checkedIn:Array;
+		private var _booked:Array;
+		private var _checkedIn:Array;
 		private var borderLine:Sprite;
 
 		override public function updateRenderer(renderer:ItemRenderer, itemIndex:int, data:Object):void
@@ -157,6 +184,9 @@ package com.pamakids.components.controls
 		}
 
 		public var selectedDates:Array=[];
+
+		private var checkIn:Date;
+		private var checkOut:Date;
 
 		protected function changedHandler(event:Event):void
 		{
@@ -274,8 +304,6 @@ package com.pamakids.components.controls
 		override protected function renderData():void
 		{
 			super.renderData();
-			if (container)
-				trace('container', container.height);
 		}
 
 		override protected function updateSkin():void
@@ -399,7 +427,9 @@ class DateRender extends ItemRenderer
 			b=true;
 			backgroudAlpha=1;
 			backgroundColor=getColor('checked_in');
+			trace(data, 'ci', isToday);
 		}
+		mouseChildren=mouseEnabled=!b;
 		return b;
 	}
 

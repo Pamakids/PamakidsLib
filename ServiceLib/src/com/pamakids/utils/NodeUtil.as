@@ -55,14 +55,17 @@ package com.pamakids.utils
 		{
 			var arr:Array=[];
 
-			var f:Date=getDateByString(from);
-			var e:Date=getDateByString(end);
-			for (var i:int; i < 365; i++)
+			if (from && end)
 			{
-				arr.push(f);
-				if (f.fullYear == e.fullYear && f.month == e.month && f.date == e.date)
-					break;
-				f.date++;
+				var f:Date=getDateByString(from);
+				var e:Date=getDateByString(end);
+				for (var i:int; i < 365; i++)
+				{
+					arr.push(f);
+					if (f.fullYear == e.fullYear && f.month == e.month && f.date == e.date)
+						break;
+					f.date++;
+				}
 			}
 
 			return arr;

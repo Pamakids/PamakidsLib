@@ -1,5 +1,6 @@
 package com.pamakids.components
 {
+	import com.greensock.TweenLite;
 	import com.pamakids.components.base.Container;
 	import com.pamakids.components.base.Skin;
 	import com.pamakids.components.interfaces.IItemRendererOwner;
@@ -74,21 +75,29 @@ package com.pamakids.components
 
 		protected function renderData():void
 		{
+//			TweenLite.killDelayedCallsTo(doRender);
+//			TweenLite.delayedCall(1, doRender, null true);
 			if (dataProvider && inited && container)
 			{
-				while (container.numChildren)
-				{
-					container.removeChildAt(0);
-				}
+//				while (container.numChildren)
+//				{
+//					container.removeChildAt(0);
+//				}
 				for each (var data:Object in dataProvider)
 				{
 					var item:ItemRenderer=new itemRender();
 					if (selectable)
 						item.addEventListener(MouseEvent.CLICK, selectHandler);
 					updateRenderer(item, dataProvider.indexOf(data), data);
-					container.addChild(item);
+					if (!item.parent)
+						container.addChild(item);
 				}
 			}
+		}
+
+		private function doRender():void
+		{
+
 		}
 
 		protected function selectHandler(event:MouseEvent):void
