@@ -83,16 +83,34 @@ package com.pamakids.components
 //				{
 //					container.removeChildAt(0);
 //				}
-				for each (var data:Object in dataProvider)
+				for (var i:int; i < dataProvider.length; i++)
 				{
-					var item:ItemRenderer=new itemRender();
-					if (selectable)
-						item.addEventListener(MouseEvent.CLICK, selectHandler);
-					updateRenderer(item, dataProvider.indexOf(data), data);
-					if (!item.parent)
+					var data:Object=dataProvider[i];
+					var item:ItemRenderer;
+					if (container.numChildren > i)
+					{
+						item=container.getChildAt(i) as ItemRenderer;
+					}
+					else
+					{
+						item=new itemRender();
 						container.addChild(item);
+						if (selectable)
+							item.addEventListener(MouseEvent.CLICK, selectHandler);
+					}
+					updateRenderer(item, dataProvider.indexOf(data), data);
 				}
+				while (container.numChildren > dataProvider.length)
+					container.removeChildAt(dataProvider.length);
 			}
+		}
+
+		protected var items:Array=[];
+
+		override protected function dispose():void
+		{
+			super.dispose();
+			items.length=0;
 		}
 
 		private function doRender():void

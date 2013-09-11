@@ -64,24 +64,35 @@ package com.pamakids.components
 		public function set data(value:Object):void
 		{
 			_data=value;
-			renderData();
+			renderData(false);
 		}
 
 		/**
 		 * 渲染数据
 		 */
-		protected function renderData():void
+		protected function renderData(clear:Boolean=false):void
 		{
-			while (numChildren)
-			{
-				removeChildAt(0);
-			}
 			if (inited)
 			{
+				if (clear)
+				{
+					while (numChildren)
+					{
+						removeChildAt(0);
+					}
+					labelDisplay=null;
+				}
 				if (label)
 				{
-					labelDisplay=new Label(label);
-					addChild(labelDisplay);
+					if (!labelDisplay)
+					{
+						labelDisplay=new Label(label);
+						addChild(labelDisplay);
+					}
+					else
+					{
+						labelDisplay.text=label;
+					}
 				}
 			}
 		}

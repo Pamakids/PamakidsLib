@@ -20,6 +20,7 @@ package com.pamakids.layouts.base
 		protected var _container:Container;
 		public var contentWidth:Number=0;
 		public var contentHeight:Number=0;
+		private var _updateImmediately:Boolean;
 
 		protected var elementReady:Boolean;
 		protected var allReady:Boolean=true;
@@ -29,6 +30,16 @@ package com.pamakids.layouts.base
 		public static const HORIZONTAL:String="HORIZONTAL";
 		public static const VERTICAL:String="VERTICAL";
 		protected var items:Array=[];
+
+		public function get updateImmediately():Boolean
+		{
+			return _updateImmediately;
+		}
+
+		public function set updateImmediately(value:Boolean):void
+		{
+			_updateImmediately=value;
+		}
 
 		protected function caculateMax(element:DisplayObject):void
 		{
@@ -210,9 +221,15 @@ package com.pamakids.layouts.base
 
 		private function delayUpdate():void
 		{
-//			update();
-			TweenLite.killDelayedCallsTo(update);
-			TweenLite.delayedCall(0.1, update);
+			if (!updateImmediately)
+			{
+				TweenLite.killDelayedCallsTo(update);
+				TweenLite.delayedCall(1, update, null, true);
+			}
+			else
+			{
+				update();
+			}
 		}
 
 		public function update():void

@@ -22,5 +22,6 @@ package com.pamakids.layouts
 		function get useVirtualLayout():Boolean;
 		function set useVirtualLayout(value:Boolean):void;
 		function set paddingBottom(value:Number):void;
+		function set updateImmediately(value:Boolean):void;
 	}
 }

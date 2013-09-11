@@ -179,6 +179,8 @@ package com.pamakids.components.controls
 				renderer.selected=true;
 			else if (!rd.updateStatus(booked, checkedIn) && DateUtil.dateIsEqual(id, today))
 				rd.isToday=true;
+			else
+				rd.reset();
 			if (!renderer.hasEventListener(Event.CHANGE))
 				renderer.addEventListener(Event.CHANGE, changedHandler);
 		}
@@ -253,6 +255,7 @@ package com.pamakids.components.controls
 			container.addEventListener(ResizeEvent.RESIZE, contaierResizedHandler);
 			addChild(container);
 			layout=new VLayout(10, true);
+			layout.updateImmediately=true;
 			layout.paddingBottom=10;
 			layout.gap=10;
 			contentLayout=new TileLayout(7, 2, 2);
@@ -438,7 +441,7 @@ class DateRender extends ItemRenderer
 		centerDisplayObject(labelDisplay);
 	}
 
-	override protected function renderData():void
+	override protected function renderData(clear:Boolean=false):void
 	{
 		if (inited)
 		{
@@ -462,5 +465,11 @@ class DateRender extends ItemRenderer
 				backgroundColor=getColor('todayBackgroundColor');
 			}
 		}
+	}
+
+	public function reset():void
+	{
+		isToday=false;
+		selected=false;
 	}
 }
