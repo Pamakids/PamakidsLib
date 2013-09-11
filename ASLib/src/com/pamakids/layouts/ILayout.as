@@ -7,6 +7,7 @@ package com.pamakids.layouts
 	public interface ILayout
 	{
 		function update():void;
+		function updateAll():void;
 		function measure():void;
 		function addItem(displayObject:DisplayObject):void;
 		function removeItem(displayObject:DisplayObject):void;
@@ -18,5 +19,9 @@ package com.pamakids.layouts
 		function set width(value:Number):void;
 		function set height(value:Number):void;
 		function setAnimation(duration:Number, vars:Object, tweenX:Boolean=true, tweeny:Boolean=true):void;
+		function get useVirtualLayout():Boolean;
+		function set useVirtualLayout(value:Boolean):void;
+		function set paddingBottom(value:Number):void;
+		function set updateImmediately(value:Boolean):void;
 	}
 }

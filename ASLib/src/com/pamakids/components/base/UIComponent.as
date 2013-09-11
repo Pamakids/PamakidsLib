@@ -22,6 +22,21 @@ package com.pamakids.components.base
 			addEventListener(Event.ADDED_TO_STAGE, onStage);
 		}
 
+		/**
+		 * 根据子项最大宽高设置宽高
+		 */
+		public function get autoFill():Boolean
+		{
+			return _autoFill;
+		}
+
+		public function set autoFill(value:Boolean):void
+		{
+			if (forceAutoFill)
+				value=forceAutoFill;
+			_autoFill=value;
+		}
+
 		public function get startTime():int
 		{
 			if (!hasEventListener(Event.ACTIVATE))
@@ -43,10 +58,14 @@ package com.pamakids.components.base
 		{
 			_enabled=value;
 			mouseChildren=mouseEnabled=value;
+			alpha=.5;
 		}
+
+		protected var inited:Boolean;
 
 		protected function onStage(event:Event):void
 		{
+			inited=true;
 			if (autoDispose)
 				removeEventListener(Event.ADDED_TO_STAGE, onStage);
 			addEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
@@ -80,6 +99,9 @@ package com.pamakids.components.base
 		{
 		}
 
+		public var minHeight:Number;
+		public var minWidth:Number;
+
 		protected function onRefreshingTime(event:Event):void
 		{
 			startTime=getTimer() - startTime;
@@ -97,21 +119,20 @@ package com.pamakids.components.base
 
 		private var _height:Number;
 		private var _width:Number;
+		protected var sizeChanged:Boolean=true;
 
 		override public function set width(value:Number):void
 		{
 			if (_width != value)
 			{
 				_width=value;
+				sizeChanged=true;
 				resize();
 			}
 		}
 
 		private var _forceAutoFill:Boolean;
-		/**
-		 * 根据子项最大宽高设置宽高
-		 */
-		public var autoFill:Boolean;
+		private var _autoFill:Boolean;
 
 		/**
 		 * 将所有子项自动居中
@@ -136,7 +157,11 @@ package com.pamakids.components.base
 			if (_width || _height)
 			{
 				autoFill=forceAutoFill;
-				dispatchEvent(new ResizeEvent(_width, _height));
+				if (sizeChanged)
+				{
+					sizeChanged=false;
+					dispatchEvent(new ResizeEvent(_width, _height));
+				}
 			}
 			centerChildren();
 		}
@@ -158,10 +183,12 @@ package com.pamakids.components.base
 			return super.addChild(child);
 		}
 
+		public var centerOffsetY:int;
+
 		protected function centerDisplayObject(child:DisplayObject):void
 		{
 			child.x=width / 2 - child.width / 2;
-			child.y=height / 2 - child.height / 2;
+			child.y=height / 2 - child.height / 2 + centerOffsetY;
 		}
 
 		protected function autoSetSize(child:DisplayObject):void
@@ -172,6 +199,12 @@ package com.pamakids.components.base
 
 		public function setSize(width:Number, height:Number):void
 		{
+			if (minWidth && width < minWidth)
+				width=minWidth;
+			if (minHeight && height < minHeight)
+				height=minHeight;
+			if (width != _width || height != _height)
+				sizeChanged=true;
 			_width=width;
 			_height=height;
 			resize();
@@ -187,6 +220,7 @@ package com.pamakids.components.base
 			if (value != _height)
 			{
 				_height=value;
+				sizeChanged=true;
 				resize();
 			}
 		}

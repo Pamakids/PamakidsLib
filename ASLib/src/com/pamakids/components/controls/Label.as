@@ -5,6 +5,7 @@ package com.pamakids.components.controls
 	import flash.display.DisplayObject;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFieldType;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 
@@ -19,12 +20,17 @@ package com.pamakids.components.controls
 			super(width, height);
 			if (!width && !height)
 				forceAutoFill=true;
-			cacheAsBitmap=true;
+			cacheAsBitmap=Style.cacheAsBitmap;
+		}
+
+		public function getTextField():TextField
+		{
+			return textField;
 		}
 
 		public function get embedFonts():Boolean
 		{
-			return _embedFont;
+			return _embedFont ? _embedFont : Style.embedFonts;
 		}
 
 		public function set embedFonts(value:Boolean):void
@@ -97,7 +103,7 @@ package com.pamakids.components.controls
 
 		public function get fontFamily():String
 		{
-			return _fontFamily;
+			return _fontFamily ? _fontFamily : Style.fontName;
 		}
 
 		public function set fontFamily(value:String):void
@@ -146,15 +152,17 @@ package com.pamakids.components.controls
 
 		public function get text():String
 		{
-			return _text;
+			return _text ? _text : textField.text;
 		}
 
 		public function set text(value:String):void
 		{
+			if (textField && textField.text == value)
+				return;
 			if (value == _text)
 				return;
 			_text=value;
-			if (textField)
+			if (textField && value != null)
 			{
 				textField.text=value;
 				updateFormat();
@@ -197,6 +205,8 @@ package com.pamakids.components.controls
 
 		override protected function autoSetSize(child:DisplayObject):void
 		{
+			if (type == TextFieldType.INPUT)
+				return;
 			if (autoFill || forceAutoFill)
 			{
 				if (child == textField)
@@ -217,11 +227,16 @@ package com.pamakids.components.controls
 			if (!textField)
 			{
 				addChild(createTextField());
-				adjust();
+				if (type != TextFieldType.INPUT)
+					adjust();
+				else
+					centerDisplayObject(textField);
 			}
 		}
 
 		private var _embedFont:Boolean;
+		public var selectable:Boolean;
+		public var type:String=TextFieldType.DYNAMIC;
 
 		protected function createTextField():TextField
 		{
@@ -232,14 +247,24 @@ package com.pamakids.components.controls
 			tf.align=algin;
 			textField=new TextField();
 			textField.autoSize=TextFieldAutoSize.LEFT;
-			if (!forceAutoFill)
+			if (!forceAutoFill && type != TextFieldType.INPUT)
 				textField.wordWrap=true;
+			textField.type=type;
 			textField.embedFonts=embedFonts;
-			textField.selectable=false;
+			textField.selectable=selectable;
 			textField.defaultTextFormat=tf;
+			if (text)
+				textField.text=text;
 			if (width)
+			{
+				if (type == TextFieldType.INPUT)
+				{
+					var th:Number=textField.height;
+					textField.autoSize=TextFieldAutoSize.NONE;
+					textField.height=th;
+				}
 				textField.width=width;
-			textField.text=text;
+			}
 			return textField;
 		}
 	}

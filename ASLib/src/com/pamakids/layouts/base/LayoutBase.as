@@ -14,24 +14,69 @@ package com.pamakids.layouts.base
 		public var paddingLeft:Number=0;
 		public var paddingRight:Number=0;
 		public var paddingTop:Number=0;
-		public var paddingBottom:Number=0;
+		private var _paddingBottom:Number=0;
 		private var _itemWidth:Number=0;
 		private var _itemHeight:Number=0;
 		protected var _container:Container;
 		public var contentWidth:Number=0;
 		public var contentHeight:Number=0;
+		private var _updateImmediately:Boolean;
+
+		protected var elementReady:Boolean;
+		protected var allReady:Boolean=true;
+		protected var maxElementWidth:Number;
+		protected var maxElementHeight:Number;
 
 		public static const HORIZONTAL:String="HORIZONTAL";
 		public static const VERTICAL:String="VERTICAL";
 		protected var items:Array=[];
 
-		public function LayoutBase(container:Container=null)
+		public function get updateImmediately():Boolean
 		{
-			if (container)
-			{
-				this.container=container;
-				this.container.addEventListener(Event.REMOVED_FROM_STAGE, onRemove);
-			}
+			return _updateImmediately;
+		}
+
+		public function set updateImmediately(value:Boolean):void
+		{
+			_updateImmediately=value;
+		}
+
+		protected function caculateMax(element:DisplayObject):void
+		{
+			maxElementWidth=maxElementWidth > element.width ? maxElementWidth : element.width;
+			maxElementHeight=maxElementHeight > element.height ? maxElementHeight : element.height;
+		}
+
+		public function LayoutBase()
+		{
+		}
+
+		private var _useVirtualLayout:Boolean;
+
+		public function get paddingBottom():Number
+		{
+			return _paddingBottom;
+		}
+
+		public function set paddingBottom(value:Number):void
+		{
+			_paddingBottom=value;
+		}
+
+		public function get useVirtualLayout():Boolean
+		{
+			return _useVirtualLayout;
+		}
+
+		public function set useVirtualLayout(value:Boolean):void
+		{
+			if (_useVirtualLayout && value)
+				clearVirtualLayoutCache();
+			_useVirtualLayout=value;
+		}
+
+		public function clearVirtualLayoutCache():void
+		{
 		}
 
 		public function get height():Number
@@ -138,6 +183,7 @@ package com.pamakids.layouts.base
 
 		public function dispose():void
 		{
+			TweenLite.killTweensOf(this);
 			container.removeEventListener(Event.REMOVED_FROM_STAGE, onRemove);
 			container=null;
 			for each (var displayObject:DisplayObject in items)
@@ -169,21 +215,38 @@ package com.pamakids.layouts.base
 				displayObject.removeEventListener(Event.COMPLETE, itemCompleHandler);
 			if (displayObject.hasEventListener(ResizeEvent.RESIZE))
 				displayObject.removeEventListener(ResizeEvent.RESIZE, itemResizedHandler);
-			container.removeChild(displayObject);
 			items.splice(items.indexOf(displayObject), 1);
 			delayUpdate();
 		}
 
 		private function delayUpdate():void
 		{
-//			update();
-			TweenLite.killDelayedCallsTo(update);
-			TweenLite.delayedCall(0.1, update);
+			if (!updateImmediately)
+			{
+				TweenLite.killDelayedCallsTo(update);
+				TweenLite.delayedCall(1, update, null, true);
+			}
+			else
+			{
+				update();
+			}
 		}
 
 		public function update():void
 		{
 
+		}
+
+		public function updateAll():void
+		{
+			if (container)
+			{
+				items.length=0;
+				for (var i:int; i < container.numChildren; i++)
+				{
+					addItem(container.getChildAt(i));
+				}
+			}
 		}
 
 		private var tweenX:Boolean=true;
@@ -230,15 +293,22 @@ package com.pamakids.layouts.base
 				target.x=x;
 				target.y=y;
 			}
-			target.visible=true;
+			if (target.width && target.height)
+				target.visible=true;
+			else
+				TweenLite.delayedCall(1, function(t:DisplayObject):void {
+					t.visible=true;
+				}, [target], true);
 		}
 
 		private var _width:Number;
 		private var _height:Number;
 
+		protected var forceAutoFill:Boolean;
+
 		public function get autoFill():Boolean
 		{
-			return container.autoFill;
+			return container ? container.autoFill : false;
 		}
 
 	}

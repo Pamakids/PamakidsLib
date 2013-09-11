@@ -15,11 +15,29 @@ package com.pamakids.components.base
 		}
 
 		private var _backgroudAlpha:Number=0;
-		public var backgroundColor:uint=0;
+		private var _backgroundColor:uint=0;
 		private var _enableBackground:Boolean;
 		private var _enableMask:Boolean;
 		private var _layout:ILayout;
 		private var maskSprite:Sprite;
+
+//		override public function set visible(value:Boolean):void
+//		{
+//			if (value)
+//				trace(this);
+//			super.visible=value;
+//		}
+
+		public function get backgroundColor():uint
+		{
+			return _backgroundColor;
+		}
+
+		public function set backgroundColor(value:uint):void
+		{
+			_backgroundColor=value;
+			drawBackground();
+		}
 
 		public function get backgroudAlpha():Number
 		{
@@ -36,9 +54,15 @@ package com.pamakids.components.base
 		{
 			if (layout)
 				layout.addItem(child);
-			if (autoCenter)
+			else if (autoCenter)
 				centerDisplayObject(child);
 			return super.addChild(child);
+		}
+
+		override protected function autoSetSize(child:DisplayObject):void
+		{
+			if (!layout)
+				super.autoSetSize(child);
 		}
 
 		public function get enableBackground():Boolean
@@ -78,7 +102,10 @@ package com.pamakids.components.base
 		{
 			_layout=value;
 			if (value)
+			{
 				value.container=this;
+				value.updateAll();
+			}
 		}
 
 		override public function removeChild(child:DisplayObject):DisplayObject
@@ -86,6 +113,13 @@ package com.pamakids.components.base
 			if (layout)
 				layout.removeItem(child);
 			return super.removeChild(child);
+		}
+
+		override public function removeChildAt(index:int):DisplayObject
+		{
+			if (layout)
+				layout.removeItem(getChildAt(index));
+			return super.removeChildAt(index);
 		}
 
 		override protected function init():void
@@ -96,35 +130,50 @@ package com.pamakids.components.base
 
 		override protected function resize():void
 		{
-			super.resize();
+//			if (sizeChanged)
+//			{
 			drawBackground();
 			drawMask();
+//			}
+			super.resize();
 		}
 
-		private function drawBackground():void
+		protected var lineColor:uint;
+
+		protected function drawBackground():void
 		{
 			if (!width || !height || !enableBackground) //条件
 				return;
 
 			graphics.clear();
 			graphics.beginFill(backgroundColor, backgroudAlpha);
-			graphics.lineStyle(0, 0, 0);
+			if (!lineColor)
+				graphics.lineStyle(0, 0, 0);
+			else
+				graphics.lineStyle(1, lineColor);
 			graphics.drawRect(0, 0, width, height);
 			graphics.endFill();
 		}
 
-		private function drawMask():void
+		protected var maskTarget:Sprite;
+
+		protected function drawMask():void
 		{
 			if (!enableMask || !width || !height)
 				return;
 			if (!maskSprite)
+			{
 				maskSprite=new Sprite();
+				super.addChild(maskSprite);
+			}
 			maskSprite.graphics.clear();
 			maskSprite.graphics.beginFill(0);
 			maskSprite.graphics.drawRect(0, 0, width, height);
 			maskSprite.graphics.endFill();
-			super.addChild(maskSprite);
-			mask=maskSprite;
+			if (!maskTarget)
+				maskTarget=this;
+			maskTarget.mask=maskSprite;
+			trace(maskTarget);
 		}
 	}
 }

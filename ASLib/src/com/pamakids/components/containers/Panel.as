@@ -8,7 +8,6 @@ package com.pamakids.components.containers
 	import com.pamakids.events.ResizeEvent;
 	import com.pamakids.layouts.ILayout;
 	import com.pamakids.layouts.base.LayoutBase;
-	import com.pamakids.utils.DPIUtil;
 
 	import flash.display.DisplayObject;
 	import flash.events.Event;

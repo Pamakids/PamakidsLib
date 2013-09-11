@@ -9,6 +9,7 @@ package com.pamakids.manager
 	import flash.geom.Rectangle;
 	import flash.net.URLLoaderDataFormat;
 	import flash.utils.Dictionary;
+	import flash.utils.getDefinitionByName;
 
 	public class AssetsManager extends Singleton
 	{
@@ -41,6 +42,11 @@ package com.pamakids.manager
 				loadedCallbacks.push(callback);
 		}
 
+		public function registAsset(name:String, bitmapOrClass:Object):void
+		{
+			bitmapDic[name]=bitmapOrClass is Class ? new bitmapOrClass : bitmapOrClass;
+		}
+
 		private var themeURL:String;
 
 		public function loadTheme(url:String):void
@@ -53,7 +59,18 @@ package com.pamakids.manager
 
 		private function loadedThemeInfoHandler(themeStr:String):void
 		{
-			var theme:Object=JSON.parse(themeStr);
+			var J:Object=getDefinitionByName('JSON') as Class;
+			var theme:Object;
+			if (J)
+			{
+				theme=J.parse(themeStr);
+			}
+			else
+			{
+				J=getDefinitionByName('com.adobe.serialization.json.JSON') as Class;
+				theme=J.decode(themeStr);
+			}
+			parseCSS(theme);
 			var dir:String=theme.dir;
 			if (isHttpTheme)
 				dir=URLUtil.getUrlDir(themeURL) + dir;
@@ -81,13 +98,38 @@ package com.pamakids.manager
 			}
 		}
 
+		private var css:Dictionary;
+
+		private function parseCSS(theme:Object):void
+		{
+			if (theme.css)
+			{
+				css=new Dictionary();
+				for (var p:String in theme.css)
+				{
+					css[p]=theme.css[p];
+				}
+			}
+		}
+
+		public function getStyle(name:String, cssID:String):Object
+		{
+			return css[cssID][name];
+		}
+
+		public function addAsset(name:String, bitmap:Bitmap):void
+		{
+			bitmapDic[name]=bitmap;
+		}
+
 		public function getAsset(name:String, type:String='image'):Bitmap
 		{
 			var asset:Bitmap;
 
 			if (bitmapDic[name])
 			{
-				asset=bitmapDic[name];
+				var b:Bitmap=bitmapDic[name];
+				asset=new Bitmap(b.bitmapData);
 			}
 			else
 			{
