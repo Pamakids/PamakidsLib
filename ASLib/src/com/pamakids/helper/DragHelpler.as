@@ -1,5 +1,7 @@
 package com.pamakids.helper
 {
+	import com.pamakids.events.ResizeEvent;
+
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
 	import flash.events.Event;
@@ -14,6 +16,7 @@ package com.pamakids.helper
 		private var targetPoint:Point;
 		private var miniX:Number;
 		private var miniY:Number;
+		private var container:DisplayObject;
 
 		public var enable:Boolean=true;
 
@@ -26,6 +29,14 @@ package com.pamakids.helper
 			target.addEventListener(Event.REMOVED_FROM_STAGE, targetRemovedHandler);
 			target.addEventListener(MouseEvent.MOUSE_DOWN, downTargetHandler);
 			target.addEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
+			container.addEventListener(ResizeEvent.RESIZE, resizeHandler);
+			this.container=container;
+		}
+
+		protected function resizeHandler(event:Event):void
+		{
+			miniX=container.width - target.width;
+			miniY=container.height - target.height;
 		}
 
 		protected function targetRemovedHandler(event:Event):void
@@ -39,6 +50,7 @@ package com.pamakids.helper
 		{
 			event.target.removeEventListener(MouseEvent.MOUSE_DOWN, downTargetHandler);
 			event.target.removeEventListener(Event.REMOVED_FROM_STAGE, onRemoved);
+			container.addEventListener(ResizeEvent.RESIZE, resizeHandler);
 		}
 
 		protected function downTargetHandler(event:MouseEvent):void
@@ -65,10 +77,20 @@ package com.pamakids.helper
 				tx=0;
 			else if (tx < miniX)
 				tx=miniX;
-			if (ty > 0)
-				ty=0;
-			else if (ty < miniY)
-				ty=miniY;
+			if (miniY < 0)
+			{
+				if (ty > 0)
+					ty=0;
+				else if (ty < miniY)
+					ty=miniY;
+			}
+			else
+			{
+				if (ty < 0)
+					ty=0;
+				else if (ty > miniY)
+					ty=miniY;
+			}
 			target.x=tx;
 			target.y=ty;
 		}
