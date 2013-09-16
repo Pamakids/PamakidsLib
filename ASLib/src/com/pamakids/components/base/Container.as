@@ -138,7 +138,7 @@ package com.pamakids.components.base
 			super.resize();
 		}
 
-		protected var lineColor:uint;
+		public var lineColor:uint;
 
 		protected function drawBackground():void
 		{
