@@ -12,6 +12,7 @@ package com.pamakids.models
 		private var _updator:Object;
 		private var _creator:Object;
 		protected var _user:Object;
+		protected var userField:String='worker_id';
 
 		public function get user():Object
 		{
@@ -25,7 +26,7 @@ package com.pamakids.models
 
 		public function get updator():Object
 		{
-			return _updator ? _updator.worker_id : null;
+			return _updator ? _updator[userField] : null;
 		}
 
 		public function set updator(value:Object):void
@@ -35,7 +36,7 @@ package com.pamakids.models
 
 		public function get creator():Object
 		{
-			return _creator ? _creator.worker_id : null;
+			return _creator ? _creator[userField] : null;
 		}
 
 		public function set creator(value:Object):void
