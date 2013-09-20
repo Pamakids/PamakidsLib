@@ -161,7 +161,7 @@ package com.pamakids.services
 			var l:URLLoader=event.target as URLLoader;
 			if (removeListeners)
 				removeEventListeners(l);
-			trace('Error:', l.data);
+			trace('Error:', l.data, status);
 			if (callbackDic[l])
 			{
 				var message:String;

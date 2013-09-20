@@ -58,7 +58,7 @@ package com.pamakids.components.base
 		{
 			_enabled=value;
 			mouseChildren=mouseEnabled=value;
-			alpha=.5;
+			alpha=value ? 1 : .5;
 		}
 
 		protected var inited:Boolean;

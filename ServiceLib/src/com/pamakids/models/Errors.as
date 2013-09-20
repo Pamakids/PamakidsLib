@@ -39,7 +39,7 @@ package com.pamakids.models
 					message='您填写的数据不对，请查证后再试';
 					break;
 				case '401':
-					message='超过1小时没有操作，验证失败，请登陆后再试';
+					message='太长时间没有操作，验证失败，请登陆后再试';
 					break;
 				default:
 					message='网络连接失败，请稍后再试';
