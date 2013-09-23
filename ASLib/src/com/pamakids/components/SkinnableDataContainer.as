@@ -47,6 +47,12 @@ package com.pamakids.components
 			renderer.label=itemToLabel(data);
 			renderer.data=data;
 		}
+
+		protected function updateRendererByIndex(itemIndex:int):void
+		{
+			updateRenderer(container.getChildAt(itemIndex) as ItemRenderer, itemIndex, dataProvider[itemIndex]);
+		}
+
 		private var _dataProvider:Array;
 		protected var container:Container;
 		public var contentLayout:ILayout;

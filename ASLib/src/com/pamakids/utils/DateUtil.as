@@ -112,6 +112,22 @@ package com.pamakids.utils
 			return date.fullYear + '年' + (date.month + 1) + '月';
 		}
 
+		public static function getDatesBetween(from:Date, end:Date):Array
+		{
+			if (!from || !end)
+				return null;
+			var arr:Array=[];
+			var nd:Date=new Date(from.fullYear, from.month, from.date);
+			for (var i:int=1; i < 365; i++)
+			{
+				arr.push(new Date(nd.getFullYear(), nd.getMonth(), nd.getDate()));
+				if (nd.getFullYear() == end.getFullYear() && nd.getMonth() == end.getMonth() && nd.getDate() == end.getDate())
+					break;
+				nd.date++;
+			}
+			return arr;
+		}
+
 		public static function getDateData(date:Date):Array
 		{
 			var ac:Array=[];
