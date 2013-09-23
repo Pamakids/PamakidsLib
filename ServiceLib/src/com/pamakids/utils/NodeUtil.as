@@ -53,22 +53,7 @@ package com.pamakids.utils
 
 		public static function getInDates(from:String, end:String):Array
 		{
-			var arr:Array=[];
-
-			if (from && end)
-			{
-				var f:Date=getDateByString(from);
-				var e:Date=getDateByString(end);
-				for (var i:int; i < 365; i++)
-				{
-					arr.push(f);
-					if (f.fullYear == e.fullYear && f.month == e.month && f.date == e.date)
-						break;
-					f.date++;
-				}
-			}
-
-			return arr;
+			return DateUtil.getDatesBetween(getDateByString(from), getDateByString(end));
 		}
 	}
 }

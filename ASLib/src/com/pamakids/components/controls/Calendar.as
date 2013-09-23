@@ -26,7 +26,7 @@ package com.pamakids.components.controls
 	 * @author mani
 	 *
 	 */
-	[Event(name="change", type="flash.events.Event")]
+	[Event(name="selected", type="flash.events.Event")]
 	public class Calendar extends SkinnableDataContainer
 	{
 		public static const BOOK_MODE:int=0;
@@ -103,6 +103,7 @@ package com.pamakids.components.controls
 			var d:Date=new Date(today.fullYear, today.month);
 			d.month=value;
 			var dp:Array=DateUtil.getDateData(d);
+			mapSelectedDates(dp);
 			if (mode == BOOK_MODE)
 			{
 				if (value <= today.getMonth())
@@ -163,11 +164,14 @@ package com.pamakids.components.controls
 				title.text=DateUtil.getNianYue(d);
 			dataProvider=dp;
 			_month=value;
+//			updateAll();
 		}
 
-		private function mapSelectedDates():void
+		private function mapSelectedDates(dp:Array=null):void
 		{
-			if (!selectedDates.length)
+			if (!dp)
+				dp=dataProvider;
+			if (!selectedDates.length || !dp)
 				return;
 			var dic:Dictionary=new Dictionary();
 			var datesArr:Array;
@@ -181,18 +185,18 @@ package com.pamakids.components.controls
 				}
 				datesArr.push(d);
 			}
-			for (var i:int; i < dataProvider.length; i++)
+			for (var i:int; i < dp.length; i++)
 			{
-				var dd:Date=dataProvider[i];
-				datesArr=dic[dd.date];
-				if (datesArr)
+				var dd:Date=dp[i] as Date;
+				if (dd)
 				{
-					for each (d in datesArr)
+					datesArr=dic[dd.date];
+					if (datesArr)
 					{
-						if (DateUtil.dateIsEqual(d, dd))
+						for each (d in datesArr)
 						{
-							selectedDates[selectedDates.indexOf(d)]=dd;
-							trace('maped dates:', d, dd);
+							if (DateUtil.dateIsEqual(d, dd))
+								selectedDates[selectedDates.indexOf(d)]=dd;
 						}
 					}
 				}
@@ -207,6 +211,8 @@ package com.pamakids.components.controls
 		{
 			super.updateRenderer(renderer, itemIndex, data);
 			var id:Date=data as Date;
+			if (!id)
+				return;
 			var rd:DateRender=renderer as DateRender;
 			if (rd.included)
 				rd.included=false;
@@ -216,18 +222,36 @@ package com.pamakids.components.controls
 				renderer.selected=true;
 			else if (selectedDates.indexOf(data) != -1)
 				rd.included=true;
-			else if (!rd.updateStatus(booked, checkedIn) && DateUtil.dateIsEqual(id, today))
-				rd.isToday=true;
-			else
-				rd.reset();
-			if (!renderer.hasEventListener(Event.CHANGE))
-				renderer.addEventListener(Event.CHANGE, changedHandler);
+			else if (!rd.updateStatus(booked, checkedIn))
+			{
+				if (DateUtil.dateIsEqual(id, today))
+					rd.isToday=true;
+				else
+					rd.reset();
+			}
+			if (mode == BOOK_MODE)
+				renderer.addEventListener('clicked', changedHandler);
 		}
 
+		/**
+		 * 选择了禁止选择的日期
+		 */
+		public function get inludedDisabledDate():Boolean
+		{
+			var d:Date;
+			for each (d in selectedDates)
+			{
+				if (checkedIn && checkedIn.indexOf(d) != -1)
+					return true;
+				if (booked && booked.indexOf(d) != -1)
+					return true;
+			}
+			return false;
+		}
 		public var selectedDates:Array=[];
 
-		private var checkIn:Date;
-		private var checkOut:Date;
+		public var checkIn:Date;
+		public var checkOut:Date;
 
 		protected function changedHandler(event:Event):void
 		{
@@ -246,22 +270,22 @@ package com.pamakids.components.controls
 			{
 				if (DateUtil.dateIsEqual(checkIn, sd))
 					checkIn=checkOut;
-				else if (checkOut)
+				else if (!checkOut || DateUtil.dateIsEqual(checkOut, sd))
 					checkOut=checkIn;
 			}
 			selectedDates=DateUtil.getDatesBetween(checkIn, checkOut);
-			mapSelectedDates();
-			if (selectedDates.length > 2)
-			{
-//				var i:int=dataProvider.indexOf(checkIn) + 1;
-//				var l:int=dataProvider.indexOf(checkOut);
-//				for (i; i < l; i++)
-//				{
-				for (var i:int; i < dataProvider.length; i++)
-					updateRendererByIndex(i);
-//				}
-			}
+			updateAll();
+			dispatchEvent(new Event('selected'));
 			trace(dr.selected, selectedDates);
+		}
+
+		private function updateAll():void
+		{
+			if (!selectedDates.length)
+				return;
+			mapSelectedDates();
+			for (var i:int; i < dataProvider.length; i++)
+				updateRendererByIndex(i);
 		}
 
 		protected function flipHandler(event:MouseEvent):void
@@ -456,7 +480,27 @@ class DateRender extends ItemRenderer
 		super(30, 30, true);
 	}
 
-	public var isToday:Boolean;
+	private var _isToday:Boolean;
+
+	public function get isToday():Boolean
+	{
+		return _isToday;
+	}
+
+	public function set isToday(value:Boolean):void
+	{
+		_isToday=value;
+		backgroudAlpha=0;
+		if (!value)
+		{
+			lineColor=-1;
+		}
+		else
+		{
+			lineColor=getColor('todayBackgroundColor');
+			backgroudAlpha=0;
+		}
+	}
 
 	public function get included():Boolean
 	{
@@ -466,26 +510,21 @@ class DateRender extends ItemRenderer
 	public function set included(value:Boolean):void
 	{
 		_included=value;
-		alpha=value ? .5 : 1;
 		if (value)
-			super.selected=false;
-		else if (selected)
-			return;
+			_selected=false;
 		if (labelDisplay)
 			labelDisplay.color=value ? getColor('selectedFontColor') : getColor();
-		if (value)
+		if (disabled || value || isToday)
 		{
-			backgroudAlpha=1;
-			backgroundColor=getColor('selectedBackgroundColor');
-		}
-		else if (isToday)
-		{
-			backgroundColor=getColor('todayBackgroundColor');
+			backgroudAlpha=.5;
+			if (!disabled)
+				backgroundColor=value ? getColor('selectedBackgroundColor') : getColor('todayBackgroundColor');
 		}
 		else
 		{
 			backgroudAlpha=0;
 		}
+		enabled=true;
 	}
 
 	override public function set selected(value:Boolean):void
@@ -493,6 +532,8 @@ class DateRender extends ItemRenderer
 		if (!data)
 			return;
 		super.selected=value;
+		if (!enabled)
+			enabled=value;
 		if (labelDisplay)
 			labelDisplay.color=value ? getColor('selectedFontColor') : getColor();
 		if (value)
@@ -510,24 +551,40 @@ class DateRender extends ItemRenderer
 		}
 	}
 
+	override public function set enabled(value:Boolean):void
+	{
+		super.enabled=value;
+		if (!value)
+		{
+			backgroudAlpha=0;
+			_selected=false;
+			if (getColor())
+				labelDisplay.color=getColor();
+		}
+	}
+
 	private var _included:Boolean;
-	private var disabled:Boolean;
+	public var disabled:Boolean;
 
 	public function updateStatus(booked:Array, checkedIn:Array):Boolean
 	{
-		disabled=false;
 		if (booked && booked.indexOf(data) != -1)
 		{
 			disabled=true;
 			backgroudAlpha=1;
 			backgroundColor=getColor('booked');
+			labelDisplay.color=getColor('selectedFontColor');
 		}
 		else if (checkedIn && checkedIn.indexOf(data) != -1)
 		{
 			disabled=true;
 			backgroudAlpha=1;
 			backgroundColor=getColor('checked_in');
-			trace(data, 'ci', isToday);
+			labelDisplay.color=getColor('selectedFontColor');
+		}
+		else
+		{
+			disabled=false;
 		}
 		mouseChildren=mouseEnabled=!disabled;
 		return disabled;
@@ -556,18 +613,22 @@ class DateRender extends ItemRenderer
 			{
 				labelDisplay.text=label;
 			}
-			if (isToday)
-			{
-				backgroudAlpha=1;
-				backgroundColor=getColor('todayBackgroundColor');
-			}
+			if (!data)
+				backgroudAlpha=0;
 		}
 	}
 
 	public function reset():void
 	{
-		enabled=true;
-		isToday=false;
-		selected=false;
+		if (!enabled)
+			enabled=true;
+		if (isToday)
+			isToday=false;
+		if (selected)
+			selected=false;
+		if (included)
+			included=false;
+		backgroudAlpha=0;
+		labelDisplay.color=getColor();
 	}
 }

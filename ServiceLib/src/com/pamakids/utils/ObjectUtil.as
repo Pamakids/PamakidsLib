@@ -278,8 +278,7 @@ package com.pamakids.utils
 		 *  @playerversion AIR 1.1
 		 *  @productversion Flex 3
 		 */
-		public static function stringCompare(a:String, b:String,
-			caseInsensitive:Boolean=false):int
+		public static function stringCompare(a:String, b:String, caseInsensitive:Boolean=false):int
 		{
 			if (a == null && b == null)
 				return 0;
@@ -526,9 +525,7 @@ package com.pamakids.utils
 		 *  @playerversion AIR 1.1
 		 *  @productversion Flex 3
 		 */
-		public static function toString(value:Object,
-			namespaceURIs:Array=null,
-			exclude:Array=null):String
+		public static function toString(value:Object, namespaceURIs:Array=null, exclude:Array=null):String
 		{
 			if (exclude == null)
 			{
@@ -544,11 +541,7 @@ package com.pamakids.utils
 		 *  code hinting tools that developers shouldn't ever see.
 		 *  @private
 		 */
-		private static function internalToString(value:Object,
-			indent:int=0,
-			refs:Dictionary=null,
-			namespaceURIs:Array=null,
-			exclude:Array=null):String
+		private static function internalToString(value:Object, indent:int=0, refs:Dictionary=null, namespaceURIs:Array=null, exclude:Array=null):String
 		{
 			var str:String;
 			var type:String=value == null ? "null" : typeof(value);
@@ -581,8 +574,7 @@ package com.pamakids.utils
 					}
 					else
 					{
-						var classInfo:Object=getClassInfo(value, exclude,
-							{includeReadOnly: true, uris: namespaceURIs});
+						var classInfo:Object=getClassInfo(value, exclude, {includeReadOnly: true, uris: namespaceURIs});
 
 						var properties:Array=classInfo.properties;
 
@@ -639,8 +631,7 @@ package com.pamakids.utils
 							if (isDict)
 							{
 								// in dictionaries, recurse on the key, because it can be a complex object
-								str+=internalToString(prop, indent, refs,
-									namespaceURIs, exclude);
+								str+=internalToString(prop, indent, refs, namespaceURIs, exclude);
 							}
 							else
 							{
@@ -657,8 +648,7 @@ package com.pamakids.utils
 							try
 							{
 								// print the value
-								str+=internalToString(value[prop], indent, refs,
-									namespaceURIs, exclude);
+								str+=internalToString(value[prop], indent, refs, namespaceURIs, exclude);
 							}
 							catch (e:Error)
 							{
@@ -718,9 +708,7 @@ package com.pamakids.utils
 			return result;
 		}
 
-		private static function internalCompare(a:Object, b:Object,
-			currentDepth:int, desiredDepth:int,
-			refs:Dictionary):int
+		private static function internalCompare(a:Object, b:Object, currentDepth:int, desiredDepth:int, refs:Dictionary):int
 		{
 			if (a == null && b == null)
 				return 0;
@@ -891,9 +879,7 @@ package com.pamakids.utils
 		*  @playerversion AIR 1.1
 		*  @productversion Flex 3
 		*/
-		public static function getClassInfo(obj:Object,
-			excludes:Array=null,
-			options:Object=null):Object
+		public static function getClassInfo(obj:Object, excludes:Array=null, options:Object=null):Object
 		{
 			var n:int;
 			var i:int;
@@ -1082,8 +1068,7 @@ package com.pamakids.utils
 				}
 			}
 
-			propertyNames.sort(Array.CASEINSENSITIVE |
-				(numericIndex ? Array.NUMERIC : 0));
+			propertyNames.sort(Array.CASEINSENSITIVE | (numericIndex ? Array.NUMERIC : 0));
 
 			// dictionary keys can be indexed by an object reference
 			// there's a possibility that two keys will have the same toString()
@@ -1131,11 +1116,7 @@ package com.pamakids.utils
 		 *  @playerversion AIR 1.1
 		 *  @productversion Flex 3
 		 */
-		public static function hasMetadata(obj:Object,
-			propName:String,
-			metadataName:String,
-			excludes:Array=null,
-			options:Object=null):Boolean
+		public static function hasMetadata(obj:Object, propName:String, metadataName:String, excludes:Array=null, options:Object=null):Boolean
 		{
 			var classInfo:Object=getClassInfo(obj, excludes, options);
 			var metadataInfo:Object=classInfo["metadata"];
@@ -1291,9 +1272,7 @@ package com.pamakids.utils
 		/**
 		 *  @private
 		 */
-		private static function arrayCompare(a:Array, b:Array,
-			currentDepth:int, desiredDepth:int,
-			refs:Dictionary):int
+		private static function arrayCompare(a:Array, b:Array, currentDepth:int, desiredDepth:int, refs:Dictionary):int
 		{
 			var result:int=0;
 
@@ -1311,8 +1290,7 @@ package com.pamakids.utils
 				{
 					if (b.hasOwnProperty(key))
 					{
-						result=internalCompare(a[key], b[key], currentDepth,
-							desiredDepth, refs);
+						result=internalCompare(a[key], b[key], currentDepth, desiredDepth, refs);
 
 						if (result != 0)
 							return result;

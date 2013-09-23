@@ -206,7 +206,8 @@ package com.pamakids.services
 			{
 				var result:Object=formate == 'text' ? JSON.parse(l.data) : l.data;
 				var vo:ResultVO;
-				if (result is String)
+
+				if (typeof result != 'object')
 					vo=new ResultVO(true, result.toString());
 				else
 					vo=new ResultVO(result.status, result.results, result.code);
