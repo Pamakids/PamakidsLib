@@ -27,8 +27,9 @@ package com.pamakids.helper
 					clickedCallback(1);
 				else
 				{
-					zoomedOut=!zoomedOut;
-					clickedCallback(zoomOut);
+//					zoomedOut=!zoomedOut;
+//					clickedCallback(zoomedOut);
+					clickedCallback.length ? clickedCallback(zoomedOut) : clickedCallback();
 				}
 			}
 		}
@@ -48,7 +49,7 @@ package com.pamakids.helper
 			Mouse.show();
 		}
 
-		private var zoomedOut:Boolean=true;
+		private var zoomedOut:Boolean=false;
 		public var clickedCallback:Function;
 
 		protected function mouseMoveHandler(event:MouseEvent):void
@@ -61,7 +62,7 @@ package com.pamakids.helper
 			else if (event.localX > width * 2 / 3)
 				currentCursor=right;
 			else
-				currentCursor=zoomedOut ? zoomIn : zoomOut;
+				currentCursor=zoomedOut ? zoomOut : zoomIn;
 			if (!currentCursor)
 			{
 				trace('No Cursor');

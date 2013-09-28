@@ -93,6 +93,13 @@ package com.pamakids.components.controls
 			renderData();
 		}
 
+		public function setCheckedAndBookedDates(checked:Array, booked:Array):void
+		{
+			_checkedIn=checked;
+			_booked=booked;
+			renderData();
+		}
+
 		public function get month():int
 		{
 			return _month;
@@ -279,6 +286,23 @@ package com.pamakids.components.controls
 			trace(dr.selected, selectedDates);
 		}
 
+		public function reset():void
+		{
+			if (selectedDates.length)
+			{
+				for each (var d:Object in selectedDates)
+				{
+					if (dataProvider.indexOf(d) != -1)
+					{
+						var ci:DateRender=getItem(d) as DateRender;
+						ci.reset();
+					}
+				}
+			}
+			checkIn=checkOut=null;
+			selectedDates.length=0;
+		}
+
 		private function updateAll():void
 		{
 			if (!selectedDates.length)
@@ -360,6 +384,12 @@ package com.pamakids.components.controls
 			Mouse.hide();
 			var p:Point=new Point(event.stageX, event.stageY);
 			p=globalToLocal(p);
+			trace(p.x, p.y);
+			if (p.x < 0 || p.y < 0)
+			{
+				outHandler(null, p);
+				return;
+			}
 			if (p.x > width / 2)
 			{
 				right.x=p.x - right.width / 2;
@@ -381,10 +411,18 @@ package com.pamakids.components.controls
 			}
 		}
 
-		protected function outHandler(event:MouseEvent):void
+		protected function outHandler(event:MouseEvent=null, point:Point=null):void
 		{
-			var p:Point=new Point(event.stageX, event.stageY);
-			p=globalToLocal(p);
+			var p:Point;
+			if (event)
+			{
+				p=new Point(event.stageX, event.stageY);
+				p=globalToLocal(p);
+			}
+			else
+			{
+				p=point;
+			}
 			if (p.x > width / 2)
 				TweenLite.to(right, 0.3, {x: width - right.width - 10, y: leftRightY, ease: Cubic.easeIn});
 			else
@@ -392,15 +430,15 @@ package com.pamakids.components.controls
 			Mouse.show();
 		}
 
-		override protected function renderData():void
-		{
-			super.renderData();
-		}
-
-		override protected function updateSkin():void
-		{
-			super.updateSkin();
-		}
+//		override protected function renderData():void
+//		{
+//			super.renderData();
+//		}
+//
+//		override protected function updateSkin():void
+//		{
+//			super.updateSkin();
+//		}
 
 		private function initTitleGroup():void
 		{
@@ -531,7 +569,8 @@ class DateRender extends ItemRenderer
 	{
 		if (!data)
 			return;
-		super.selected=value;
+//		super.selected=value;
+		_selected=value;
 		if (!enabled)
 			enabled=value;
 		if (labelDisplay)
@@ -548,6 +587,10 @@ class DateRender extends ItemRenderer
 		else
 		{
 			backgroudAlpha=0;
+		}
+		if (!value)
+		{
+			trace(backgroudAlpha, value);
 		}
 	}
 

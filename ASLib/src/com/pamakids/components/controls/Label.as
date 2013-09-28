@@ -236,14 +236,20 @@ package com.pamakids.components.controls
 				addChild(createTextField());
 				if (type != TextFieldType.INPUT)
 					adjust();
-				else
+				else if (width && height)
 					centerDisplayObject(textField);
+				else if (!width)
+					width=textField.width;
+				else
+					height=textField.height;
 			}
 		}
 
 		private var _embedFont:Boolean;
 		public var selectable:Boolean;
 		public var type:String=TextFieldType.DYNAMIC;
+
+		public var multiline:Boolean;
 
 		protected function createTextField():TextField
 		{
@@ -256,6 +262,7 @@ package com.pamakids.components.controls
 			textField.autoSize=TextFieldAutoSize.LEFT;
 			if (!forceAutoFill && type != TextFieldType.INPUT)
 				textField.wordWrap=true;
+			textField.multiline=multiline;
 			textField.type=type;
 			textField.embedFonts=embedFonts;
 			textField.selectable=selectable;
@@ -271,6 +278,15 @@ package com.pamakids.components.controls
 					textField.height=th;
 				}
 				textField.width=width;
+			}
+			else if (type == TextFieldType.INPUT)
+			{
+				var th:Number=textField.height;
+				var tw:Number=textField.width;
+				textField.autoSize=TextFieldAutoSize.NONE;
+				textField.height=th;
+				textField.width=tw;
+				setSize(tw, th);
 			}
 			return textField;
 		}

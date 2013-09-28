@@ -80,6 +80,11 @@ package com.pamakids.components
 		 */
 		public static const CALENDAR_MODE:String="CALENDAR_MODE";
 
+		protected function getItem(data:Object):ItemRenderer
+		{
+			return container.getChildAt(dataProvider.indexOf(data)) as ItemRenderer;
+		}
+
 		protected function renderData():void
 		{
 			if (dataProvider && inited && container)
