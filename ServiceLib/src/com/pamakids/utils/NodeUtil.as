@@ -23,6 +23,8 @@ package com.pamakids.utils
 		 */
 		public static function getDateByString(date:String):Date
 		{
+			if (!date)
+				return null;
 			var d:Date;
 			var arr:Array;
 			if (date.indexOf('-') != -1)

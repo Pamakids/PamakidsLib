@@ -21,6 +21,13 @@ package com.pamakids.components.controls
 			if (!width && !height)
 				forceAutoFill=true;
 			cacheAsBitmap=Style.cacheAsBitmap;
+			if (Style.embedFonts && !Style.fontLoaded)
+			{
+				Style.addFontCallback(function():void
+				{
+					textField.text=text;
+				});
+			}
 		}
 
 		public function getTextField():TextField
