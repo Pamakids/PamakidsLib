@@ -269,11 +269,11 @@ package com.pamakids.components.controls
 			textField.defaultTextFormat=tf;
 			if (text)
 				textField.text=text;
+			var th:Number=textField.height;
 			if (width)
 			{
 				if (type == TextFieldType.INPUT)
 				{
-					var th:Number=textField.height;
 					textField.autoSize=TextFieldAutoSize.NONE;
 					textField.height=th;
 				}
@@ -281,7 +281,6 @@ package com.pamakids.components.controls
 			}
 			else if (type == TextFieldType.INPUT)
 			{
-				var th:Number=textField.height;
 				var tw:Number=textField.width;
 				textField.autoSize=TextFieldAutoSize.NONE;
 				textField.height=th;

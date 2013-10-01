@@ -31,7 +31,8 @@ package com.pamakids.layouts
 					if (horizentalCenter && width)
 						x=(width - element.width) / 2;
 					else
-						TweenLite.delayedCall(1, function(element:DisplayObject):void {
+						TweenLite.delayedCall(1, function(element:DisplayObject):void
+						{
 							element.x=(width - element.width) / 2;
 						}, [element], true);
 					positionItem(element, x, y);
@@ -41,7 +42,7 @@ package com.pamakids.layouts
 			}
 			if (autoFill || forceAutoFill || !width)
 			{
-				if (allReady)
+				if (allReady && element)
 				{
 					contentHeight=element.height + element.y + paddingBottom;
 					contentWidth=maxElementWidth + paddingLeft + paddingRight;

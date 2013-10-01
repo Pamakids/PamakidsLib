@@ -218,9 +218,12 @@ package com.pamakids.components.controls
 		{
 			super.updateRenderer(renderer, itemIndex, data);
 			var id:Date=data as Date;
-			if (!id)
-				return;
 			var rd:DateRender=renderer as DateRender;
+			if (!id)
+			{
+				rd.reset();
+				return;
+			}
 			if (rd.included)
 				rd.included=false;
 			if (id && id.time < today.time && !DateUtil.dateIsEqual(id, today))
@@ -663,15 +666,16 @@ class DateRender extends ItemRenderer
 
 	public function reset():void
 	{
-		if (!enabled)
-			enabled=true;
 		if (isToday)
 			isToday=false;
+		if (!enabled)
+			enabled=true;
 		if (selected)
 			selected=false;
 		if (included)
 			included=false;
 		backgroudAlpha=0;
-		labelDisplay.color=getColor();
+		if (labelDisplay)
+			labelDisplay.color=getColor();
 	}
 }

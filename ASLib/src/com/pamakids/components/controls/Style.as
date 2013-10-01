@@ -10,6 +10,7 @@ package com.pamakids.components.controls
 		 */
 		public static var cacheAsBitmap:Boolean=true;
 		public static const MAIN_COLOR:uint=0x806F5D;
+		public static const PROMPT_COLOR:uint=0x666666;
 		public static var fontLoaded:Boolean=true;
 		private static var fontCallbackes:Array=[];
 

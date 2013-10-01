@@ -54,7 +54,8 @@ package com.pamakids.manager
 			themeLoaded=false;
 			isHttpTheme=URLUtil.isHttp(url);
 			themeURL=url;
-			lm.load(url, loadedThemeInfoHandler, isHttpTheme ? URLUtil.getCachePath(url) : null, null, null, false, URLLoaderDataFormat.TEXT);
+//			lm.load(url, loadedThemeInfoHandler, isHttpTheme ? URLUtil.getCachePath(url) : null, null, null, false, URLLoaderDataFormat.TEXT);
+			lm.loadText(url, loadedThemeInfoHandler);
 		}
 
 		private function loadedThemeInfoHandler(themeStr:String):void
@@ -73,7 +74,8 @@ package com.pamakids.manager
 			parseCSS(theme);
 			var dir:String=theme.dir;
 			if (isHttpTheme)
-				dir=URLUtil.getUrlDir(themeURL) + dir;
+				dir=URLUtil.getHttp(themeURL) + dir;
+//				dir=URLUtil.getUrlDir(themeURL) + dir;
 			var url:String;
 			var savePath:String;
 			for each (var asset:Object in theme.assets)

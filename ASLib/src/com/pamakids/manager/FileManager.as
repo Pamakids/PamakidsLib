@@ -8,7 +8,15 @@ package com.pamakids.manager
 
 		private static function get File():Class
 		{
-			return getDefinitionByName('flash.filesystem.File') as Class;
+			try
+			{
+				return getDefinitionByName('flash.filesystem.File') as Class;
+			}
+			catch (error:Error)
+			{
+				trace(error);
+			}
+			return null;
 		}
 
 		private static function get FileMode():Class
