@@ -16,7 +16,7 @@ package com.pamakids.models
 
 		public function get user():Object
 		{
-			return _user.member_id;
+			return _user ? _user.member_id : null;
 		}
 
 		public function set user(value:Object):void

@@ -14,6 +14,7 @@ package com.pamakids.models
 		private var _results:Object;
 		public var reason:String;
 		public var errCode:String;
+		public var code:String;
 
 		public function getTotal():int
 		{

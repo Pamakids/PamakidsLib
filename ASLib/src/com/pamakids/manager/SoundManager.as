@@ -1,12 +1,13 @@
 package com.pamakids.manager
 {
 	import com.pamakids.utils.Singleton;
-
+	
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
+	import flash.media.SoundTransform;
 	import flash.net.URLRequest;
 	import flash.utils.Dictionary;
 
@@ -64,11 +65,14 @@ package com.pamakids.manager
 		/**
 		 * 添加绑定的声音
 		 * @param id 播放id
-		 * @param sound 声音对象
+		 * @param sound 声音对象或类
+		 * @loops 循环播放次数
 		 */
-		public function addSound(id:String, sound:Sound):void
+		public function addSound(id:String, sound:Object, loops:int=0, volume:Number=1):void
 		{
+			trace(sound is Sound);
 			sounds[id]=sound;
+			config[id] = {loops:loops, volume:volume};
 		}
 
 		/**
@@ -84,46 +88,59 @@ package com.pamakids.manager
 
 		/**
 		 * 配置文件里会包含播放次数，url等信息
-		 * @param id 播放id
-		 * @param times 播放次数
+		 * @param target 播放id 或 绑定类 或 绑定Sound对象
+		 * @param startPosition 播放起始时间
 		 */
-		public function play(id:String, times:int=0):void
+		public function play(target:Object, startPosition:int=0):void
 		{
-			var s:Sound=sounds[id];
-			var o:Object=config[id];
-			if (playingSounds[id])
+			var s:Object;
+			var o:Object;
+			if(target is String)
 			{
-				if (playingPosition[id])
+				s =sounds[target];
+				o=config[target];
+				if (playingSounds[target])
 				{
-					o=playingSounds[id];
-					s=o.sound;
-					o.channel=s.play(playingPosition[id], loops(id));
-					trace('Sound ' + id + ' is replaying');
+					if (playingPosition[target])
+					{
+						o=playingSounds[target];
+						s=o.sound;
+						o.channel=s.play(playingPosition[target], loops(target as String));
+						trace('Sound ' + target + ' is replaying');
+					}
+					else
+					{
+						trace('Sound ' + target + ' is playing');
+					}
+					return;
 				}
-				else
-				{
-					trace('Sound ' + id + ' is playing');
-				}
-				return;
 			}
 			if (s)
 			{
-				var sc:SoundChannel=s.play(times ? times : startTime(id), loops(id));
+				s = s as Sound ? s as Sound : new s;
+				var sc:SoundChannel=s.play(startPosition ? startPosition : startTime(target as String), loops(target as String));
+				var volume:Number = config[target].volume;
+				if(volume != 1)
+				{
+					trace(volume);
+					var so:SoundTransform = sc.soundTransform;
+					so.volume = volume;
+				}
 				sc.addEventListener(Event.SOUND_COMPLETE, playedHandler);
-				playingSounds[id]={channel: sc, sound: s, volume: 1};
+				playingSounds[target]={channel: sc, sound: s, volume: 1};
 			}
 			else
 			{
 				if (!o)
 				{
-					throw new Error('Sound:' + id + ' is not added or configed');
+					throw new Error('Sound:' + target + ' is not added or configed');
 				}
 				else
 				{
 					s=new Sound();
 					s.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 					s.addEventListener(ProgressEvent.PROGRESS, progressHandler);
-					loadingSounds[id]=s;
+					loadingSounds[target]=s;
 					s.load(new URLRequest(o.url));
 				}
 			}
