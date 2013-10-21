@@ -1,12 +1,12 @@
 package com.pamakids.components
 {
-	import com.greensock.TweenLite;
 	import com.pamakids.components.base.Container;
 	import com.pamakids.components.base.Skin;
 	import com.pamakids.components.interfaces.IItemRendererOwner;
 	import com.pamakids.layouts.ILayout;
 	import com.pamakids.layouts.VLayout;
 
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 
 	public class SkinnableDataContainer extends Skin implements IItemRendererOwner
@@ -50,7 +50,8 @@ package com.pamakids.components
 
 		protected function updateRendererByIndex(itemIndex:int):void
 		{
-			updateRenderer(container.getChildAt(itemIndex) as ItemRenderer, itemIndex, dataProvider[itemIndex]);
+			if (itemIndex < container.numChildren)
+				updateRenderer(container.getChildAt(itemIndex) as ItemRenderer, itemIndex, dataProvider[itemIndex]);
 		}
 
 		private var _dataProvider:Array;
@@ -79,16 +80,15 @@ package com.pamakids.components
 		 */
 		public static const CALENDAR_MODE:String="CALENDAR_MODE";
 
+		protected function getItem(data:Object):ItemRenderer
+		{
+			return container.getChildAt(dataProvider.indexOf(data)) as ItemRenderer;
+		}
+
 		protected function renderData():void
 		{
-//			TweenLite.killDelayedCallsTo(doRender);
-//			TweenLite.delayedCall(1, doRender, null true);
 			if (dataProvider && inited && container)
 			{
-//				while (container.numChildren)
-//				{
-//					container.removeChildAt(0);
-//				}
 				for (var i:int; i < dataProvider.length; i++)
 				{
 					var data:Object=dataProvider[i];
@@ -111,6 +111,17 @@ package com.pamakids.components
 			}
 		}
 
+		protected function removeAllRendererListeners(type:String, handler:Function):void
+		{
+			if (!container)
+				return;
+			for (var i:int; i < container.numChildren; i++)
+			{
+				var item:ItemRenderer=container.getChildAt(i) as ItemRenderer;
+				item.removeEventListener(type, handler);
+			}
+		}
+
 		protected var items:Array=[];
 
 		override protected function dispose():void
@@ -130,9 +141,14 @@ package com.pamakids.components
 				return;
 			var i:ItemRenderer=event.currentTarget as ItemRenderer;
 			if (selectionMode == CALENDAR_MODE)
+			{
 				i.selected=!i.selected;
+				i.dispatchEvent(new Event('clicked'));
+			}
 			else
+			{
 				i.selected=true;
+			}
 		}
 
 	}

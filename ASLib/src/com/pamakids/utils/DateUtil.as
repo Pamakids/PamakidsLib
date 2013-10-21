@@ -112,6 +112,12 @@ package com.pamakids.utils
 			return date.fullYear + '年' + (date.month + 1) + '月';
 		}
 
+		public static function getYMD(date:Date, dateOffset:int=0):String
+		{
+			date.date+=dateOffset;
+			return date.fullYear + '/' + (date.month + 1) + '/' + date.date;
+		}
+
 		public static function getDatesBetween(from:Date, end:Date):Array
 		{
 			if (!from || !end)

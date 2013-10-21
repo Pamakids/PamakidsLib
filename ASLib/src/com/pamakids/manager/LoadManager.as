@@ -180,7 +180,7 @@ package com.pamakids.manager
 			{
 				u.addEventListener(ProgressEvent.PROGRESS, loadingHandler);
 				if (loadingCallBack != null)
-					loadingCallBack[u]=loadingCallBack;
+					loadingCallbackDic[u]=loadingCallBack;
 			}
 		}
 
@@ -210,7 +210,10 @@ package com.pamakids.manager
 		{
 			var u:URLLoader=event.currentTarget as URLLoader;
 			if (loadingCallbackDic[u])
-				loadingCallbackDic[u](event.bytesLoaded, event.bytesTotal);
+			{
+				var f:Function=loadingCallbackDic[u];
+				f.length == 2 ? f(event.bytesLoaded, event.bytesTotal) : f(event.bytesLoaded / event.bytesTotal);
+			}
 			if (event.bytesLoaded == event.bytesTotal)
 			{
 				u.removeEventListener(ProgressEvent.PROGRESS, loadingHandler);
@@ -267,12 +270,15 @@ package com.pamakids.manager
 					{
 						returnContent=l.content;
 					}
-					params ? f(returnContent, params) : f(returnContent);
+					if (f.length)
+						params ? f(returnContent, params) : f(returnContent)
+					else
+						f();
 				}
 			}
 			else if (callbacks is Function)
 			{
-				callbacks(l.content);
+				callbacks.length ? callbacks(l.content) : callbacks();
 			}
 		}
 
@@ -341,17 +347,18 @@ package com.pamakids.manager
 
 		private function onBinaryLoaded(event:Event):void
 		{
+			var f:Function;
 			var u:URLLoader=event.target as URLLoader;
 			if (loadingCallbackDic[u])
 			{
-				loadingCallbackDic[u](1, 1)
+				f=loadingCallbackDic[u];
+				f.length == 2 ? f(1, 1) : f(1);
 				delete loadingCallbackDic[u];
 				delete loadedBytes[u];
 				delete tobeLoadedBytes[u];
 				u.removeEventListener(ProgressEvent.PROGRESS, loadingHandler);
 			}
 			u.removeEventListener(Event.COMPLETE, onBinaryLoaded);
-			var f:Function;
 			var arr:Array=loaderDic[u];
 			var params:Array;
 

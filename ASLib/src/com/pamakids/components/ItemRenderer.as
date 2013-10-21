@@ -99,7 +99,7 @@ package com.pamakids.components
 
 		private var _itemIndex:int;
 		private var _label:String;
-		private var _selected:Boolean;
+		protected var _selected:Boolean;
 		protected var labelDisplay:Label;
 
 		override protected function init():void

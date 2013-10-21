@@ -241,6 +241,11 @@ package com.pamakids.components.containers
 				recordValue=container.y;
 		}
 
+		public function get selectedItem():Object
+		{
+			return dataProvider[currentPage];
+		}
+
 		private function movingComplete():void
 		{
 			dispatchEvent(new Event('moved'));

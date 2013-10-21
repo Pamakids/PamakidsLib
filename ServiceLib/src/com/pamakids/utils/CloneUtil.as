@@ -56,6 +56,8 @@ package com.pamakids.utils
 		{
 			try
 			{
+				if (!source)
+					return null;
 				var o:Object=new tobeClass();
 
 				var objectXML:Object=describeType(o); //生成描述vo的xml

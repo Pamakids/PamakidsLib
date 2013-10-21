@@ -28,6 +28,23 @@ package com.pamakids.components.base
 //			super.visible=value;
 //		}
 
+		/**
+		 * -1则不显示边框
+		 * @return
+		 *
+		 */
+		public function get lineColor():int
+		{
+			return _lineColor;
+		}
+
+		public function set lineColor(value:int):void
+		{
+			_lineColor=value;
+			drawBackground();
+			trace(value);
+		}
+
 		public function get backgroundColor():uint
 		{
 			return _backgroundColor;
@@ -138,7 +155,7 @@ package com.pamakids.components.base
 			super.resize();
 		}
 
-		public var lineColor:uint;
+		private var _lineColor:int=-1;
 
 		protected function drawBackground():void
 		{
@@ -147,7 +164,7 @@ package com.pamakids.components.base
 
 			graphics.clear();
 			graphics.beginFill(backgroundColor, backgroudAlpha);
-			if (!lineColor)
+			if (lineColor == -1)
 				graphics.lineStyle(0, 0, 0);
 			else
 				graphics.lineStyle(1, lineColor);

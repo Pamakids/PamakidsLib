@@ -97,8 +97,8 @@ package com.pamakids.components.controls
 		{
 			if (overState)
 			{
-				TweenLite.to(overState, 0.3, {alpha: 0});
 				upState.visible=true;
+				TweenLite.to(overState, 0.3, {alpha: 0});
 			}
 		}
 
@@ -106,8 +106,9 @@ package com.pamakids.components.controls
 		{
 			if (overState && !event.buttonDown)
 			{
-				TweenLite.to(overState, 0.3, {alpha: 1});
-				upState.visible=false;
+				TweenLite.to(overState, 0.3, {alpha: 1, onComplete: function():void {
+					upState.visible=false;
+				}});
 			}
 		}
 
@@ -125,6 +126,8 @@ package com.pamakids.components.controls
 			{
 				if (downState)
 				{
+					if (overState)
+						overState.alpha=0;
 					upState.visible=false;
 					downState.visible=true;
 				}
