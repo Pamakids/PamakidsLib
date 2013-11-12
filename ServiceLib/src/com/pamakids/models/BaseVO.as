@@ -13,6 +13,7 @@ package com.pamakids.models
 		private var _creator:Object;
 		protected var _user:Object;
 		protected var userField:String='worker_id';
+		protected var required:Array=[];
 
 		public function get user():Object
 		{
@@ -86,6 +87,19 @@ package com.pamakids.models
 			if (updator)
 				s='更新时间：' + updated_at + '\t' + '更新者：' + updator + '\n' + s;
 			return s;
+		}
+
+		public var invalidMessage:String;
+
+		public function isValidate():Boolean
+		{
+			for each (var p:String in required)
+			{
+				var value:Object=this[p];
+				if (value != false && value != 0 && !value)
+					return false;
+			}
+			return true;
 		}
 
 		public static function jsonArray(arr:Array):Array
