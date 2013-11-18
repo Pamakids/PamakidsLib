@@ -148,7 +148,7 @@ package com.pamakids.models
 						if (oa)
 						{
 							var sa:Array=source[q.localName] as Array;
-							if ((sa && sa.length != oa.length) || !sa)
+							if (!compareArray(oa, sa))
 								diff[q.localName]=oa;
 						}
 						else
@@ -159,6 +159,27 @@ package com.pamakids.models
 				}
 			}
 			return diff;
+		}
+
+		private static function compareArray(a1:Array, a2:Array):Boolean
+		{
+			var equal:Boolean=true;
+			if (a1 && a1.length != a2.length || !a1)
+			{
+				equal=false;
+			}
+			else if (a1.length == a2.length)
+			{
+				for (var i:int; i < a1.length; i++)
+				{
+					if (a1[i] != a2[i])
+					{
+						equal=false;
+						break;
+					}
+				}
+			}
+			return equal;
 		}
 	}
 }
