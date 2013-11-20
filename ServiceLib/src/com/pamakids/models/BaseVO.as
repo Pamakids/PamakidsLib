@@ -13,6 +13,7 @@ package com.pamakids.models
 		private var _creator:Object;
 		protected var _user:Object;
 		protected var userField:String='worker_id';
+		protected var required:Array=[];
 
 		public function get user():Object
 		{
@@ -88,6 +89,19 @@ package com.pamakids.models
 			return s;
 		}
 
+		public var invalidMessage:String;
+
+		public function isValidate():Boolean
+		{
+			for each (var p:String in required)
+			{
+				var value:Object=this[p];
+				if (value != false && value != 0 && !value)
+					return false;
+			}
+			return true;
+		}
+
 		public static function jsonArray(arr:Array):Array
 		{
 			var a:Array=[];
@@ -134,7 +148,7 @@ package com.pamakids.models
 						if (oa)
 						{
 							var sa:Array=source[q.localName] as Array;
-							if ((sa && sa.length != oa.length) || !sa)
+							if (!compareArray(oa, sa))
 								diff[q.localName]=oa;
 						}
 						else
@@ -145,6 +159,27 @@ package com.pamakids.models
 				}
 			}
 			return diff;
+		}
+
+		private static function compareArray(a1:Array, a2:Array):Boolean
+		{
+			var equal:Boolean=true;
+			if (a1 && a1.length != a2.length || !a1)
+			{
+				equal=false;
+			}
+			else if (a1.length == a2.length)
+			{
+				for (var i:int; i < a1.length; i++)
+				{
+					if (a1[i] != a2[i])
+					{
+						equal=false;
+						break;
+					}
+				}
+			}
+			return equal;
 		}
 	}
 }

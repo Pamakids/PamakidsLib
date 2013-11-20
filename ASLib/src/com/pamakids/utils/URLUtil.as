@@ -28,6 +28,14 @@ package com.pamakids.utils
 			return s ? s.substr(s.lastIndexOf('.')) : '';
 		}
 
+		public static function getHttpPath(url:String):String
+		{
+			if (!isHttp(url))
+				return '';
+			else
+				return url.match(new RegExp('(http|https)://.*/'))[0];
+		}
+
 		public static function getHttp(url:String):String
 		{
 			if (!isHttp(url))

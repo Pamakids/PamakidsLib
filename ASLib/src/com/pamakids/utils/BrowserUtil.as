@@ -30,5 +30,11 @@ package com.pamakids.utils
 			}
 			return o;
 		}
+
+		public static function getHttpPath():String
+		{
+			var url:String=ExternalInterface.call("window.location.href.toString");
+			return URLUtil.getHttpPath(url);
+		}
 	}
 }
