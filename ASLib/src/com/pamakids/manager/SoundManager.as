@@ -91,7 +91,7 @@ package com.pamakids.manager
 		 * @param target 播放id 或 绑定类 或 绑定Sound对象
 		 * @param startPosition 播放起始时间
 		 */
-		public function play(target:Object, startPosition:int=0):void
+		public function play(target:Object, startPosition:int=0, _vol:Number=-1):void
 		{
 			var s:Object;
 			var o:Object;
@@ -107,7 +107,9 @@ package com.pamakids.manager
 						o=playingSounds[target];
 						s=o.sound;
 						o.channel=s.play(playingPosition[target], loops(target as String));
-						if (vol != 1)
+						if (_vol >= 0)
+							vol=_vol;
+						if (vol >= 0)
 						{
 							var st:SoundTransform=new SoundTransform(vol);
 							o.channel.soundTransform=st;
@@ -126,7 +128,9 @@ package com.pamakids.manager
 				s=s as Sound ? s as Sound : new s;
 				var sc:SoundChannel=s.play(startPosition ? startPosition : startTime(target as String), loops(target as String));
 				var volume:Number=volume(target as String);
-				if (volume != 1)
+				if (_vol >= 0)
+					volume=_vol;
+				if (volume >= 0)
 				{
 					var ts:SoundTransform=new SoundTransform(volume);
 					sc.soundTransform=ts;
