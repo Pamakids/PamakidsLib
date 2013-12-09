@@ -70,7 +70,7 @@ package com.pamakids.manager
 		 */
 		public function addSound(id:String, sound:Object, loops:int=0, volume:Number=1):void
 		{
-			trace(sound is Sound);
+//			trace(sound is Sound);
 			sounds[id]=sound;
 			config[id]={loops: loops, volume: volume};
 		}
@@ -91,12 +91,13 @@ package com.pamakids.manager
 		 * @param target 播放id 或 绑定类 或 绑定Sound对象
 		 * @param startPosition 播放起始时间
 		 */
-		public function play(target:Object, startPosition:int=0):void
+		public function play(target:Object, startPosition:int=0, _vol:Number=-1):void
 		{
 			var s:Object;
 			var o:Object;
 			if (target is String)
 			{
+				var vol:Number=volume(target as String);
 				s=sounds[target];
 				o=config[target];
 				if (playingSounds[target])
@@ -106,6 +107,13 @@ package com.pamakids.manager
 						o=playingSounds[target];
 						s=o.sound;
 						o.channel=s.play(playingPosition[target], loops(target as String));
+						if (_vol >= 0)
+							vol=_vol;
+						if (vol >= 0)
+						{
+							var st:SoundTransform=new SoundTransform(vol);
+							o.channel.soundTransform=st;
+						}
 						trace('Sound ' + target + ' is replaying');
 					}
 					else
@@ -121,18 +129,16 @@ package com.pamakids.manager
 			{
 				s=s as Sound ? s as Sound : new s;
 				var sc:SoundChannel=s.play(startPosition ? startPosition : startTime(target as String), loops(target as String));
-				if (config[target] is Sound)
+				var volume:Number=volume(target as String);
+				if (_vol >= 0)
+					volume=_vol;
+				if (volume >= 0)
 				{
-					var volume:Number=config[target].volume;
-					if (volume != 1)
-					{
-						trace(volume);
-						var so:SoundTransform=sc.soundTransform;
-						so.volume=volume;
-					}
+					var ts:SoundTransform=new SoundTransform(volume);
+					sc.soundTransform=ts;
 				}
 				sc.addEventListener(Event.SOUND_COMPLETE, playedHandler);
-				playingSounds[target]={channel: sc, sound: s, volume: 1};
+				playingSounds[target]={channel: sc, sound: s, volume: volume};
 			}
 			else
 			{
@@ -203,6 +209,11 @@ package com.pamakids.manager
 		private function loops(id:String):int
 		{
 			return config[id] ? config[id].loops : 0;
+		}
+
+		private function volume(id:String):Number
+		{
+			return config[id] ? config[id].volume : 1;
 		}
 
 		private function startTime(id:String):Number
