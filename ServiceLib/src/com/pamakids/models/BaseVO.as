@@ -97,7 +97,10 @@ package com.pamakids.models
 			{
 				var value:Object=this[p];
 				if (value != false && value != 0 && !value)
+				{
+					invalidMessage='必填项未填，请检查后再输入';
 					return false;
+				}
 			}
 			return true;
 		}

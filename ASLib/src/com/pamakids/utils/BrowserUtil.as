@@ -24,7 +24,8 @@ package com.pamakids.utils
 					{
 						var a2:Array=s.split('=');
 						if (a2.length == 2)
-							o[a2[0]]=a2[1];
+							o[a2[0]]=decodeURI(a2[1]);
+
 					}
 				}
 			}

@@ -1,7 +1,7 @@
 package com.pamakids.manager
 {
 	import com.pamakids.utils.Singleton;
-	
+
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
@@ -72,7 +72,7 @@ package com.pamakids.manager
 		{
 			trace(sound is Sound);
 			sounds[id]=sound;
-			config[id] = {loops:loops, volume:volume};
+			config[id]={loops: loops, volume: volume};
 		}
 
 		/**
@@ -95,9 +95,9 @@ package com.pamakids.manager
 		{
 			var s:Object;
 			var o:Object;
-			if(target is String)
+			if (target is String)
 			{
-				s =sounds[target];
+				s=sounds[target];
 				o=config[target];
 				if (playingSounds[target])
 				{
@@ -115,16 +115,21 @@ package com.pamakids.manager
 					return;
 				}
 			}
+			if (!s)
+				s=target;
 			if (s)
 			{
-				s = s as Sound ? s as Sound : new s;
+				s=s as Sound ? s as Sound : new s;
 				var sc:SoundChannel=s.play(startPosition ? startPosition : startTime(target as String), loops(target as String));
-				var volume:Number = config[target].volume;
-				if(volume != 1)
+				if (config[target] is Sound)
 				{
-					trace(volume);
-					var so:SoundTransform = sc.soundTransform;
-					so.volume = volume;
+					var volume:Number=config[target].volume;
+					if (volume != 1)
+					{
+						trace(volume);
+						var so:SoundTransform=sc.soundTransform;
+						so.volume=volume;
+					}
 				}
 				sc.addEventListener(Event.SOUND_COMPLETE, playedHandler);
 				playingSounds[target]={channel: sc, sound: s, volume: 1};
@@ -148,7 +153,7 @@ package com.pamakids.manager
 
 		protected function playedHandler(event:Event):void
 		{
-			for (var id:String in playingSounds)
+			for (var id:Object in playingSounds)
 			{
 				if (playingSounds[id].channel == event.currentTarget)
 				{

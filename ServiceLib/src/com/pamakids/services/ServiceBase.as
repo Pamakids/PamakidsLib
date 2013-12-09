@@ -126,12 +126,12 @@ package com.pamakids.services
 					{
 						for (var p:* in od)
 						{
-							arr.push(p + '=' + od[p]);
+							arr.push(encodeURI(p + '=' + od[p]));
 						}
 					}
 					else
 					{
-						arr.push(q.localName + '=' + od);
+						arr.push(encodeURI(q.localName + '=' + od));
 					}
 				}
 			}
