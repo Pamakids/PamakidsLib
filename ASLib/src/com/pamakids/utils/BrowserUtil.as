@@ -24,7 +24,19 @@ package com.pamakids.utils
 					{
 						var a2:Array=s.split('=');
 						if (a2.length == 2)
-							o[a2[0]]=decodeURI(a2[1]);
+						{
+							var value:String=a2[1];
+							var uv:String;
+							if (value && value.indexOf('http') == 0)
+							{
+								uv=unescape(value);
+								o[a2[0]]=uv;
+							}
+							else
+							{
+								o[a2[0]]=decodeURI(value);
+							}
+						}
 
 					}
 				}
