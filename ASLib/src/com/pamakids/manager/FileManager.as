@@ -3,6 +3,10 @@ package com.pamakids.manager
 	import flash.utils.ByteArray;
 	import flash.utils.getDefinitionByName;
 
+	/**
+	 * 文件管理器
+	 * @author mani
+	 */
 	public class FileManager
 	{
 

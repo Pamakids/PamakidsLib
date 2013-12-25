@@ -8,6 +8,10 @@ package com.pamakids.helper
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
+	/**
+	 * 拖拽助手
+	 * @author mani
+	 */
 	public class DragHelpler
 	{
 		private var target:DisplayObject;

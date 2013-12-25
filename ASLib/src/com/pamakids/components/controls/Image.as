@@ -12,7 +12,7 @@ package com.pamakids.components.controls
 	import flash.utils.ByteArray;
 
 	/**
-	 * 图片加载完成后派发
+	 * 图片
 	 * @author mani
 	 */
 	[Event(name="complete", type="flash.events.Event")]

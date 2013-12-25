@@ -19,6 +19,10 @@ package com.pamakids.components.containers
 
 	[Event(name="clickItem", type="com.pamakids.events.IndexEvent")]
 	[Event(name="moved", type="flash.events.Event")]
+
+	/**
+	 * 幻灯片
+	 */
 	public class Switcher extends Skin
 	{
 		private var container:Container;

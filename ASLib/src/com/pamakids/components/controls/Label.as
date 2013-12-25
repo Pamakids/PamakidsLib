@@ -10,6 +10,10 @@ package com.pamakids.components.controls
 	import flash.text.TextFormatAlign;
 
 	[Event(name="resize", type="com.pamakids.events.ResizeEvent")]
+
+	/**
+	 * 文本
+	 */
 	public class Label extends UIComponent
 	{
 		protected var textField:TextField;

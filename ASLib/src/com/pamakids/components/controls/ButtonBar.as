@@ -9,6 +9,10 @@ package com.pamakids.components.controls
 
 	import flash.events.MouseEvent;
 
+	/**
+	 * 按钮条
+	 * @author mani
+	 */
 	public class ButtonBar extends Container
 	{
 

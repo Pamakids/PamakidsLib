@@ -3,6 +3,10 @@ package com.pamakids.components.controls
 	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
 
+	/**
+	 * 开关按钮
+	 * @author mani
+	 */
 	public class ToggleButton extends Button
 	{
 		protected var selectedState:DisplayObject;

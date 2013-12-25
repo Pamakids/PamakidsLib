@@ -6,6 +6,10 @@ package com.pamakids.helper
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
+	/**
+	 * 点击助手
+	 * @author mani
+	 */
 	public class ClickEventHelper
 	{
 		private var callback:Function;

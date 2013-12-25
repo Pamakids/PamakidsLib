@@ -5,6 +5,10 @@ package com.pamakids.layouts
 
 	import flash.display.DisplayObject;
 
+	/**
+	 * 水平布局
+	 * @author mani
+	 */
 	public class HLayout extends LayoutBase
 	{
 		public var verticalCenter:Boolean=true;
@@ -30,7 +34,8 @@ package com.pamakids.layouts
 					if (verticalCenter && height)
 						y=(height - element.height) / 2;
 					else
-						TweenLite.delayedCall(1, function(element:DisplayObject):void {
+						TweenLite.delayedCall(1, function(element:DisplayObject):void
+						{
 							element.y=(height - element.height) / 2;
 						}, [element], true);
 					positionItem(element, x, y);

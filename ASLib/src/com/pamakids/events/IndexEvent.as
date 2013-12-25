@@ -2,6 +2,10 @@ package com.pamakids.events
 {
 	import flash.events.Event;
 
+	/**
+	 * 索引变换事件
+	 * @author mani
+	 */
 	public class IndexEvent extends Event
 	{
 		public static const INDEX:String="INDEX";

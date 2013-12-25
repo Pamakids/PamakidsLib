@@ -4,6 +4,10 @@ package com.pamakids.utils
 	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 
+	/**
+	 * 唯一ID生成器
+	 * @author mani
+	 */
 	public class UUID
 	{
 		// Char codes for 0123456789ABCDEF

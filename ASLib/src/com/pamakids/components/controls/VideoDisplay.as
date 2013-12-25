@@ -21,6 +21,9 @@ package com.pamakids.components.controls
 	import flash.utils.getTimer;
 
 	[Event(name="played", type="flash.events.Event")]
+	/**
+	 * 视频播放
+	 */
 	public class VideoDisplay extends Container
 	{
 		public static const BUFFERING:String="buffering";

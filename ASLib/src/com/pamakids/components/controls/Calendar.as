@@ -20,6 +20,7 @@ package com.pamakids.components.controls
 	import flash.utils.Dictionary;
 
 	/**
+	 * 日历
 	 * css:
 	 * * title
 	 * * titleGroup

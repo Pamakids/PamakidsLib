@@ -3,7 +3,7 @@ package com.pamakids.components.controls
 	import com.pamakids.components.base.UIComponent;
 
 	/**
-	 * 线组件
+	 * 线
 	 * @author mani
 	 */
 	public class Line extends UIComponent

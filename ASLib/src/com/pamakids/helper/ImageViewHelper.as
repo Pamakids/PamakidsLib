@@ -6,6 +6,10 @@ package com.pamakids.helper
 	import flash.events.MouseEvent;
 	import flash.ui.Mouse;
 
+	/**
+	 * 图片浏览助手
+	 * @author mani
+	 */
 	public class ImageViewHelper extends Skin
 	{
 		public function ImageViewHelper(width:Number=0, height:Number=0)

@@ -8,6 +8,10 @@ package com.pamakids.layouts.base
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 
+	/**
+	 * 布局基类
+	 * @author mani
+	 */
 	public class LayoutBase implements ILayout
 	{
 		private var _gap:Number=0;
@@ -296,7 +300,8 @@ package com.pamakids.layouts.base
 			if (target.width && target.height)
 				target.visible=true;
 			else
-				TweenLite.delayedCall(1, function(t:DisplayObject):void {
+				TweenLite.delayedCall(1, function(t:DisplayObject):void
+				{
 					t.visible=true;
 				}, [target], true);
 		}

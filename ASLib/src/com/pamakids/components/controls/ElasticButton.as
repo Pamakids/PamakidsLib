@@ -8,6 +8,10 @@ package com.pamakids.components.controls
 	import flash.events.MouseEvent;
 	import flash.utils.setTimeout;
 
+	/**
+	 * 弹簧按钮
+	 * @author mani
+	 */
 	public class ElasticButton extends Button
 	{
 		public function ElasticButton(styleName:String)

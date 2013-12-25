@@ -7,6 +7,10 @@ package com.pamakids.components.controls
 	import flash.display.BitmapData;
 	import flash.geom.Rectangle;
 
+	/**
+	 * 滚动条
+	 * @author mani
+	 */
 	public class ScrollBar extends Skin
 	{
 
