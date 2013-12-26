@@ -3,6 +3,10 @@ package com.pamakids.models
 	import com.pamakids.utils.NodeUtil;
 	import com.pamakids.utils.ObjectUtil;
 
+	/**
+	 * VO基类
+	 * @author mani
+	 */
 	public class BaseVO
 	{
 		public function BaseVO()

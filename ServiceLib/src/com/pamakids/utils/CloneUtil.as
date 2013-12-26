@@ -3,8 +3,19 @@ package com.pamakids.utils
 
 	import flash.utils.describeType;
 
+	/**
+	 * 克隆工具
+	 * @author mani
+	 */
 	public class CloneUtil
 	{
+		/**
+		 * 复制值
+		 * @param source 源
+		 * @param target 目标
+		 * @param force  是否强制复制所有值
+		 *
+		 */
 		public static function copyValue(source:Object, target:Object, force:Boolean=false):void
 		{
 			var arr:Array=ObjectUtil.getClassInfo(source).properties as Array;
@@ -31,17 +42,9 @@ package com.pamakids.utils
 			}
 		}
 
-		public static function cloneObject(source:Object, target:Object, force:Boolean=false):void
-		{
-			for (var p:* in source)
-			{
-				if (force || target.hasOwnProperty(p))
-				{
-					target[p]=source[p];
-				}
-			}
-		}
-
+		/**
+		 * 克隆数值
+		 */
 		public static function cloneArray(source:Array):Array
 		{
 			var arr:Array=[];
@@ -52,7 +55,13 @@ package com.pamakids.utils
 			return arr;
 		}
 
-		public static function convertObject(source:Object, tobeClass:*, autoArrayToAC:Boolean=false):*
+		/**
+		 * 转换对象类型
+		 * @param source 源对象
+		 * @param tobeClass 转换的类
+		 * @return 返回新类型的对象
+		 */
+		public static function convertObject(source:Object, tobeClass:*):*
 		{
 			try
 			{
@@ -96,12 +105,18 @@ package com.pamakids.utils
 			return o;
 		}
 
-		public static function convertArrayObjects(source:Array, tobeClass:*, autoArrayToAC:Boolean=false):Array
+		/**
+		 * 转换整个数组的对象
+		 * @param source 源数组
+		 * @param tobeClass 转换的目标类型
+		 * @return 新类型对象的数组
+		 */
+		public static function convertArrayObjects(source:Array, tobeClass:*):Array
 		{
 			var arr:Array=[]
 			for each (var o:Object in source)
 			{
-				arr.push(convertObject(o, tobeClass, autoArrayToAC) as tobeClass);
+				arr.push(convertObject(o, tobeClass) as tobeClass);
 			}
 			return arr;
 		}

@@ -16,6 +16,10 @@ package com.pamakids.services
 	import flash.net.URLVariables;
 	import flash.utils.Dictionary;
 
+	/**
+	 * 服务基类
+	 * @author mani
+	 */
 	public class ServiceBase
 	{
 		public static var HOST:String;
@@ -107,7 +111,6 @@ package com.pamakids.services
 			l.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 			l.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			l.addEventListener(HTTPStatusEvent.HTTP_STATUS, onHttpStatus);
-//			l.addEventListener(HTTPStatusEvent.HTTP_RESPONSE_STATUS, onHttpStatus);
 
 			if (showBusy != null)
 				showBusy();
@@ -149,8 +152,6 @@ package com.pamakids.services
 			return u;
 		}
 
-//		http://localhost:9050/admin/users?page=1&perPage=1
-
 		protected function securityErrorHandler(event:SecurityErrorEvent):void
 		{
 			onError(event);
@@ -186,7 +187,6 @@ package com.pamakids.services
 		private function removeEventListeners(loader:URLLoader):void
 		{
 			loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, onHttpStatus);
-//			loader.removeEventListener(HTTPStatusEvent.HTTP_RESPONSE_STATUS, onHttpStatus);
 			loader.removeEventListener(Event.COMPLETE, loadedHandler);
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);

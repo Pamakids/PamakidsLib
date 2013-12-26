@@ -11,6 +11,10 @@ package com.pamakids.services
 	import flash.net.URLRequestMethod;
 	import flash.utils.Dictionary;
 
+	/**
+	 * 上传服务
+	 * @author mani
+	 */
 	public class UploadService extends ServiceBase
 	{
 		public static const UPLOAD:String="upload";

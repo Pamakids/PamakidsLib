@@ -11,6 +11,11 @@ package com.pamakids.services
 	import flash.net.URLRequestMethod;
 	import flash.utils.Dictionary;
 
+	/**
+	 * 上传到七牛云存储的服务
+	 * @author mani
+	 *
+	 */
 	public class QNUploadService extends ServiceBase
 	{
 		public static const UPLOAD:String="upload";
