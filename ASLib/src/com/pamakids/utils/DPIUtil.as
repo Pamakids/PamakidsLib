@@ -56,22 +56,21 @@ package com.pamakids.utils
 		{
 			var w:int=Math.max(Capabilities.screenResolutionX, Capabilities.screenResolutionY);
 			var h:int=Math.min(Capabilities.screenResolutionX, Capabilities.screenResolutionY);
-//			w=1280;
-//			h=800;
+
 			var scale:Number=0;
 			var offsetX:Number=0
 			var offsetY:Number=0;
-			if (h/768>w/1024)
+			if (h / 768 > w / 1024)
 			{
-				scale=w/1024;
-				offsetY=(h-768*scale)/2;
+				scale=w / 1024;
+				offsetY=(h - 768 * scale) / 2;
 			}
 			else
 			{
-				scale=h/768;
-				offsetX=(w-1024*scale)/2;
+				scale=h / 768;
+				offsetX=(w - 1024 * scale) / 2;
 			}
-			return [scale,offsetX,offsetY];
+			return [scale, offsetX, offsetY];
 		}
 
 	}
