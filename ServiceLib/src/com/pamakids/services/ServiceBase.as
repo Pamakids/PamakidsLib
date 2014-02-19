@@ -16,6 +16,10 @@ package com.pamakids.services
 	import flash.net.URLVariables;
 	import flash.utils.Dictionary;
 
+	/**
+	 * 服务基类
+	 * @author mani
+	 */
 	public class ServiceBase
 	{
 		public static var HOST:String;
@@ -28,6 +32,17 @@ package com.pamakids.services
 
 		public static var showBusy:Function;
 		public static var hideBusy:Function;
+
+		/**
+		 * 默认接口同时只可执行一次
+		 */
+		public var executeOnce:Boolean=true;
+
+		/**
+		 * 执行字典
+		 */
+		public static var callingDic:Dictionary=new Dictionary();
+
 
 		private var _uri:String;
 
@@ -107,10 +122,11 @@ package com.pamakids.services
 			l.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 			l.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			l.addEventListener(HTTPStatusEvent.HTTP_STATUS, onHttpStatus);
-//			l.addEventListener(HTTPStatusEvent.HTTP_RESPONSE_STATUS, onHttpStatus);
 
 			if (showBusy != null)
 				showBusy();
+			if (executeOnce)
+				callingDic[this.uri]=true;
 		}
 
 		private function getGetParams(data:Object):String
@@ -126,12 +142,12 @@ package com.pamakids.services
 					{
 						for (var p:* in od)
 						{
-							arr.push(p + '=' + od[p]);
+							arr.push(encodeURI(p + '=' + od[p]));
 						}
 					}
 					else
 					{
-						arr.push(q.localName + '=' + od);
+						arr.push(encodeURI(q.localName + '=' + od));
 					}
 				}
 			}
@@ -148,8 +164,6 @@ package com.pamakids.services
 			u.url=url;
 			return u;
 		}
-
-//		http://localhost:9050/admin/users?page=1&perPage=1
 
 		protected function securityErrorHandler(event:SecurityErrorEvent):void
 		{
@@ -169,6 +183,8 @@ package com.pamakids.services
 				callbackDic[l](new ResultVO(false, message, status.toString()));
 				delete callbackDic[l];
 			}
+			if (executeOnce)
+				delete callingDic[this.uri];
 			if (hideBusy != null)
 				hideBusy();
 		}
@@ -186,7 +202,6 @@ package com.pamakids.services
 		private function removeEventListeners(loader:URLLoader):void
 		{
 			loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, onHttpStatus);
-//			loader.removeEventListener(HTTPStatusEvent.HTTP_RESPONSE_STATUS, onHttpStatus);
 			loader.removeEventListener(Event.COMPLETE, loadedHandler);
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
@@ -204,7 +219,15 @@ package com.pamakids.services
 
 			if (l.data)
 			{
-				var result:Object=formate == 'text' ? JSON.parse(l.data) : l.data;
+				var result:Object={};
+				try
+				{
+					result=formate == 'text' ? JSON.parse(l.data) : l.data;
+				}
+				catch (error:Error)
+				{
+					trace('JSON格式化服务数据出错', error.toString());
+				}
 				var vo:ResultVO;
 
 				if (typeof result != 'object')
@@ -221,6 +244,8 @@ package com.pamakids.services
 			delete callbackDic[l];
 			if (hideBusy != null)
 				hideBusy();
+			if (executeOnce)
+				delete callingDic[this.uri];
 		}
 	}
 }

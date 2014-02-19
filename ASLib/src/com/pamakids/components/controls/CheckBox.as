@@ -6,6 +6,10 @@ package com.pamakids.components.controls
 	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
 
+	/**
+	 * 复选框
+	 * @author mani
+	 */
 	public class CheckBox extends Skin
 	{
 

@@ -42,6 +42,12 @@ package com.pamakids.utils
 			return d;
 		}
 
+		/**
+		 * 获得NodeJS的日期时间字符串
+		 * @param date
+		 * @param dateOffset
+		 * @return
+		 */
 		public static function setTime(date:Date, dateOffset:int=0):String
 		{
 			if (dateOffset)

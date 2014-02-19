@@ -1,9 +1,6 @@
 package com.pamakids.utils
 {
 
-	/**
-	 * 普通API还是原生更快...
-	 */
 	final public class MathUtil
 	{
 

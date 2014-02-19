@@ -4,6 +4,10 @@ package com.pamakids.helper
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 
+	/**
+	 * 外部点击助手
+	 * @author mani
+	 */
 	public class OutClickHelper
 	{
 		private var callback:Function;

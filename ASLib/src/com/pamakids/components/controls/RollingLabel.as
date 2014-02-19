@@ -9,6 +9,10 @@ package com.pamakids.components.controls
 	import flash.events.Event;
 	import flash.text.TextField;
 
+	/**
+	 * 滚动文本
+	 * @author mani
+	 */
 	public class RollingLabel extends Label
 	{
 		public function RollingLabel(text:String='', width:Number=0, height:Number=0)
@@ -31,11 +35,9 @@ package com.pamakids.components.controls
 		{
 			initRollNumbers();
 			tf1=createTextField();
-//			tf1.addEventListener(ResizeEvent.RESIZE, resizeHandler);
 			tf1.text=prefix + rollNumbers[0].toString();
 			addChild(tf1);
 			tf2=createTextField();
-//			tf2.addEventListener(ResizeEvent.RESIZE, resizeHandler);
 			addChild(tf2);
 			tf2.y=height;
 			moveTextFields();
@@ -56,7 +58,6 @@ package com.pamakids.components.controls
 
 		override protected function autoSetSize(child:DisplayObject):void
 		{
-			trace(child.width, width);
 			var changed:Boolean=child.width > width || child.height > height;
 			if (changed)
 				setSize(child.width > width ? child.width : width, child.height > height ? child.height : height);
@@ -122,7 +123,7 @@ package com.pamakids.components.controls
 			{
 				acceleration=1;
 				isMoving=false;
-				if (endFunction!=null && hasAddedValue)
+				if (endFunction != null && hasAddedValue)
 					endFunction();
 				return;
 			}
@@ -177,8 +178,6 @@ package com.pamakids.components.controls
 			maskSprite.graphics.beginFill(0);
 			maskSprite.graphics.drawRect(0, 0, width, height);
 			maskSprite.graphics.endFill();
-			trace("w---------" + this.width)
-			trace("w---------" + this.width)
 		}
 	}
 }

@@ -12,15 +12,16 @@ package com.pamakids.services
 	import flash.utils.Dictionary;
 
 	/**
-	 * 上传服务
+	 * 上传到七牛云存储的服务
 	 * @author mani
+	 *
 	 */
-	public class UploadService extends ServiceBase
+	public class QNUploadService extends ServiceBase
 	{
 		public static const UPLOAD:String="upload";
 		private var callbackDic:Dictionary;
 
-		public function UploadService()
+		public function QNUploadService()
 		{
 			callbackDic=new Dictionary();
 			super(UPLOAD, URLRequestMethod.POST);

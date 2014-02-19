@@ -14,6 +14,10 @@ package com.pamakids.components.containers
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
+	/**
+	 * 面板
+	 * @author mani
+	 */
 	public class Panel extends Skin
 	{
 		private var scrollBar:ScrollBar;
@@ -98,12 +102,12 @@ package com.pamakids.components.containers
 					toValue=0;
 				else if (toValue < height - container.height)
 					toValue=height - container.height;
-				TweenLite.to(container, 0.5, {y: toValue, ease: Cubic.easeOut,
-						onUpdate: function():void {
-							contentPostion=container.y;
-							if (scrollBar)
-								scrollBar.scrollTo(-contentPostion);
-						}});
+				TweenLite.to(container, 0.5, {y: toValue, ease: Cubic.easeOut, onUpdate: function():void
+				{
+					contentPostion=container.y;
+					if (scrollBar)
+						scrollBar.scrollTo(-contentPostion);
+				}});
 			}
 			removeStageListener();
 		}

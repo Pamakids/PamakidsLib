@@ -8,6 +8,10 @@ package com.pamakids.manager
 	import flash.events.Event;
 	import flash.utils.getQualifiedClassName;
 
+	/**
+	 * 弹出管理器
+	 * @author mani
+	 */
 	public class PopupManager
 	{
 		public static var parent:Sprite;

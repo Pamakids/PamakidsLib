@@ -4,6 +4,10 @@ package com.pamakids.layouts
 
 	import flash.display.DisplayObject;
 
+	/**
+	 * 铺格布局
+	 * @author mani
+	 */
 	public class TileLayout extends LayoutBase
 	{
 		private var verticalGap:Number

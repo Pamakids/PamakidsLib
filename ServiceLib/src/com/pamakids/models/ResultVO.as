@@ -1,6 +1,10 @@
 package com.pamakids.models
 {
 
+	/**
+	 * 返回结果
+	 * @author mani
+	 */
 	public class ResultVO
 	{
 		public function ResultVO(status:Boolean, results:Object=null, errCode:String='')

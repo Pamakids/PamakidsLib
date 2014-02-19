@@ -4,6 +4,10 @@ package com.pamakids.components.controls
 
 	import flash.events.MouseEvent;
 
+	/**
+	 * 文本按钮
+	 * @author mani
+	 */
 	public class LabelButton extends Container
 	{
 		public function LabelButton(label:String, width:Number=0, height:Number=0)

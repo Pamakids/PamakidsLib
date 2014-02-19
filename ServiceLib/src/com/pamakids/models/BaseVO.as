@@ -3,6 +3,10 @@ package com.pamakids.models
 	import com.pamakids.utils.NodeUtil;
 	import com.pamakids.utils.ObjectUtil;
 
+	/**
+	 * VO基类
+	 * @author mani
+	 */
 	public class BaseVO
 	{
 		public function BaseVO()
@@ -97,7 +101,10 @@ package com.pamakids.models
 			{
 				var value:Object=this[p];
 				if (value != false && value != 0 && !value)
+				{
+					invalidMessage='必填项未填，请检查后再输入';
 					return false;
+				}
 			}
 			return true;
 		}

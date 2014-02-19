@@ -5,6 +5,10 @@ package com.pamakids.layouts
 
 	import flash.display.DisplayObject;
 
+	/**
+	 * 垂直布局
+	 * @author mani
+	 */
 	public class VLayout extends LayoutBase
 	{
 		private var verticalCenter:Boolean;

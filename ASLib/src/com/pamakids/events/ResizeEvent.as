@@ -2,6 +2,10 @@ package com.pamakids.events
 {
 	import flash.events.Event;
 
+	/**
+	 * 尺寸重置事件
+	 * @author mani
+	 */
 	public class ResizeEvent extends Event
 	{
 		public static const RESIZE:String="resize";

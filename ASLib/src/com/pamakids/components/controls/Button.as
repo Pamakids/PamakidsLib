@@ -7,6 +7,10 @@ package com.pamakids.components.controls
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
+	/**
+	 * 按钮
+	 * @author mani
+	 */
 	public class Button extends Skin
 	{
 		protected var upState:DisplayObject;
@@ -106,7 +110,8 @@ package com.pamakids.components.controls
 		{
 			if (overState && !event.buttonDown)
 			{
-				TweenLite.to(overState, 0.3, {alpha: 1, onComplete: function():void {
+				TweenLite.to(overState, 0.3, {alpha: 1, onComplete: function():void
+				{
 					upState.visible=false;
 				}});
 			}

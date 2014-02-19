@@ -123,6 +123,8 @@ package com.pamakids.manager
 					return;
 				}
 			}
+			if (!s)
+				s=target;
 			if (s)
 			{
 				s=s as Sound ? s as Sound : new s;
@@ -157,7 +159,7 @@ package com.pamakids.manager
 
 		protected function playedHandler(event:Event):void
 		{
-			for (var id:String in playingSounds)
+			for (var id:Object in playingSounds)
 			{
 				if (playingSounds[id].channel == event.currentTarget)
 				{

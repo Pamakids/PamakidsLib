@@ -11,6 +11,10 @@ package com.pamakids.manager
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 
+	/**
+	 * 资源管理器
+	 * @author mani
+	 */
 	public class AssetsManager extends Singleton
 	{
 
@@ -54,7 +58,6 @@ package com.pamakids.manager
 			themeLoaded=false;
 			isHttpTheme=URLUtil.isHttp(url);
 			themeURL=url;
-//			lm.load(url, loadedThemeInfoHandler, isHttpTheme ? URLUtil.getCachePath(url) : null, null, null, false, URLLoaderDataFormat.TEXT);
 			lm.loadText(url, loadedThemeInfoHandler);
 		}
 
@@ -75,7 +78,6 @@ package com.pamakids.manager
 			var dir:String=theme.dir;
 			if (isHttpTheme)
 				dir=URLUtil.getHttp(themeURL) + dir;
-//				dir=URLUtil.getUrlDir(themeURL) + dir;
 			var url:String;
 			var savePath:String;
 			for each (var asset:Object in theme.assets)
