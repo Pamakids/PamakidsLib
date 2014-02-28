@@ -27,17 +27,16 @@ package com.pamakids.utils
 				return null;
 			var d:Date;
 			var arr:Array;
-			if (date.indexOf('-') != -1)
-			{
-				arr=date.split('-');
-				d=new Date(arr[0], int(arr[1]) - 1, arr[2]);
-			}
-			else if (date.indexOf(' ') != -1)
+			if (date.indexOf(' ') != -1)
 			{
 				arr=date.split(' ');
 				var a1:Array=arr[0].split('-'); //年月日
 				var a2:Array=arr[1].split(':'); //时分秒
-				d=new Date(a1[0], int(a1[1]) - 1, arr[2], a2[0], a2[1], a2[2]);
+				d=new Date(a1[0], int(a1[1]) - 1, a1[2], a2[0], a2[1], a2[2]);
+			}else if (date.indexOf('-') != -1)
+			{
+				arr=date.split('-');
+				d=new Date(arr[0], int(arr[1]) - 1, arr[2]);
 			}
 			return d;
 		}

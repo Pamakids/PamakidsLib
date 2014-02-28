@@ -30,6 +30,7 @@ package com.pamakids.components.controls
 				Style.addFontCallback(function():void
 				{
 					textField.text=text;
+					setSize(textField.width, textField.height);
 				});
 			}
 		}

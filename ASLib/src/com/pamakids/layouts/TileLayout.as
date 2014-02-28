@@ -15,6 +15,8 @@ package com.pamakids.layouts
 		private var numColumns:int
 		private var horizentalCenter:Boolean=true;
 
+		public var numRaws:int;
+
 		public function TileLayout(numColumns:int, verticalGap:Number=0, horizontalGap:Number=0)
 		{
 			this.numColumns=numColumns
@@ -37,7 +39,8 @@ package com.pamakids.layouts
 				if (horizentalCenter && !xoffset && width && !container.forceAutoFill)
 					xoffset=(width - (item.width * numColumns) - horizontalGap * (numColumns - 1)) / 2;
 				x=xoffset + (i % numColumns) * (horizontalGap + item.width);
-				y=int(i / numColumns) * (verticalGap + item.height);
+				numRaws=int(i / numColumns) + 1;
+				y=(numRaws - 1) * (verticalGap + item.height);
 				positionItem(item, x, y);
 			}
 

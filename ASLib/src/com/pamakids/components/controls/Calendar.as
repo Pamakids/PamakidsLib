@@ -24,8 +24,8 @@ package com.pamakids.components.controls
 	 * css:
 	 * * title
 	 * * titleGroup
-	 * @author mani
 	 *
+	 * @author mani
 	 */
 	[Event(name="selected", type="flash.events.Event")]
 	public class Calendar extends SkinnableDataContainer
@@ -98,6 +98,8 @@ package com.pamakids.components.controls
 		{
 			_checkedIn=checked;
 			_booked=booked;
+//			month=today.getMonth();
+			mapSelectedDates();
 			renderData();
 		}
 
@@ -263,6 +265,7 @@ package com.pamakids.components.controls
 
 		public var checkIn:Date;
 		public var checkOut:Date;
+		private var info:Container;
 
 		protected function changedHandler(event:Event):void
 		{
@@ -341,28 +344,32 @@ package com.pamakids.components.controls
 
 		private function initInfoGroup():void
 		{
-			var info:Container=new Container();
-			info.forceAutoFill=true;
-			info.layout=new HLayout(5);
-			var checked:Container=new Container(13, 13, true);
-			checked.backgroundColor=getColor('checked_in', 'DateRender');
-			checked.backgroudAlpha=1;
-			info.addChild(checked);
-			var l:Label=new Label('已入住');
-			info.addChild(l);
-			var booked:Container=new Container(13, 13, true);
-			booked.backgroundColor=getColor('booked', 'DateRender')
-			booked.backgroudAlpha=1;
-			info.addChild(booked);
-			l=new Label('已预定');
-			info.addChild(l);
-			var selected:Container=new Container(13, 13, true);
-			selected.backgroundColor=getColor('selectedBackgroundColor', 'DateRender');
-			selected.backgroudAlpha=1;
-			info.addChild(selected);
-			l=new Label('已选择');
-			info.addChild(l);
-			addChild(info);
+			if (!info)
+			{
+				info=new Container();
+				info.forceAutoFill=true;
+				info.layout=new HLayout(5);
+				var checked:Container=new Container(13, 13, true);
+				checked.backgroundColor=getColor('checked_in', 'DateRender');
+				checked.backgroudAlpha=1;
+				info.addChild(checked);
+				var l:Label=new Label('已入住');
+				info.addChild(l);
+				var booked:Container=new Container(13, 13, true);
+				booked.backgroundColor=getColor('booked', 'DateRender')
+				booked.backgroudAlpha=1;
+				info.addChild(booked);
+				l=new Label('已预定');
+				info.addChild(l);
+				var selected:Container=new Container(13, 13, true);
+				selected.backgroundColor=getColor('selectedBackgroundColor', 'DateRender');
+				selected.backgroudAlpha=1;
+				info.addChild(selected);
+				l=new Label('已选择');
+				info.addChild(l);
+			}
+			if (!info.parent)
+				addChild(info);
 		}
 
 		private function initDateGroup():void
@@ -380,7 +387,11 @@ package com.pamakids.components.controls
 
 		protected function contaierResizedHandler(event:Event):void
 		{
-			trace(container.width, container.height, Math.random());
+			var raw:int=contentLayout['numRaws'];
+			if (raw == 6 && info)
+				removeChild(info);
+			else
+				initInfoGroup();
 		}
 
 		protected function moveHandler(event:MouseEvent):void
@@ -388,7 +399,6 @@ package com.pamakids.components.controls
 			Mouse.hide();
 			var p:Point=new Point(event.stageX, event.stageY);
 			p=globalToLocal(p);
-			trace(p.x, p.y);
 			if (p.x < 0 || p.y < 0)
 			{
 				outHandler(null, p);

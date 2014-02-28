@@ -4,7 +4,7 @@ package com.pamakids.components.controls
 	import com.pamakids.manager.LoadManager;
 	import com.pamakids.utils.BitmapDataUtil;
 	import com.pamakids.utils.URLUtil;
-
+	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
@@ -37,6 +37,8 @@ package com.pamakids.components.controls
 		private var lm:LoadManager;
 		private var scaleMode:String;
 		public var smoothing:Boolean=true;
+		public var showLoading:Boolean=true;
+		private var loading:Label;
 
 		public function set source(value:Object):void
 		{
@@ -47,14 +49,31 @@ package com.pamakids.components.controls
 			else if (value != _source)
 			{
 				lm=LoadManager.instance;
+				
 				if (value is String)
-					lm.load(value as String, loadedHandler, URLUtil.getCachePath(value as String), null, null, false, LoadManager.BITMAP);
+					lm.load(value as String, loadedHandler, URLUtil.getCachePath(value as String), null, loadingHandler, false, LoadManager.BITMAP);
 				else if (value is ByteArray)
 					lm.loadContentFromByteArray(value as ByteArray, loadedHandler);
 			}
 			_source=value;
 		}
-
+		
+		override protected function init():void
+		{
+			if(showLoading)
+			{
+				loading = new Label('00%');
+				addChild(loading);
+				centerDisplayObject(loading);
+			}
+		}
+		
+		private function loadingHandler(percent:Number):void
+		{
+			if(loading)
+				loading.text = int(percent * 100) + '%';
+		}
+		
 		override public function set autoCenter(value:Boolean):void
 		{
 			super.autoCenter=value;
@@ -63,6 +82,11 @@ package com.pamakids.components.controls
 
 		protected function loadedHandler(bitmap:Bitmap):void
 		{
+			if(loading)
+			{
+				removeChild(loading);
+				loading = null;
+			}
 			bitmap.smoothing=smoothing;
 			if (forceAutoFill || autoFill)
 			{
@@ -74,7 +98,7 @@ package com.pamakids.components.controls
 				content=new Bitmap(resizedBD);
 			}
 			content.smoothing=smoothing;
-			addContent(content);
+			addChild(content);
 			if (!tobeDisposedBitmap)
 				tobeDisposedBitmap=content;
 			if (tobeDisposedBitmap != content)
@@ -88,11 +112,6 @@ package com.pamakids.components.controls
 				return;
 			if (autoFill || forceAutoFill)
 				setSize(child.width, child.height);
-		}
-
-		protected function addContent(content:Bitmap):void
-		{
-			addChild(content);
 		}
 
 		override protected function dispose():void

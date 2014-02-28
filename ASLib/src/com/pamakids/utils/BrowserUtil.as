@@ -9,13 +9,18 @@ package com.pamakids.utils
 
 		import flash.external.ExternalInterface;
 
-		public static function getQuery():Object
+		/**
+		 * 获取url的查询数据
+		 * @param url 如果为空则获取当前url
+		 * @return {key:value}这样的对象
+		 */
+		public static function getQuery(url:String=''):Object
 		{
-			var url:String=ExternalInterface.call("window.location.href.toString");
+			var urlString:String=url ? url : ExternalInterface.call("window.location.href.toString");
 			var o:Object;
-			if (url.indexOf('?') != -1)
+			if (urlString.indexOf('?') != -1)
 			{
-				var query:String=url.split('?')[1];
+				var query:String=urlString.split('?')[1];
 				if (query)
 				{
 					o={};

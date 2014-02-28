@@ -60,7 +60,7 @@ package com.pamakids.manager
 			view.visible=true;
 		}
 
-		public static function popupWithin(view:DisplayObject, parentDOC:Sprite, isShowMask:Boolean=true, center:Boolean=true):void
+		public static function popupWithin(view:DisplayObject, parentDOC:Sprite=null, isShowMask:Boolean=true, center:Boolean=true):void
 		{
 			var parent:Sprite=parentDOC ? parentDOC : PopupManager.parent;
 			if (!parent)

@@ -118,7 +118,17 @@ package com.pamakids.manager
 
 		public function getStyle(name:String, cssID:String):Object
 		{
-			return css[cssID][name];
+			var style:Object;
+			try
+			{
+				style=css[cssID][name];
+			}
+			catch (error:Error)
+			{
+				throw new Error(cssID + "'s style is not exist. You have to use AssetsManager to load a theme file which with " + cssID);
+			}
+
+			return style;
 		}
 
 		public function addAsset(name:String, bitmap:Bitmap):void

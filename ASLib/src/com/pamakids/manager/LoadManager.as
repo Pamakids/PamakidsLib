@@ -300,7 +300,6 @@ package com.pamakids.manager
 			var lc:LoaderContext=new LoaderContext(false, ApplicationDomain.currentDomain, null);
 //			lc.imageDecodingPolicy=ImageDecodingPolicy.ON_LOAD;
 			lc.allowCodeImport=true;
-//			lc.allowLoadBytesCodeExecution=true;
 			loaderDic[l]=callbacks;
 			l.loadBytes(byteArray, lc);
 			completeParamsDic[l]=params;
@@ -401,7 +400,10 @@ package com.pamakids.manager
 			//每个回调函数都调用
 			for each (f in arr)
 			{
-				params ? f(u.data, params) : f(u.data);
+				if(f.length)
+					params ? f(u.data, params) : f(u.data);
+				else
+					f();
 			}
 		}
 	}
