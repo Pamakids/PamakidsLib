@@ -125,7 +125,7 @@ package com.pamakids.manager
 					if (fileObject is ByteArray)
 						fs.writeBytes(fileObject as ByteArray)
 					else if (fileObject is String)
-						fs.writeUTFBytes(fileObject as String);
+						fs.writeUTF(fileObject as String);
 					else
 						fs.writeObject(fileObject);
 					fs.close();
