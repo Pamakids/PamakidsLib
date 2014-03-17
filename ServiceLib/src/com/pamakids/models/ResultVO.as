@@ -1,5 +1,6 @@
 package com.pamakids.models
 {
+	import com.pamakids.utils.ObjectUtil;
 
 	/**
 	 * 返回结果
@@ -49,12 +50,13 @@ package com.pamakids.models
 
 		public function toString():String
 		{
-			var s:String;
-			for (var p:* in this)
+			var arr:Array=ObjectUtil.getClassInfo(this).properties as Array;
+			var s:String='Result:\n{\n';
+			for each (var q:QName in arr)
 			{
-				s+=p + '=' + this[p] + '\n';
+				s+=q.localName+':'+this[q.localName]+'\n';
 			}
-			return s;
+			return s+'}';
 		}
 	}
 }
