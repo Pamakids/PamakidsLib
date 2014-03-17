@@ -151,7 +151,8 @@ package com.pamakids.services
 					}
 				}
 			}
-			arr.push('id=' + id);
+			if (id)
+				arr.push('id=' + id);
 			return '?' + arr.join('&');
 		}
 

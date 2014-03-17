@@ -274,7 +274,6 @@ package com.pamakids.manager
 					if (bitmap)
 					{
 						returnContent=new Bitmap(bitmap.bitmapData.clone());
-						bitmap.bitmapData.dispose();
 					}
 					else
 					{

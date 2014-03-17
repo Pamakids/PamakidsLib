@@ -51,7 +51,7 @@ package com.pamakids.components.controls
 				lm=LoadManager.instance;
 				
 				if (value is String)
-					lm.load(value as String, loadedHandler, URLUtil.getCachePath(value as String), null, loadingHandler, false, LoadManager.BITMAP);
+					lm.loadImage(value as String, loadedHandler, URLUtil.getCachePath(value as String), loadingHandler);
 				else if (value is ByteArray)
 					lm.loadContentFromByteArray(value as ByteArray, loadedHandler);
 			}
