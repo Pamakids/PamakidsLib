@@ -61,6 +61,7 @@ package com.pamakids.manager
 			savePathDic=new Dictionary();
 			loadingCallbackDic=new Dictionary();
 			onCompleteDic=new Dictionary();
+			ioErrorDic=new Dictionary();
 			completeParamsDic=new Dictionary();
 			bigDataFormates=[BITMAP, SWF];
 		}
@@ -75,6 +76,7 @@ package com.pamakids.manager
 		private var onCompleteDic:Dictionary; //加载完成后回调函数字典
 		private var savePathDic:Dictionary; //存储路径字典
 		private var loadingCallbackDic:Dictionary;
+		private var ioErrorDic:Dictionary;
 
 		public function loadText(url:String, onComplete:Function, savePath:String=''):void
 		{
@@ -116,7 +118,10 @@ package com.pamakids.manager
 		 * @param loadingCallBack //加载的回调函数
 		 * @param formate 加载文件的格式
 		 */
-		public function load(url:String, onComplete:Function, savePath:String=null, params:Array=null, loadingCallBack:Function=null, forceReload:Boolean=false, formate:String=URLLoaderDataFormat.BINARY):void
+		public function load(url:String, onComplete:Function, savePath:String=null, 
+			params:Array=null, loadingCallBack:Function=null, 
+			forceReload:Boolean=false, formate:String=URLLoaderDataFormat.BINARY,
+			ioHander:Function=null):void
 		{
 			var b:ByteArray;
 
@@ -138,6 +143,7 @@ package com.pamakids.manager
 
 			var u:URLLoader=loadingDic[url];
 			var arr:Array;
+			var ioarr:Array;
 
 			//如果有正在加载的，则把加载完成的回调函数添加到数组里
 			if (u)
@@ -145,6 +151,9 @@ package com.pamakids.manager
 				arr=loaderDic[u];
 				if (arr && arr.indexOf(onComplete) == -1)
 					arr.push(onComplete);
+				ioarr=ioErrorDic[u];
+				if (ioarr && ioarr.indexOf(ioHander) == -1)
+					ioarr.push(ioHander);
 				return;
 			}
 
@@ -168,6 +177,7 @@ package com.pamakids.manager
 			if (savePath)
 				savePathDic[u]=savePath;
 			loaderDic[u]=[onComplete];
+			ioErrorDic[u]=ioHander;
 			if (bigDataFormates.indexOf(formate) != -1)
 				formate=URLLoaderDataFormat.BINARY;
 			u.dataFormat=formate;
@@ -310,12 +320,19 @@ package com.pamakids.manager
 		{
 			trace('Load IO Error: ' + event.toString());
 			var u:URLLoader=event.currentTarget as URLLoader;
+			var ioCB:Function=ioErrorDic[u];
+			var params:Array=completeParamsDic[u];
 			delete loadingDic[u];
 			delete loaderDic[u];
 			delete loaderFormate[u];
 			delete savePathDic[u];
 			delete completeParamsDic[u];
-			if (errorHandlers)
+			delete ioErrorDic[u];
+
+			if(ioCB!=null){
+				ioCB(event,params);
+			}
+			else if (errorHandlers)
 			{
 				for each (var f:Function in errorHandlers)
 				{
@@ -408,3 +425,5 @@ package com.pamakids.manager
 		}
 	}
 }
+
+
