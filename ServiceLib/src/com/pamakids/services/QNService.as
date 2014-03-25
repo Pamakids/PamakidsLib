@@ -3,7 +3,7 @@ package com.pamakids.services
 	import com.pamakids.models.ResultVO;
 	import com.pamakids.utils.CloneUtil;
 	import com.pamakids.utils.Singleton;
-
+	
 	import flash.events.DataEvent;
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
@@ -64,7 +64,7 @@ package com.pamakids.services
 		 * 上传文件
 		 * @param file 文件对象
 		 * @param callback 回调函数，参数为ResultVO或上传进度数字
-		 * @param data {key:"自定义文件名，默认为文件名"}
+		 * @param data {key:"自定义文件名，默认为文件名", "x:test":"自定义属性和值"}
 		 */
 		public function upload(file:File, callback:Function, data:Object=null):void
 		{
@@ -110,7 +110,7 @@ package com.pamakids.services
 
 		protected function completeHandler(event:DataEvent):void
 		{
-			callbackDic[event.target](new ResultVO(true, event.data));
+			callbackDic[event.target](new ResultVO(true, JSON.parse(event.data)));
 			clearFile(event);
 		}
 

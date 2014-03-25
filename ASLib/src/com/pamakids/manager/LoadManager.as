@@ -118,10 +118,7 @@ package com.pamakids.manager
 		 * @param loadingCallBack //加载的回调函数
 		 * @param formate 加载文件的格式
 		 */
-		public function load(url:String, onComplete:Function, savePath:String=null, 
-			params:Array=null, loadingCallBack:Function=null, 
-			forceReload:Boolean=false, formate:String=URLLoaderDataFormat.BINARY,
-			ioHander:Function=null):void
+		public function load(url:String, onComplete:Function, savePath:String=null, params:Array=null, loadingCallBack:Function=null, forceReload:Boolean=false, formate:String=URLLoaderDataFormat.BINARY, ioHander:Function=null):void
 		{
 			var b:ByteArray;
 
@@ -328,8 +325,9 @@ package com.pamakids.manager
 			delete completeParamsDic[u];
 			delete ioErrorDic[u];
 
-			if(ioCB!=null){
-				ioCB(event,params);
+			if (ioCB != null)
+			{
+				ioCB(event, params);
 			}
 			else if (errorHandlers)
 			{
@@ -416,7 +414,7 @@ package com.pamakids.manager
 			//每个回调函数都调用
 			for each (f in arr)
 			{
-				if(f.length)
+				if (f.length)
 					params ? f(u.data, params) : f(u.data);
 				else
 					f();
