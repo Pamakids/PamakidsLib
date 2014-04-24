@@ -118,10 +118,7 @@ package com.pamakids.manager
 		 * @param loadingCallBack //加载的回调函数
 		 * @param formate 加载文件的格式
 		 */
-		public function load(url:String, onComplete:Function, savePath:String=null,
-			params:Array=null, loadingCallBack:Function=null,
-			forceReload:Boolean=false, formate:String=URLLoaderDataFormat.BINARY,
-			ioHander:Function=null):void
+		public function load(url:String, onComplete:Function, savePath:String=null, params:Array=null, loadingCallBack:Function=null, forceReload:Boolean=false, formate:String=URLLoaderDataFormat.BINARY, ioHander:Function=null):void
 		{
 			var b:ByteArray;
 

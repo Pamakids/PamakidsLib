@@ -12,9 +12,28 @@ package com.pamakids.utils
 		{
 		}
 
+		/**
+		 * @param time
+		 * @return 2014-1-1
+		 * 
+		 */		
 		public static function getTime(time:String):String
 		{
 			return time ? time.split('T')[0] : null;
+		}
+		
+		/**
+		 * 
+		 * @param time
+		 * @return 2014-1-1 12:60:60
+		 * 
+		 */		
+		public static function getTimeDetail(time:String):String
+		{
+			var a1:Array = time.split('T');
+			var ymd:String = a1[0];
+			var hms:String = a1[1].split('.')[0];
+			return time ? ymd+' '+hms : null;
 		}
 
 		/**
@@ -55,7 +74,8 @@ package com.pamakids.utils
 			var month:String=m < 10 ? '0' + m : '' + m;
 			var d:int=date.getDate();
 			var ds:String=d < 10 ? '0' + d : '' + d;
-			return date ? date.getFullYear() + '-' + month + '-' + ds : '';
+			var ymd = date.getFullYear() + '-' + month + '-' + ds; //年月日
+			return date ? ymd : '';
 		}
 
 		public static function getInDates(from:String, end:String):Array

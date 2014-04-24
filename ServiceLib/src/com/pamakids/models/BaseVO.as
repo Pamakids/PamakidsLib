@@ -1,6 +1,5 @@
 package com.pamakids.models
 {
-	import com.pamakids.utils.NodeUtil;
 	import com.pamakids.utils.ObjectUtil;
 
 	/**
@@ -56,7 +55,7 @@ package com.pamakids.models
 
 		public function get updated_at():String
 		{
-			return NodeUtil.getTime(_updated_at);
+			return getTimeDetail(_updated_at);
 		}
 
 		public function set updated_at(value:String):void
@@ -66,7 +65,15 @@ package com.pamakids.models
 
 		public function get created_at():String
 		{
-			return NodeUtil.getTime(_created_at);
+			return getTimeDetail(_created_at);
+		}
+		
+		private function getTimeDetail(time:String):String
+		{
+			var a1:Array = time.split('T');
+			var ymd:String = a1[0];
+			var hms:String = a1[1].split('.')[0];
+			return time ? ymd+' '+hms : null;
 		}
 
 		public function set created_at(value:String):void
