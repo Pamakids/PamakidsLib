@@ -73,5 +73,26 @@ package com.pamakids.utils
 			return [scale, offsetX, offsetY];
 		}
 
+		public static function getStageSize(stageW:Number, stageH:Number):Array
+		{
+			var w:int=Math.max(stageW, stageH);
+			var h:int=Math.min(stageW, stageH);
+
+			var scale:Number=0;
+			var offsetX:Number=0
+			var offsetY:Number=0;
+			if (h / 768 > w / 1024)
+			{
+				scale=w / 1024;
+				offsetY=(h - 768 * scale) / 2;
+			}
+			else
+			{
+				scale=h / 768;
+				offsetX=(w - 1024 * scale) / 2;
+			}
+			return [scale, offsetX, offsetY];
+		}
+
 	}
 }

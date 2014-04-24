@@ -60,6 +60,13 @@ package com.pamakids.services
 			return url + '?imageView2/' + options + '/w/' + width + '/h/' + height;
 		}
 
+		public static function getQNThumbnail(width:Number, height:Number, options:int=1):String
+		{
+			return HOST + '?imageView2/' + options + '/w/' + width + '/h/' + height;
+		}
+
+		public static var HOST:String;
+
 		/**
 		 * 上传文件
 		 * @param file 文件对象
@@ -78,12 +85,14 @@ package com.pamakids.services
 			{
 				data=new URLVariables();
 				data.key=file.name;
+				data.token=token;
 			}
 			else
 			{
 				data=getURLVariables(data);
+				data.token=data.token ? data.token : token;
 			}
-			data.token=token;
+
 			u.data=data;
 
 			file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
