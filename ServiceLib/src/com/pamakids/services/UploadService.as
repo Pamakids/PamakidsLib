@@ -19,21 +19,24 @@ package com.pamakids.services
 	{
 		public static const UPLOAD:String="upload";
 		private var callbackDic:Dictionary;
+		private var progressDic:Dictionary;
 
 		public function UploadService()
 		{
 			callbackDic=new Dictionary();
+			progressDic=new Dictionary();
 			super(UPLOAD, URLRequestMethod.POST);
 			headers=[];
 			headers.push(new URLRequestHeader('Content-Type', 'multipart/form-data'));
 			headers.push(new URLRequestHeader('UploadFile', 'true'));
 		}
 
-		public function upload(file:File, callback:Function, data:Object=null):void
+		public function upload(file:File, compCallback:Function, data:Object=null, progressCallback:Function=null):void
 		{
 			if (callbackDic[file])
 				clearFile(null, file);
-			callbackDic[file]=callback;
+			callbackDic[file]=compCallback;
+			progressDic[file]=progressCallback;
 			var u:URLRequest=getURLRequest(getURLVariables(data));
 			file.upload(u, 'upload');
 			file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
@@ -56,6 +59,7 @@ package com.pamakids.services
 			file.removeEventListener(HTTPStatusEvent.HTTP_STATUS, onStatus);
 			file.removeEventListener(DataEvent.UPLOAD_COMPLETE_DATA, completeHandler);
 			delete callbackDic[file];
+			delete progressDic[file];
 		}
 
 		protected function onStatus(event:HTTPStatusEvent):void
@@ -79,7 +83,7 @@ package com.pamakids.services
 		protected function progressHandler(event:ProgressEvent):void
 		{
 			var percent:Number=Math.floor(event.bytesLoaded * 100 / event.bytesTotal);
-			callbackDic[event.target](percent);
+			progressDic[event.target](percent);
 		}
 	}
 }
