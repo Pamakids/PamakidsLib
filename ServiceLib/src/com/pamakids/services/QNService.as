@@ -3,7 +3,7 @@ package com.pamakids.services
 	import com.pamakids.models.ResultVO;
 	import com.pamakids.utils.CloneUtil;
 	import com.pamakids.utils.Singleton;
-	
+
 	import flash.events.DataEvent;
 	import flash.events.Event;
 	import flash.events.HTTPStatusEvent;
@@ -60,9 +60,9 @@ package com.pamakids.services
 			return url + '?imageView2/' + options + '/w/' + width + '/h/' + height;
 		}
 
-		public static function getQNThumbnail(width:Number, height:Number, options:int=1):String
+		public static function getQNThumbnail(key:String, width:Number, height:Number, options:int=1):String
 		{
-			return HOST + '?imageView2/' + options + '/w/' + width + '/h/' + height;
+			return HOST + key + '?imageView2/' + options + '/w/' + width + '/h/' + height;
 		}
 
 		public static var HOST:String;
