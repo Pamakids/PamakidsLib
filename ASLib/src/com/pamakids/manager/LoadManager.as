@@ -80,7 +80,7 @@ package com.pamakids.manager
 
 		public function loadText(url:String, onComplete:Function, savePath:String=''):void
 		{
-			load(url, onComplete, savePath, null, null, false, URLLoaderDataFormat.TEXT);
+			load(url, onComplete, savePath, null, null, false, URLLoaderDataFormat.TEXT, null, true);
 		}
 
 		public function loadSWF(url:String, onComplete:Function=null, savePath:String='', loadingCallback:Function=null):void
@@ -118,14 +118,20 @@ package com.pamakids.manager
 		 * @param loadingCallBack //加载的回调函数
 		 * @param formate 加载文件的格式
 		 */
-		public function load(url:String, onComplete:Function, savePath:String=null, params:Array=null, loadingCallBack:Function=null, forceReload:Boolean=false, formate:String=URLLoaderDataFormat.BINARY, ioHander:Function=null):void
+		public function load(url:String, onComplete:Function, savePath:String=null,
+			params:Array=null, loadingCallBack:Function=null, forceReload:Boolean=false,
+			formate:String=URLLoaderDataFormat.BINARY, ioHander:Function=null, isString:Boolean=false):void
 		{
 			var b:ByteArray;
 
 			//如果有存储路径，先去本地缓存找是否有
 			if (savePath)
 			{
-				var cachedData:Object=formate == BITMAP ? FileManager.readFileByteArray(savePath) : FileManager.readFile(savePath);
+				var cachedData:Object
+				if (formate == BITMAP)
+					cachedData=FileManager.readFileByteArray(savePath)
+				else
+					cachedData=FileManager.readFile(savePath, false, isString);
 				if (cachedData is ByteArray)
 					cachedData=cachedData as ByteArray;
 				if (cachedData)
