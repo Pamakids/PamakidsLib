@@ -1,7 +1,7 @@
 package com.pamakids.components.controls
 {
 	import com.greensock.TweenLite;
-
+	
 	import flash.events.DataEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -101,6 +101,8 @@ package com.pamakids.components.controls
 		public function set volume(value:Number):void
 		{
 			_volume=value;
+			if(!soundChannel)
+				return;
 			soundTransform=soundChannel.soundTransform;
 			TweenLite.to(soundTransform, 0.8, {volume: value, onUpdate: pausingHandler});
 		}
@@ -166,6 +168,7 @@ package com.pamakids.components.controls
 			try
 			{
 				soundChannel=sound.play(currentPosition);
+				soundLength = sound.length;
 				if (muted)
 				{
 					soundTransform=soundChannel.soundTransform;
@@ -181,6 +184,8 @@ package com.pamakids.components.controls
 			}
 			trace('Sound Player play: ' + url);
 		}
+		
+		public var soundLength:Number;
 
 		/**
 		 * 是否在音频加载完成后自动播放
@@ -294,7 +299,7 @@ package com.pamakids.components.controls
 			sound.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
 			sound.addEventListener(ProgressEvent.PROGRESS, progressHandler);
 		}
-
+		
 		private function pausedHandler():void
 		{
 			currentPosition=soundChannel.position;

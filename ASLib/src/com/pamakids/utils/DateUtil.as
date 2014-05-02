@@ -112,6 +112,12 @@ package com.pamakids.utils
 			return date.fullYear + '年' + (date.month + 1) + '月';
 		}
 
+		/**
+		 * 获取年月日 
+		 * @param date 当前日期
+		 * @param dateOffset 变差天数
+		 * @return 年/月/日 
+		 */		
 		public static function getYMD(date:Date, dateOffset:int=0):String
 		{
 			date.date+=dateOffset;
