@@ -23,7 +23,7 @@ package com.pamakids.utils
 
 			var result:String="";
 			if (hours != 0)
-				result=hours + ":";
+				result=(hours > 10 ? hours : '0'+hours) + ":";
 
 			if (result && minutes < 10)
 				result+="0" + minutes + ":";
@@ -35,6 +35,34 @@ package com.pamakids.utils
 			else
 				result+=seconds;
 
+			return result;
+		}
+		
+		/**
+		 * 获取时:分:秒 
+		 * @param date
+		 * @return 10:10:10
+		 */		
+		public static function getHMS(date:Date):String
+		{
+			var hours:uint = date.getHours();
+			var minutes:uint = date.getMinutes();
+			var seconds:uint = date.getSeconds();
+			
+			var result:String="";
+			if (hours != 0)
+				result=(hours >= 10 ? hours : '0'+hours) + ":";
+			
+			if (result && minutes < 10)
+				result+="0" + minutes + ":";
+			else
+				result+=minutes + ":";
+			
+			if (seconds < 10)
+				result+="0" + seconds;
+			else
+				result+=seconds;
+			
 			return result;
 		}
 

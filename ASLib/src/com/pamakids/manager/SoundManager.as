@@ -1,7 +1,7 @@
 package com.pamakids.manager
 {
 	import com.pamakids.utils.Singleton;
-
+	
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
@@ -125,7 +125,7 @@ package com.pamakids.manager
 			}
 			if (!s)
 				s=target;
-			if (s)
+			if (!(s is String))
 			{
 				s=s as Sound ? s as Sound : new s;
 				var sc:SoundChannel=s.play(startPosition ? startPosition : startTime(target as String), loops(target as String));
