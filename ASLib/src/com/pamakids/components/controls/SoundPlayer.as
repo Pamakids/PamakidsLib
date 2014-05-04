@@ -1,7 +1,7 @@
 package com.pamakids.components.controls
 {
 	import com.greensock.TweenLite;
-
+	
 	import flash.events.DataEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -20,12 +20,14 @@ package com.pamakids.components.controls
 	 */
 	[Event(name="playing", type="flash.events.DataEvent")]
 	[Event(name="playComplete", type="flash.events.Event")]
+	[Event(name="playRepeatComplete", type="flash.events.Event")]
 	[Event(name="error", type="flash.events.DataEvent")]
 	public class SoundPlayer extends EventDispatcher
 	{
 
 		public static const PLAYING:String="playing";
 		public static const PLAY_COMPLETE:String="playComplete";
+		public static const PLAY_REPEAT_COMPLETE:String="playRepeatComplete";
 
 		public function SoundPlayer(intervalTime:Number=0)
 		{
@@ -101,6 +103,8 @@ package com.pamakids.components.controls
 		public function set volume(value:Number):void
 		{
 			_volume=value;
+			if(!soundChannel)
+				return;
 			soundTransform=soundChannel.soundTransform;
 			TweenLite.to(soundTransform, 0.8, {volume: value, onUpdate: pausingHandler});
 		}
@@ -166,6 +170,7 @@ package com.pamakids.components.controls
 			try
 			{
 				soundChannel=sound.play(currentPosition);
+				soundLength = sound.length;
 				if (muted)
 				{
 					soundTransform=soundChannel.soundTransform;
@@ -181,6 +186,8 @@ package com.pamakids.components.controls
 			}
 			trace('Sound Player play: ' + url);
 		}
+		
+		public var soundLength:Number;
 
 		/**
 		 * 是否在音频加载完成后自动播放
@@ -207,6 +214,11 @@ package com.pamakids.components.controls
 		{
 			_repeat=value;
 		}
+		
+		/**
+		 * 默认无限重复 
+		 */		
+		public var repeatTimes:int = -1;
 
 		/**
 		 * 重播
@@ -294,7 +306,7 @@ package com.pamakids.components.controls
 			sound.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
 			sound.addEventListener(ProgressEvent.PROGRESS, progressHandler);
 		}
-
+		
 		private function pausedHandler():void
 		{
 			currentPosition=soundChannel.position;
@@ -306,18 +318,32 @@ package com.pamakids.components.controls
 		{
 			soundChannel.soundTransform=soundTransform;
 		}
+		
+		public var repeatInterval:Number;
 
 		private function playedHandler(event:Event):void
 		{
 			trace('Sound Played', url);
 			stopInternalTimer();
-			dispatchEvent(new Event(PLAY_COMPLETE));
 			if (repeat)
 			{
+				if(repeatTimes > 0){
+					repeatTimes --;
+				}else if(repeatTimes == 0){
+					dispatchEvent(new Event(PLAY_REPEAT_COMPLETE));
+					return;
+				}
 				playing=false;
 				currentPosition=0;
-				play();
+				if(repeatInterval){
+					TweenLite.delayedCall(repeatInterval, function():void{
+						play();
+					});
+				}else{
+					play();
+				}
 			}
+			dispatchEvent(new Event(PLAY_COMPLETE));
 		}
 
 		private function progressHandler(event:ProgressEvent):void
