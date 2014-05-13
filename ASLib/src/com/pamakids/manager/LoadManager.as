@@ -78,9 +78,9 @@ package com.pamakids.manager
 		private var loadingCallbackDic:Dictionary;
 		private var ioErrorDic:Dictionary;
 
-		public function loadText(url:String, onComplete:Function, savePath:String=''):void
+		public function loadText(url:String, onComplete:Function, savePath:String='', ioHander:Function=null):void
 		{
-			load(url, onComplete, savePath, null, null, false, URLLoaderDataFormat.TEXT, null, true);
+			load(url, onComplete, savePath, null, null, false, URLLoaderDataFormat.TEXT, ioHander, true);
 		}
 
 		public function loadSWF(url:String, onComplete:Function=null, savePath:String='', loadingCallback:Function=null):void
@@ -151,13 +151,13 @@ package com.pamakids.manager
 			//如果有正在加载的，则把加载完成的回调函数添加到数组里
 			if (u)
 			{
-				arr=loaderDic[u];
-				if (arr && arr.indexOf(onComplete) == -1)
-					arr.push(onComplete);
-				ioarr=ioErrorDic[u];
-				if (ioarr && ioarr.indexOf(ioHander) == -1)
-					ioarr.push(ioHander);
-				return;
+//				arr=loaderDic[u];
+//				if (arr && arr.indexOf(onComplete) == -1)
+//					arr.push(onComplete);
+//				ioarr=ioErrorDic[u];
+//				if (ioarr && ioarr.indexOf(ioHander) == -1)
+//					ioarr.push(ioHander);
+//				return;
 			}
 
 			if (!forceReload)

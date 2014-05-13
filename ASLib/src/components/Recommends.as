@@ -138,13 +138,14 @@ package components
 				hint=new RecommendHint();
 				hint.init();
 				parent.addChild(hint);
-				stage.addEventListener(TouchEvent.TOUCH_BEGIN, onTouchBegin);
-				stage.addEventListener(TouchEvent.TOUCH_END, onTouchEnd);
 
 				if (Capabilities.isDebugger)
 				{
-					stage.addEventListener(MouseEvent.MIDDLE_CLICK, onClick);
+					addEventListener(MouseEvent.MIDDLE_CLICK, onClick);
 				}
+
+				parent.addEventListener(TouchEvent.TOUCH_BEGIN, onTouchBegin);
+				parent.addEventListener(TouchEvent.TOUCH_END, onTouchEnd);
 			}
 			hint.getRandomGesture();
 		}
@@ -155,7 +156,7 @@ package components
 				navigateToURL(new URLRequest(crtUrl));
 			clearHint();
 			clearCheck();
-			stage.removeEventListener(MouseEvent.MIDDLE_CLICK, onClick);
+			removeEventListener(MouseEvent.MIDDLE_CLICK, onClick);
 		}
 
 		private var hint:RecommendHint;
@@ -338,14 +339,14 @@ package components
 					parent.removeChild(hint);
 				hint=null;
 			}
-			stage.removeEventListener(TouchEvent.TOUCH_BEGIN, onTouchBegin);
-			stage.removeEventListener(TouchEvent.TOUCH_END, onTouchEnd);
+			parent.removeEventListener(TouchEvent.TOUCH_BEGIN, onTouchBegin);
+			parent.removeEventListener(TouchEvent.TOUCH_END, onTouchEnd);
 
 		}
 
 		private function removeMask():void
 		{
-			if (parent && parent.contains(parent))
+			if (parent && parent.contains(maskS))
 				parent.removeChild(maskS);
 		}
 
