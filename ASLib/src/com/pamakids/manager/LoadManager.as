@@ -120,7 +120,7 @@ package com.pamakids.manager
 		 */
 		public function load(url:String, onComplete:Function, savePath:String=null,
 			params:Array=null, loadingCallBack:Function=null, forceReload:Boolean=false,
-			formate:String=URLLoaderDataFormat.BINARY, ioHander:Function=null, isString:Boolean=false):void
+			formate:String=URLLoaderDataFormat.BINARY, ioHander:Function=null, isString:Boolean=false, uncompress:Boolean=false):void
 		{
 			var b:ByteArray;
 
@@ -131,7 +131,7 @@ package com.pamakids.manager
 				if (formate == BITMAP)
 					cachedData=FileManager.readFileByteArray(savePath)
 				else
-					cachedData=FileManager.readFile(savePath, false, isString);
+					cachedData=FileManager.readFile(savePath, false, isString, uncompress);
 				if (cachedData is ByteArray)
 					cachedData=cachedData as ByteArray;
 				if (cachedData)
