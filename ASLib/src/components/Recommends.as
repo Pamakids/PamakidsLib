@@ -78,9 +78,7 @@ package components
 
 			r.addEventListener(MouseEvent.CLICK, onClickedHandler);
 			r.data=recommendsData.main;
-
-			trace(r.width, r.height)
-
+			r.initData();
 			r.rotation=90;
 			addChild(r);
 
