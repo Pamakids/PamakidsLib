@@ -23,7 +23,7 @@ package com.pamakids.utils
 
 			var result:String="";
 			if (hours != 0)
-				result=(hours > 10 ? hours : '0'+hours) + ":";
+				result=(hours >= 10 ? hours : '0' + hours) + ":";
 
 			if (result && minutes < 10)
 				result+="0" + minutes + ":";
@@ -37,32 +37,55 @@ package com.pamakids.utils
 
 			return result;
 		}
-		
+
 		/**
-		 * 获取时:分:秒 
+		 * HH:MM:SS
+		 * @param hhmmss
+		 * @return Date
+		 *
+		 */
+		public static function getDateByHHMMSS(hhmmss:String):Date
+		{
+			var d:Date;
+			try
+			{
+				d=new Date();
+				var arr:Array=hhmmss.split(':');
+				if (arr.length == 3)
+					d.setHours(arr[0], arr[1], arr[2], 0);
+				else
+					d.setHours(arr[0], arr[1], 0, 0);
+			}
+			catch (error:Error)
+			{
+			}
+			return d;
+		}
+
+		/**
+		 * 获取时:分:秒
 		 * @param date
 		 * @return 10:10:10
-		 */		
+		 */
 		public static function getHMS(date:Date):String
 		{
-			var hours:uint = date.getHours();
-			var minutes:uint = date.getMinutes();
-			var seconds:uint = date.getSeconds();
-			
+			var hours:uint=date.getHours();
+			var minutes:uint=date.getMinutes();
+			var seconds:uint=date.getSeconds();
+
 			var result:String="";
-			if (hours != 0)
-				result=(hours >= 10 ? hours : '0'+hours) + ":";
-			
+			result=(hours >= 10 ? hours : '0' + hours) + ":";
+
 			if (result && minutes < 10)
 				result+="0" + minutes + ":";
 			else
 				result+=minutes + ":";
-			
+
 			if (seconds < 10)
 				result+="0" + seconds;
 			else
 				result+=seconds;
-			
+
 			return result;
 		}
 
@@ -141,13 +164,15 @@ package com.pamakids.utils
 		}
 
 		/**
-		 * 获取年月日 
+		 * 获取年月日
 		 * @param date 当前日期
 		 * @param dateOffset 变差天数
-		 * @return 年/月/日 
-		 */		
+		 * @return 年/月/日
+		 */
 		public static function getYMD(date:Date, dateOffset:int=0):String
 		{
+			if (!date)
+				return '';
 			date.date+=dateOffset;
 			return date.fullYear + '/' + (date.month + 1) + '/' + date.date;
 		}
@@ -196,3 +221,5 @@ package com.pamakids.utils
 		}
 	}
 }
+
+

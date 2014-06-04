@@ -12,21 +12,26 @@ package com.pamakids.utils
 		{
 		}
 
+		public static function getTimeDate(time:String):Date
+		{
+			return getDateByString(getTime(time));
+		}
+
 		/**
 		 * @param time
 		 * @return 2014-1-1
-		 * 
+		 *
 		 */		
 		public static function getTime(time:String):String
 		{
 			return time ? time.split('T')[0] : null;
 		}
-		
+
 		/**
-		 * 
+		 *
 		 * @param time
 		 * @return 2014-1-1 12:60:60
-		 * 
+		 *
 		 */		
 		public static function getTimeDetail(time:String):String
 		{
@@ -61,6 +66,35 @@ package com.pamakids.utils
 		}
 
 		/**
+		 * 根据NodeJS后台返回的日期字符串获得本地Date
+		 * @param date 格式如：2014-05-31T16:00:00.000Z
+		 */
+		public static function getLocalDate(date:String):Date
+		{
+			var d:Date;
+			if(date){
+				try
+				{
+					var arr:Array = date.split('T');
+					var a1:Array = arr[0].split('-');
+					var a2:Array = arr[1].split('.')[0].split(':');
+					d = new Date(a1[0], parseInt(a1[1])-1,a1[2],a2[0],a2[1],a2[2]);
+					d.hours+=8;
+				} 
+				catch(error:Error) 
+				{
+					trace('get local date error', error);	
+				}
+			}
+			return d;
+		}
+
+//		public static function getLocalDate():Date
+//		{
+//
+//		}
+
+		/**
 		 * 获得NodeJS的日期时间字符串
 		 * @param date
 		 * @param dateOffset
@@ -74,7 +108,7 @@ package com.pamakids.utils
 			var month:String=m < 10 ? '0' + m : '' + m;
 			var d:int=date.getDate();
 			var ds:String=d < 10 ? '0' + d : '' + d;
-			var ymd = date.getFullYear() + '-' + month + '-' + ds; //年月日
+			var ymd:String = date.getFullYear() + '-' + month + '-' + ds; //年月日
 			return date ? ymd : '';
 		}
 
@@ -84,3 +118,5 @@ package com.pamakids.utils
 		}
 	}
 }
+
+

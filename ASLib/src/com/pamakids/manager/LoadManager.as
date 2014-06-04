@@ -5,6 +5,7 @@ package com.pamakids.manager
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.net.URLLoader;
@@ -20,7 +21,7 @@ package com.pamakids.manager
 	 * 文件加载管理
 	 * @author mani
 	 */
-	public class LoadManager
+	public class LoadManager extends EventDispatcher
 	{
 
 		public static const BITMAP:String="BITMAP";
@@ -78,9 +79,9 @@ package com.pamakids.manager
 		private var loadingCallbackDic:Dictionary;
 		private var ioErrorDic:Dictionary;
 
-		public function loadText(url:String, onComplete:Function, savePath:String=''):void
+		public function loadText(url:String, onComplete:Function, savePath:String='', forceReload:Boolean=false):void
 		{
-			load(url, onComplete, savePath, null, null, false, URLLoaderDataFormat.TEXT, null, true);
+			load(url, onComplete, savePath, null, null, forceReload, URLLoaderDataFormat.TEXT, null, true);
 		}
 
 		public function loadSWF(url:String, onComplete:Function=null, savePath:String='', loadingCallback:Function=null):void
@@ -125,7 +126,7 @@ package com.pamakids.manager
 			var b:ByteArray;
 
 			//如果有存储路径，先去本地缓存找是否有
-			if (savePath)
+			if (savePath && !forceReload)
 			{
 				var cachedData:Object
 				if (formate == BITMAP)
@@ -139,7 +140,10 @@ package com.pamakids.manager
 					if (formate == BITMAP)
 						getContentFromByteArray(cachedData as ByteArray, [onComplete], params);
 					else
-						params ? onComplete(cachedData, params) : onComplete(cachedData);
+						if(onComplete.length)
+							params ? onComplete(cachedData, params) : onComplete(cachedData);
+						else
+							onComplete();
 					return;
 				}
 			}
@@ -184,7 +188,8 @@ package com.pamakids.manager
 			if (bigDataFormates.indexOf(formate) != -1)
 				formate=URLLoaderDataFormat.BINARY;
 			u.dataFormat=formate;
-			u.load(new URLRequest(url));
+			var toloadUrl:String = forceReload ? url+'?'+Math.random() : url
+			u.load(new URLRequest(toloadUrl));
 			completeParamsDic[u]=params;
 			u.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			u.addEventListener(Event.COMPLETE, onBinaryLoaded);
@@ -343,6 +348,7 @@ package com.pamakids.manager
 				}
 				errorHandlers=null;
 			}
+			dispatchEvent(new IOErrorEvent(IOErrorEvent.IO_ERROR));
 		}
 
 		public function cancelLoad(url:String):void

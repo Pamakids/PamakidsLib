@@ -9,6 +9,7 @@ package com.pamakids.manager
 	 */
 	public class FileManager
 	{
+		public static var savedDir:String;
 
 		private static function get File():Class
 		{
@@ -41,7 +42,11 @@ package com.pamakids.manager
 
 				try
 				{
-					var f:Object=fromAppDirectory ? File.applicationDirectory.resolvePath(path) : File.applicationStorageDirectory.resolvePath(path);
+					var f:Object;
+					if(savedDir)
+						f = new File(savedDir+path);
+					else
+						f = fromAppDirectory ? File.applicationDirectory.resolvePath(path) : File.applicationStorageDirectory.resolvePath(path);
 					if (!f.exists)
 						return o;
 					var fs:Object=new FileStream();
@@ -109,9 +114,14 @@ package com.pamakids.manager
 			{
 				if (path.charAt(0) == '/')
 					path=path.substr(1);
-				createDirectory(path);
 				var fs:Object=new FileStream();
-				var file:Object=File.applicationStorageDirectory.resolvePath(path);
+				var file:Object;
+				if(savedDir)
+					file = new File(savedDir+path);
+				else{
+					createDirectory(path);
+					file = File.applicationStorageDirectory.resolvePath(path);
+				}
 				try
 				{
 					fs.open(file, FileMode.WRITE);
@@ -182,6 +192,22 @@ package com.pamakids.manager
 			{
 				if (f.exists)
 					f.deleteFileAsync();
+			}
+			catch (error:Error)
+			{
+				trace("Delete File Error:" + error.toString());
+			}
+		}
+
+		public static function deleteSavedFile(path:String, async:Boolean=false):void
+		{
+			if (!File)
+				return;
+			var f:Object=File.applicationStorageDirectory.resolvePath(path);
+			try
+			{
+				if (f.exists)
+					async ? f.deleteFileAsync() : f.deleteFile();
 			}
 			catch (error:Error)
 			{

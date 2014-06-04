@@ -210,7 +210,7 @@ package com.pamakids.services
 
 		protected function ioErrorHandler(event:IOErrorEvent):void
 		{
-			onError(event);
+			onError(event,true,event.errorID);
 		}
 
 		protected function loadedHandler(event:Event):void

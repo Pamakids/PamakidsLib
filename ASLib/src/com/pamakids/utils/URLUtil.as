@@ -3,6 +3,8 @@ package com.pamakids.utils
 
 	public class URLUtil
 	{
+		public static var PREFIX:String=''
+
 		public static function getRelativeURL(url:String):String
 		{
 			return isHttp(url) ? url.replace(new RegExp('(http|https)://.*?/'), '') : '';
@@ -18,8 +20,11 @@ package com.pamakids.utils
 			if (!isHttp(url))
 				return '';
 			var cachePath:String=getRelativeURL(url);
+			if (cachePath.indexOf('?') != -1){
+				cachePath = 'cache/'+cachePath.replace('?', '');
+			}
 			if (cachePath.indexOf('/') == -1)
-				cachePath='cache/' + cachePath;
+				cachePath=PREFIX ? PREFIX+'/'+cachePath : 'cache/' + cachePath;
 			return cachePath;
 		}
 
@@ -53,3 +58,5 @@ package com.pamakids.utils
 		}
 	}
 }
+
+
