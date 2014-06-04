@@ -79,9 +79,11 @@ package com.pamakids.manager
 		private var loadingCallbackDic:Dictionary;
 		private var ioErrorDic:Dictionary;
 
-		public function loadText(url:String, onComplete:Function, savePath:String='', forceReload:Boolean=false):void
+		public function loadText(url:String, onComplete:Function, savePath:String='', ioHanderOrforceReload:Object=null):void
 		{
-			load(url, onComplete, savePath, null, null, forceReload, URLLoaderDataFormat.TEXT, null, true);
+			var forceLoad:Boolean=ioHanderOrforceReload === true ? true : false;
+			var handler:Function=ioHanderOrforceReload as Function;
+			load(url, onComplete, savePath, null, null, forceLoad, URLLoaderDataFormat.TEXT, handler, true);
 		}
 
 		public function loadSWF(url:String, onComplete:Function=null, savePath:String='', loadingCallback:Function=null):void
@@ -119,9 +121,7 @@ package com.pamakids.manager
 		 * @param loadingCallBack //加载的回调函数
 		 * @param formate 加载文件的格式
 		 */
-		public function load(url:String, onComplete:Function, savePath:String=null,
-			params:Array=null, loadingCallBack:Function=null, forceReload:Boolean=false,
-			formate:String=URLLoaderDataFormat.BINARY, ioHander:Function=null, isString:Boolean=false):void
+		public function load(url:String, onComplete:Function, savePath:String=null, params:Array=null, loadingCallBack:Function=null, forceReload:Boolean=false, formate:String=URLLoaderDataFormat.BINARY, ioHander:Function=null, isString:Boolean=false, uncompress:Boolean=false):void
 		{
 			var b:ByteArray;
 
@@ -132,18 +132,17 @@ package com.pamakids.manager
 				if (formate == BITMAP)
 					cachedData=FileManager.readFileByteArray(savePath)
 				else
-					cachedData=FileManager.readFile(savePath, false, isString);
+					cachedData=FileManager.readFile(savePath, false, isString, uncompress);
 				if (cachedData is ByteArray)
 					cachedData=cachedData as ByteArray;
 				if (cachedData)
 				{
 					if (formate == BITMAP)
 						getContentFromByteArray(cachedData as ByteArray, [onComplete], params);
+					else if (onComplete.length)
+						params ? onComplete(cachedData, params) : onComplete(cachedData);
 					else
-						if(onComplete.length)
-							params ? onComplete(cachedData, params) : onComplete(cachedData);
-						else
-							onComplete();
+						onComplete();
 					return;
 				}
 			}
@@ -155,13 +154,13 @@ package com.pamakids.manager
 			//如果有正在加载的，则把加载完成的回调函数添加到数组里
 			if (u)
 			{
-				arr=loaderDic[u];
-				if (arr && arr.indexOf(onComplete) == -1)
-					arr.push(onComplete);
-				ioarr=ioErrorDic[u];
-				if (ioarr && ioarr.indexOf(ioHander) == -1)
-					ioarr.push(ioHander);
-				return;
+//				arr=loaderDic[u];
+//				if (arr && arr.indexOf(onComplete) == -1)
+//					arr.push(onComplete);
+//				ioarr=ioErrorDic[u];
+//				if (ioarr && ioarr.indexOf(ioHander) == -1)
+//					ioarr.push(ioHander);
+//				return;
 			}
 
 			if (!forceReload)
@@ -188,7 +187,7 @@ package com.pamakids.manager
 			if (bigDataFormates.indexOf(formate) != -1)
 				formate=URLLoaderDataFormat.BINARY;
 			u.dataFormat=formate;
-			var toloadUrl:String = forceReload ? url+'?'+Math.random() : url
+			var toloadUrl:String=forceReload ? url + '?' + Math.random() : url
 			u.load(new URLRequest(toloadUrl));
 			completeParamsDic[u]=params;
 			u.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
