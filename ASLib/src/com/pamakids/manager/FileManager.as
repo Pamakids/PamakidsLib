@@ -1,9 +1,7 @@
 package com.pamakids.manager
 {
-	import flash.filesystem.File;
-	import flash.filesystem.FileMode;
-	import flash.filesystem.FileStream;
 	import flash.utils.ByteArray;
+	import flash.utils.getDefinitionByName;
 
 	/**
 	 * 文件管理器
@@ -13,28 +11,28 @@ package com.pamakids.manager
 	{
 		public static var savedDir:String;
 
-//		private static function get File():Class
-//		{
-//			try
-//			{
-//				return getDefinitionByName('flash.filesystem.File') as Class;
-//			}
-//			catch (error:Error)
-//			{
-//				trace(error);
-//			}
-//			return null;
-//		}
-//
-//		private static function get FileMode():Class
-//		{
-//			return getDefinitionByName('flash.filesystem.FileMode') as Class;
-//		}
-//
-//		private static function get FileStream():Class
-//		{
-//			return getDefinitionByName('flash.filesystem.FileStream') as Class;
-//		}
+		private static function get File():Class
+		{
+			try
+			{
+				return getDefinitionByName('flash.filesystem.File') as Class;
+			}
+			catch (error:Error)
+			{
+				trace(error);
+			}
+			return null;
+		}
+
+		private static function get FileMode():Class
+		{
+			return getDefinitionByName('flash.filesystem.FileMode') as Class;
+		}
+
+		private static function get FileStream():Class
+		{
+			return getDefinitionByName('flash.filesystem.FileStream') as Class;
+		}
 
 		public static function readFile(path:String, fromAppDirectory:Boolean=false, readString:Boolean=false, uncompress:Boolean=false):Object
 		{
@@ -45,17 +43,17 @@ package com.pamakids.manager
 				try
 				{
 					var f:Object;
-					if(savedDir)
-						f = new File(savedDir+path);
+					if (savedDir)
+						f=new File(savedDir + path);
 					else
-						f = fromAppDirectory ? File.applicationDirectory.resolvePath(path) : File.applicationStorageDirectory.resolvePath(path);
+						f=fromAppDirectory ? File.applicationDirectory.resolvePath(path) : File.applicationStorageDirectory.resolvePath(path);
 					if (!f.exists)
 						return o;
 					var fs:Object=new FileStream();
 					fs.open(f, FileMode.READ);
 					if (!uncompress)
 					{
-						o=readString ? fs.readUTF() : fs.readObject();
+						o=readString ? fs.readUTFBytes(fs.bytesAvailable) : fs.readObject();
 					}
 					else
 					{
@@ -118,11 +116,12 @@ package com.pamakids.manager
 					path=path.substr(1);
 				var fs:Object=new FileStream();
 				var file:Object;
-				if(savedDir)
-					file = new File(savedDir+path);
-				else{
+				if (savedDir)
+					file=new File(savedDir + path);
+				else
+				{
 					createDirectory(path);
-					file = File.applicationStorageDirectory.resolvePath(path);
+					file=File.applicationStorageDirectory.resolvePath(path);
 				}
 				try
 				{

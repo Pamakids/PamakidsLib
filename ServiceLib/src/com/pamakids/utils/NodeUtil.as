@@ -21,7 +21,7 @@ package com.pamakids.utils
 		 * @param time
 		 * @return 2014-1-1
 		 *
-		 */		
+		 */
 		public static function getTime(time:String):String
 		{
 			return time ? time.split('T')[0] : null;
@@ -32,13 +32,13 @@ package com.pamakids.utils
 		 * @param time
 		 * @return 2014-1-1 12:60:60
 		 *
-		 */		
+		 */
 		public static function getTimeDetail(time:String):String
 		{
-			var a1:Array = time.split('T');
-			var ymd:String = a1[0];
-			var hms:String = a1[1].split('.')[0];
-			return time ? ymd+' '+hms : null;
+			var a1:Array=time.split('T');
+			var ymd:String=a1[0];
+			var hms:String=a1[1].split('.')[0];
+			return time ? ymd + ' ' + hms : null;
 		}
 
 		/**
@@ -57,7 +57,8 @@ package com.pamakids.utils
 				var a1:Array=arr[0].split('-'); //年月日
 				var a2:Array=arr[1].split(':'); //时分秒
 				d=new Date(a1[0], int(a1[1]) - 1, a1[2], a2[0], a2[1], a2[2]);
-			}else if (date.indexOf('-') != -1)
+			}
+			else if (date.indexOf('-') != -1)
 			{
 				arr=date.split('-');
 				d=new Date(arr[0], int(arr[1]) - 1, arr[2]);
@@ -72,18 +73,19 @@ package com.pamakids.utils
 		public static function getLocalDate(date:String):Date
 		{
 			var d:Date;
-			if(date){
+			if (date)
+			{
 				try
 				{
-					var arr:Array = date.split('T');
-					var a1:Array = arr[0].split('-');
-					var a2:Array = arr[1].split('.')[0].split(':');
-					d = new Date(a1[0], parseInt(a1[1])-1,a1[2],a2[0],a2[1],a2[2]);
-					d.hours+=8;
-				} 
-				catch(error:Error) 
+					var arr:Array=date.split('T');
+					var a1:Array=arr[0].split('-');
+					var a2:Array=arr[1].split('.')[0].split(':');
+					d=new Date(a1[0], parseInt(a1[1]) - 1, a1[2], a2[0], a2[1], a2[2]);
+					d.minutes-=d.getTimezoneOffset()
+				}
+				catch (error:Error)
 				{
-					trace('get local date error', error);	
+					trace('get local date error', error);
 				}
 			}
 			return d;
@@ -108,7 +110,7 @@ package com.pamakids.utils
 			var month:String=m < 10 ? '0' + m : '' + m;
 			var d:int=date.getDate();
 			var ds:String=d < 10 ? '0' + d : '' + d;
-			var ymd:String = date.getFullYear() + '-' + month + '-' + ds; //年月日
+			var ymd:String=date.getFullYear() + '-' + month + '-' + ds; //年月日
 			return date ? ymd : '';
 		}
 
