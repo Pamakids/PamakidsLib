@@ -56,7 +56,7 @@ package com.pamakids.components.containers
 			else if (value >= dataProvider.length)
 				value=dataProvider.length - 1;
 			_currentPage=value;
-			if (!disableDrag || pagesBar)
+			if (!disableDrag && pagesBar)
 				pagesBar.selectedIndex(value);
 			if (disableDrag)
 				TweenLite.to(container, 0.3, {x: -currentPage * width, ease: Cubic.easeOut, onComplete: movingComplete});
@@ -267,3 +267,5 @@ package com.pamakids.components.containers
 		}
 	}
 }
+
+

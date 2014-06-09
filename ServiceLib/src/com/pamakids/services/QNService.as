@@ -144,7 +144,7 @@ package com.pamakids.services
 		private function onError(event:Event):void
 		{
 			trace('ErrorString:', event.toString());
-			callbackDic[event.target](new ResultVO(false, '上传失败，请检查网络是否连接'));
+			callbackDic[event.target](new ResultVO(false, '上传失败，请检查网络是否连接',event.toString()));
 			clearFile(event);
 		}
 
