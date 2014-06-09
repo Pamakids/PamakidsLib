@@ -1,5 +1,6 @@
 package com.pamakids.utils
 {
+	import flash.display.Stage;
 	import flash.system.Capabilities;
 
 	public class DPIUtil
@@ -49,13 +50,15 @@ package com.pamakids.utils
 			return targetDPI / sourceDPI;
 		}
 
+		public static var stage:Stage;
+
 		/**
 		 * array[scale,offsetX,offsetY]
 		 * */
 		public static function getAndroidSize():Array
 		{
-			var w:int=Math.max(Capabilities.screenResolutionX, Capabilities.screenResolutionY);
-			var h:int=Math.min(Capabilities.screenResolutionX, Capabilities.screenResolutionY);
+			var w:int=Math.max(stage.fullScreenHeight,stage.fullScreenWidth);
+			var h:int=Math.min(stage.fullScreenHeight,stage.fullScreenWidth);
 
 			var scale:Number=0;
 			var offsetX:Number=0
@@ -70,7 +73,8 @@ package com.pamakids.utils
 				scale=h / 768;
 				offsetX=(w - 1024 * scale) / 2;
 			}
-			return [scale, offsetX, offsetY];
+			var arr:Array=[scale, offsetX, offsetY];
+			return arr;
 		}
 
 		public static function getStageSize(stageW:Number, stageH:Number):Array
@@ -91,8 +95,11 @@ package com.pamakids.utils
 				scale=h / 768;
 				offsetX=(w - 1024 * scale) / 2;
 			}
-			return [scale, offsetX, offsetY];
+			var arr:Array=[scale, offsetX, offsetY];
+			return arr;
 		}
 
 	}
 }
+
+

@@ -125,7 +125,7 @@ package com.pamakids.components.controls
 			volume=value ? 0 : 1;
 		}
 
-		private var _volume:Number;
+		private var _volume:Number=1;
 
 		/**
 		 * 暂停音乐
