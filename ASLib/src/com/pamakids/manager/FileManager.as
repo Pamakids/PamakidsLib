@@ -11,7 +11,7 @@ package com.pamakids.manager
 	{
 		public static var savedDir:String;
 
-		private static function get File():Class
+		public static function get File():Class
 		{
 			try
 			{

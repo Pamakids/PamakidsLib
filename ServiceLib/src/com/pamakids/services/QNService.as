@@ -9,12 +9,14 @@ package com.pamakids.services
 	import flash.events.HTTPStatusEvent;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
-	import flash.filesystem.File;
+	import flash.net.URLLoaderDataFormat;
 	import flash.net.URLRequest;
 	import flash.net.URLRequestHeader;
 	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
+	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
+	import flash.utils.getDefinitionByName;
 
 	/**
 	 * 上传到七牛云存储的服务
@@ -23,6 +25,19 @@ package com.pamakids.services
 	 */
 	public class QNService extends Singleton
 	{
+		private static function get File():Class
+		{
+			try
+			{
+				return getDefinitionByName('flash.filesystem.File') as Class;
+			}
+			catch (error:Error)
+			{
+				trace(error);
+			}
+			return null;
+		}
+
 		private var callbackDic:Dictionary;
 		private var headers:Array;
 
@@ -73,7 +88,7 @@ package com.pamakids.services
 		 * @param callback 回调函数，参数为ResultVO或上传进度数字
 		 * @param data {key:"自定义文件名，默认为文件名", "x:test":"自定义属性和值"}
 		 */
-		public function upload(file:File, callback:Function, data:Object=null):void
+		public function upload(file:Object, callback:Function, data:Object=null):void
 		{
 			if (callbackDic[file])
 				clearFile(null, file);
@@ -102,6 +117,76 @@ package com.pamakids.services
 			file.upload(u, 'file');
 		}
 
+		private static const BOUNDARY:String = "boundary";
+
+//		public static function createMultiPartRequest(bytes:ByteArray, fileProp:String="file1", fileName:String="file1.png", params:Object=null):ByteArray
+//		{
+//			var header1:String = "\r\n--" + BOUNDARY + "\r\n" + 
+//				"Content-Disposition: form-data; name=\""+fileProp+"\"; filename=\""+fileName+"\"\r\n" + 
+//				"Content-Type: multipart/form-data\r\n" + "\r\n";
+//			var headerBytes1:ByteArray = new ByteArray();
+//			headerBytes1.writeMultiByte(header1, "ascii");
+//			var postData:ByteArray = new ByteArray();
+//			postData.writeBytes(headerBytes1, 0, headerBytes1.length);
+//
+//			if(bytes)
+//				postData.writeBytes(bytes, 0, bytes.length);
+//
+//			if (!params)
+//				params = {};
+//			if (!params.Upload)
+//				params.Upload = "Submit Query";
+//			for (var prop:String in params) {
+//				var header:String = "--" + BOUNDARY + "\r\n" + "Content-Disposition: form-data; name=\""+prop+"\"\r\n" + "\r\n" + params[prop]+"\r\n" + "--" + BOUNDARY + "--";
+//				var headerBytes:ByteArray = new ByteArray();
+//				headerBytes.writeMultiByte(header, "ascii");
+//				postData.writeBytes(headerBytes, 0, headerBytes.length);
+//			}
+//
+//			return postData;
+//		}
+
+//		public static function httpS(ba:ByteArray,key:String,token:String,filename:String):void
+//		{
+//			var client:HttpClient = new HttpClient();
+//
+//			var uri:URI = new URI('http://up.qiniu.com');
+//			var contentType:String = "application/octet-stream";
+//
+////			 Create test data
+//			var multipart:Multipart = new Multipart([ 
+//				new Part("key", key), 
+//				new Part("Content-Type", contentType),
+//				new Part("file", ba, contentType, [ { name:"filename", value:filename } ]),
+//				new Part("submit", "Upload")
+//				]);
+//
+//
+//			client.listener.onComplete = function(event:HttpResponseEvent):void {
+//				trace(event);
+//			};
+//
+//			client.postMultipart(uri, multipart);
+//		}
+
+		public function uploadBA(ba:ByteArray,data:Object,cb:Function):void
+		{
+			var ml:MultipartURLLoader=new MultipartURLLoader();
+			callbackDic[ml]=cb;
+
+			ml.dataFormat=URLLoaderDataFormat.BINARY;
+			ml.addFile(ba, data.filename, 'file');
+			ml.addVariable('token', data.token);
+			ml.addVariable('key',data.key);
+
+			ml.addEventListener(BAUploadedEvent.EVENT_ID, onBAComplete);
+			ml.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+			ml.addEventListener(IOErrorEvent.IO_ERROR, onError);
+			ml.addEventListener(HTTPStatusEvent.HTTP_STATUS, onStatus);
+
+			ml.load('http://up.qiniu.com');
+		}
+
 		protected function getURLVariables(data:Object):URLVariables
 		{
 			var uv:URLVariables;
@@ -123,9 +208,31 @@ package com.pamakids.services
 			clearFile(event);
 		}
 
-		private function clearFile(event:Event, f:File=null):void
+		protected function onBAComplete(e:BAUploadedEvent):void
 		{
-			var file:File=event ? event.target as File : f;
+			var ld:MultipartURLLoader=e.target as MultipartURLLoader;
+			var cb:Function=callbackDic[ld];
+
+			var vo:ResultVO=new ResultVO(true, JSON.parse(e.data as String))
+			cb(vo);
+
+			clearFile(e);
+		}
+
+		private function clearFile(event:Event, f:Object=null):void
+		{
+			if(event.target is MultipartURLLoader)
+			{
+				var ml:MultipartURLLoader=event.target as MultipartURLLoader;
+				ml.addEventListener(Event.COMPLETE, onBAComplete);
+				ml.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+				ml.addEventListener(IOErrorEvent.IO_ERROR, onError);
+				ml.addEventListener(HTTPStatusEvent.HTTP_STATUS, onStatus);
+				ml.dispose();
+				delete callbackDic[event.target];
+				return;
+			}
+			var file:Object=event ? event.target as File : f;
 			file.cancel();
 			file.removeEventListener(ProgressEvent.PROGRESS, progressHandler);
 			file.removeEventListener(IOErrorEvent.IO_ERROR, errorHandler);
@@ -144,7 +251,8 @@ package com.pamakids.services
 		private function onError(event:Event):void
 		{
 			trace('ErrorString:', event.toString());
-			callbackDic[event.target](new ResultVO(false, '上传失败，请检查网络是否连接',event.toString()));
+			if(callbackDic[event.target])
+				callbackDic[event.target](new ResultVO(false, '上传失败，请检查网络是否连接',event.toString()));
 			clearFile(event);
 		}
 
