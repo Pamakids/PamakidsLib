@@ -20,11 +20,14 @@ package com.pamakids.utils
 			if (!isHttp(url))
 				return '';
 			var cachePath:String=getRelativeURL(url);
-			if (cachePath.indexOf('?') != -1){
-				cachePath = 'cache/'+cachePath.replace('?', '');
+			if (cachePath.indexOf('?') != -1)
+			{
+				var s:String=cachePath.replace('?', '');
+				s=s.replace(/\//g, '');
+				cachePath='cache/' + s;
 			}
 			if (cachePath.indexOf('/') == -1)
-				cachePath=PREFIX ? PREFIX+'/'+cachePath : 'cache/' + cachePath;
+				cachePath=PREFIX ? PREFIX + '/' + cachePath : 'cache/' + cachePath;
 			return cachePath;
 		}
 

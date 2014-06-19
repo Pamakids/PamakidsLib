@@ -70,10 +70,12 @@ package com.pamakids.models
 
 		private function getTimeDetail(time:String):String
 		{
-			var a1:Array = time.split('T');
-			var ymd:String = a1[0];
-			var hms:String = a1[1].split('.')[0];
-			return time ? ymd+' '+hms : null;
+			if (!time)
+				return '';
+			var a1:Array=time.split('T');
+			var ymd:String=a1[0];
+			var hms:String=a1[1].split('.')[0];
+			return time ? ymd + ' ' + hms : null;
 		}
 
 		public function set created_at(value:String):void
@@ -97,43 +99,43 @@ package com.pamakids.models
 			var c:String=created_at;
 			var date:Date=new Date();
 
-			var y0:Number=Number(c.substr(0,4));
+			var y0:Number=Number(c.substr(0, 4));
 			var y1:Number=date.getUTCFullYear();
-			if(y1>y0)
+			if (y1 > y0)
 			{
-				return (y1-y0).toString()+'年前';
+				return (y1 - y0).toString() + '年前';
 			}
 
-			var m0s:String=c.substr(5,2);
-			var m0:Number=m0s.charAt(0)=='0'?Number(m0s.substr(1,1)):Number(m0s);
-			var m1:Number=date.getUTCMonth()+1;
-			if(m1>m0)
+			var m0s:String=c.substr(5, 2);
+			var m0:Number=m0s.charAt(0) == '0' ? Number(m0s.substr(1, 1)) : Number(m0s);
+			var m1:Number=date.getUTCMonth() + 1;
+			if (m1 > m0)
 			{
-				return (m1-m0).toString()+'月前';
+				return (m1 - m0).toString() + '月前';
 			}
 
-			var d0s:String=c.substr(8,2);
-			var d0:Number=d0s.charAt(0)=='0'?Number(d0s.substr(1,1)):Number(d0s);
+			var d0s:String=c.substr(8, 2);
+			var d0:Number=d0s.charAt(0) == '0' ? Number(d0s.substr(1, 1)) : Number(d0s);
 			var d1:Number=date.getUTCDate();
-			if(d1>d0)
+			if (d1 > d0)
 			{
-				return (d1-d0).toString()+'天前';
+				return (d1 - d0).toString() + '天前';
 			}
 
-			var h0s:String=c.substr(11,2);
-			var h0:Number=h0s.charAt(0)=='0'?Number(h0s.substr(1,1)):Number(h0s);
+			var h0s:String=c.substr(11, 2);
+			var h0:Number=h0s.charAt(0) == '0' ? Number(h0s.substr(1, 1)) : Number(h0s);
 			var h1:Number=date.getUTCHours();
-			if(h1>h0)
+			if (h1 > h0)
 			{
-				return (h1-h0).toString()+'小时前';
+				return (h1 - h0).toString() + '小时前';
 			}
 
-			var mi0s:String=c.substr(14,2);
-			var mi0:Number=mi0s.charAt(0)=='0'?Number(mi0s.substr(1,1)):Number(mi0s);
+			var mi0s:String=c.substr(14, 2);
+			var mi0:Number=mi0s.charAt(0) == '0' ? Number(mi0s.substr(1, 1)) : Number(mi0s);
 			var mi1:Number=date.getUTCMinutes();
-			if(mi1>mi0)
+			if (mi1 > mi0)
 			{
-				return (mi1-mi0).toString()+'分钟前';
+				return (mi1 - mi0).toString() + '分钟前';
 			}
 
 			return '刚刚';

@@ -169,12 +169,12 @@ package com.pamakids.utils
 		 * @param dateOffset 变差天数
 		 * @return 年/月/日
 		 */
-		public static function getYMD(date:Date, dateOffset:int=0):String
+		public static function getYMD(date:Date, dateOffset:int=0, spaceMark:String="/"):String
 		{
 			if (!date)
 				return '';
 			date.date+=dateOffset;
-			return date.fullYear + '/' + (date.month + 1) + '/' + date.date;
+			return date.fullYear + spaceMark + (date.month + 1) + spaceMark + date.date;
 		}
 
 		public static function getDatesBetween(from:Date, end:Date):Array

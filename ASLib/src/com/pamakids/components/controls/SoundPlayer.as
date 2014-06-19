@@ -103,7 +103,7 @@ package com.pamakids.components.controls
 		public function set volume(value:Number):void
 		{
 			_volume=value;
-			if(!soundChannel)
+			if (!soundChannel)
 				return;
 			soundTransform=soundChannel.soundTransform;
 			TweenLite.to(soundTransform, 0.8, {volume: value, onUpdate: pausingHandler});
@@ -170,13 +170,15 @@ package com.pamakids.components.controls
 			try
 			{
 				soundChannel=sound.play(currentPosition);
-				soundLength = sound.length;
+				soundLength=sound.length;
 				soundTransform=soundChannel.soundTransform;
 				if (muted)
 				{
 					soundTransform.volume=0;
-				}else{
-					soundTransform.volume = volume
+				}
+				else
+				{
+					soundTransform.volume=volume
 				}
 				soundChannel.soundTransform=soundTransform;
 				initIntervalTimer();
@@ -220,8 +222,8 @@ package com.pamakids.components.controls
 
 		/**
 		 * 默认无限重复
-		 */		
-		public var repeatTimes:int = -1;
+		 */
+		public var repeatTimes:int=-1;
 
 		/**
 		 * 重播
@@ -229,7 +231,6 @@ package com.pamakids.components.controls
 		public function replay():void
 		{
 			playing=false;
-			currentPosition=0;
 			play();
 //			playing=true;
 //			if (soundChannel)
@@ -253,7 +254,7 @@ package com.pamakids.components.controls
 		 */
 		public function stop():void
 		{
-			paused = false;
+			paused=false;
 			if (!playing)
 				return;
 			try
@@ -284,7 +285,8 @@ package com.pamakids.components.controls
 		{
 			if (value == _url)
 			{
-				currentPosition=0;
+				if (!currentPosition)
+					currentPosition=0;
 				if (internalTimer)
 					internalTimer.reset();
 				replay();
@@ -330,19 +332,26 @@ package com.pamakids.components.controls
 			stopInternalTimer();
 			if (repeat)
 			{
-				if(repeatTimes > 0){
-					repeatTimes --;
-				}else if(repeatTimes == 0){
+				if (repeatTimes > 0)
+				{
+					repeatTimes--;
+				}
+				else if (repeatTimes == 0)
+				{
 					dispatchEvent(new Event(PLAY_REPEAT_COMPLETE));
 					return;
 				}
 				playing=false;
 				currentPosition=0;
-				if(repeatInterval){
-					TweenLite.delayedCall(repeatInterval, function():void{
+				if (repeatInterval)
+				{
+					TweenLite.delayedCall(repeatInterval, function():void
+					{
 						play();
 					});
-				}else{
+				}
+				else
+				{
 					play();
 				}
 			}

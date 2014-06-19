@@ -116,13 +116,11 @@ package com.pamakids.manager
 					path=path.substr(1);
 				var fs:Object=new FileStream();
 				var file:Object;
+				createDirectory(path);
 				if (savedDir)
 					file=new File(savedDir + path);
 				else
-				{
-					createDirectory(path);
 					file=File.applicationStorageDirectory.resolvePath(path);
-				}
 				try
 				{
 					fs.open(file, FileMode.WRITE);
