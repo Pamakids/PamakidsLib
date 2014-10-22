@@ -44,12 +44,12 @@ package com.pamakids.utils
 		 * @return Date
 		 *
 		 */
-		public static function getDateByHHMMSS(hhmmss:String):Date
+		public static function getDateByHHMMSS(hhmmss:String, date:Date=null):Date
 		{
 			var d:Date;
 			try
 			{
-				d=new Date();
+				d=date ? date : new Date();
 				var arr:Array=hhmmss.split(':');
 				if (arr.length == 3)
 					d.setHours(arr[0], arr[1], arr[2], 0);
@@ -175,6 +175,23 @@ package com.pamakids.utils
 				return '';
 			date.date+=dateOffset;
 			return date.fullYear + spaceMark + (date.month + 1) + spaceMark + date.date;
+		}
+
+		public static function getDateByYMD(ymd:String, spaceMark:String="/"):Date
+		{
+			if (!ymd)
+				return null;
+			var arr:Array=ymd.split(spaceMark);
+			if (arr.length != 3)
+				return null;
+			var y:int=int(arr[0]);
+			var m:int=int(arr[1]);
+			var r:int=int(arr[2]);
+			var date:Date=new Date(y, m - 1, r, 0, 0, 0, 0);
+			if (date.getTime() > 0)
+				return date;
+			else
+				return null;
 		}
 
 		public static function getDatesBetween(from:Date, end:Date):Array

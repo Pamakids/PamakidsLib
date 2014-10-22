@@ -70,8 +70,10 @@ package com.pamakids.utils
 		 * 根据NodeJS后台返回的日期字符串获得本地Date
 		 * @param date 格式如：2014-05-31T16:00:00.000Z
 		 */
-		public static function getLocalDate(date:String):Date
+		public static function getLocalDate(date:Object):Date
 		{
+			if (date is Date)
+				return date as Date;
 			var d:Date;
 			if (date)
 			{

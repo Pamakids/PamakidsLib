@@ -64,6 +64,9 @@ package com.pamakids.manager
 			onCompleteDic=new Dictionary();
 			ioErrorDic=new Dictionary();
 			completeParamsDic=new Dictionary();
+			loaderFormate=new Dictionary();
+			tobeLoadedBytes=new Dictionary();
+			loadedBytes=new Dictionary();
 			bigDataFormates=[BITMAP, SWF];
 		}
 
@@ -72,12 +75,28 @@ package com.pamakids.manager
 		private var completeParamsDic:Dictionary; //加载完成后回调函数的参数字典
 		private var loadedDic:Dictionary; //已经加载的数据字典
 		private var loaderDic:Dictionary; //Loader字典
-		private var loaderFormate:Dictionary=new Dictionary();
+		private var loaderFormate:Dictionary;
 		private var loadingDic:Dictionary; //正在加载字典
 		private var onCompleteDic:Dictionary; //加载完成后回调函数字典
 		private var savePathDic:Dictionary; //存储路径字典
 		private var loadingCallbackDic:Dictionary;
 		private var ioErrorDic:Dictionary;
+		private var tobeLoadedBytes:Dictionary;
+		private var loadedBytes:Dictionary;
+
+		public function clearLoaderDic(u:URLLoader):void
+		{
+			delete loaderDic[u];
+			delete loadedDic[u];
+			delete savePathDic[u];
+			delete loadingCallbackDic[u];
+			delete onCompleteDic[u];
+			delete ioErrorDic[u];
+			delete completeParamsDic[u];
+			delete loaderFormate[u];
+			delete tobeLoadedBytes[u];
+			delete loadedBytes[u];
+		}
 
 		public function loadText(url:String, onComplete:Function, savePath:String='', ioHanderOrforceReload:Object=null):void
 		{
@@ -202,26 +221,7 @@ package com.pamakids.manager
 		}
 
 		public var allLoadingHandler:Function;
-		private var tobeLoadedBytes:Dictionary=new Dictionary();
-		private var loadedBytes:Dictionary=new Dictionary();
 		private var startLoad:int;
-
-		public function clearLoading():void
-		{
-			startLoad=0;
-			allLoadingHandler=null;
-			clearObject(tobeLoadedBytes);
-			clearObject(loadedBytes);
-			clearObject(loadingCallbackDic);
-		}
-
-		private function clearObject(o:Object):void
-		{
-			for (var key:* in o)
-			{
-				delete o[key];
-			}
-		}
 
 		protected function loadingHandler(event:ProgressEvent):void
 		{
@@ -230,10 +230,6 @@ package com.pamakids.manager
 			{
 				var f:Function=loadingCallbackDic[u];
 				f.length == 2 ? f(event.bytesLoaded, event.bytesTotal) : f(event.bytesLoaded / event.bytesTotal);
-			}
-			if (event.bytesLoaded == event.bytesTotal)
-			{
-				u.removeEventListener(ProgressEvent.PROGRESS, loadingHandler);
 			}
 			if (allLoadingHandler != null)
 			{
@@ -258,6 +254,8 @@ package com.pamakids.manager
 				else if (allLoadingHandler.length == 1)
 					allLoadingHandler(loaded / toload);
 			}
+			if (event.bytesLoaded == event.bytesTotal)
+				u.removeEventListener(ProgressEvent.PROGRESS, loadingHandler);
 		}
 
 		protected function contentLoadedHandler(event:Event):void
@@ -324,16 +322,12 @@ package com.pamakids.manager
 
 		private function ioErrorHandler(event:IOErrorEvent):void
 		{
-			trace('Load IO Error: ' + event.toString());
+			Log.error('Load IO Error: ' + event.toString());
 			var u:URLLoader=event.currentTarget as URLLoader;
 			var ioCB:Function=ioErrorDic[u];
 			var params:Array=completeParamsDic[u];
-			delete loadingDic[u];
-			delete loaderDic[u];
-			delete loaderFormate[u];
-			delete savePathDic[u];
-			delete completeParamsDic[u];
-			delete ioErrorDic[u];
+
+			clearLoaderDic(u);
 
 			if (ioCB != null)
 			{
@@ -364,8 +358,7 @@ package com.pamakids.manager
 				{
 
 				}
-				delete loadingDic[url];
-				delete loaderDic[u];
+				clearLoaderDic(u);
 			}
 		}
 
@@ -377,12 +370,10 @@ package com.pamakids.manager
 			{
 				f=loadingCallbackDic[u];
 				f.length == 2 ? f(1, 1) : f(1);
-				delete loadingCallbackDic[u];
-				delete loadedBytes[u];
-				delete tobeLoadedBytes[u];
 				u.removeEventListener(ProgressEvent.PROGRESS, loadingHandler);
 			}
 			u.removeEventListener(Event.COMPLETE, onBinaryLoaded);
+			u.removeEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			var arr:Array=loaderDic[u];
 			var params:Array;
 
@@ -395,7 +386,6 @@ package com.pamakids.manager
 			if (savePath)
 			{
 				FileManager.saveFile(savePath, u.data);
-				delete savePathDic[u];
 			}
 
 			var formate:String=loaderFormate[u];
@@ -404,18 +394,17 @@ package com.pamakids.manager
 			{
 				if (loadingDic[key] == u)
 				{
-					trace('Loaded Asset URL:' + key);
-					if (!savePath && bigDataFormates.indexOf(formate) == -1)
+					if (!savePath && bigDataFormates.indexOf(formate) == -1 && formate != URLLoaderDataFormat.BINARY)
 						loadedDic[key]=u.data;
 					delete loadingDic[key];
 					break;
 				}
 			}
 
-			delete loaderDic[u];
-			delete loaderFormate[u];
 			params=completeParamsDic[u];
-			delete completeParamsDic[u];
+
+			clearLoaderDic(u);
+
 			if (bigDataFormates.indexOf(formate) != -1 && b)
 			{
 				getContentFromByteArray(b, arr, params);

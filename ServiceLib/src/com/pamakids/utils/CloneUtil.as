@@ -116,7 +116,9 @@ package com.pamakids.utils
 			var arr:Array=[]
 			for each (var o:Object in source)
 			{
-				arr.push(convertObject(o, tobeClass) as tobeClass);
+				var oo:Object=convertObject(o, tobeClass) as tobeClass;
+				if (oo)
+					arr.push(oo);
 			}
 			return arr;
 		}

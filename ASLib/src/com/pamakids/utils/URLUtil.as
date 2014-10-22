@@ -12,7 +12,7 @@ package com.pamakids.utils
 
 		public static function isHttp(url:String):Boolean
 		{
-			return url.indexOf('http') != -1;
+			return url ? url.indexOf('http') != -1 : false;
 		}
 
 		public static function getCachePath(url:String):String

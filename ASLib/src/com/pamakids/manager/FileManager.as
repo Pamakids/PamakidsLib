@@ -9,7 +9,19 @@ package com.pamakids.manager
 	 */
 	public class FileManager
 	{
-		public static var savedDir:String;
+		public static var _savedDir:String;
+
+		public static function set savedDir(value:String):void
+		{
+			_savedDir=value;
+		}
+
+		public static function get savedDir():String
+		{
+			if (_savedDir && _savedDir.indexOf('\\') != -1)
+				_savedDir=_savedDir.replace(/\\/g, '/')
+			return _savedDir;
+		}
 
 		private static function get File():Class
 		{
@@ -43,10 +55,10 @@ package com.pamakids.manager
 				try
 				{
 					var f:Object;
-					if (savedDir)
-						f=new File(savedDir + path);
+					if (fromAppDirectory)
+						f=File.applicationDirectory.resolvePath(path);
 					else
-						f=fromAppDirectory ? File.applicationDirectory.resolvePath(path) : File.applicationStorageDirectory.resolvePath(path);
+						f=savedDir ? new File(savedDir + path) : File.applicationStorageDirectory.resolvePath(path);
 					if (!f.exists)
 						return o;
 					var fs:Object=new FileStream();
@@ -186,11 +198,15 @@ package com.pamakids.manager
 		{
 			if (!File)
 				return;
-			var f:Object=new File(path);
+			var file:Object;
+			if (savedDir)
+				file=new File(savedDir + path);
+			else
+				file=File.applicationStorageDirectory.resolvePath(path);
 			try
 			{
-				if (f.exists)
-					f.deleteFileAsync();
+				if (file.exists)
+					file.deleteFileAsync();
 			}
 			catch (error:Error)
 			{

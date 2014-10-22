@@ -1,6 +1,7 @@
 package com.pamakids.components.controls
 {
 	import com.greensock.TweenLite;
+	import com.pamakids.utils.DateUtil;
 
 	import flash.events.DataEvent;
 	import flash.events.Event;
@@ -43,7 +44,7 @@ package com.pamakids.components.controls
 
 		private var _url:String;
 
-		public var currentPosition:Number; //当前播放位置
+		private var _currentPosition:Number; //当前播放位置
 
 		public var playing:Boolean;
 
@@ -54,6 +55,18 @@ package com.pamakids.components.controls
 		private var soundTransform:SoundTransform;
 
 		private var _internalTime:Number;
+
+		public function get currentPosition():Number
+		{
+			return _currentPosition;
+		}
+
+		public function set currentPosition(value:Number):void
+		{
+			if (!value)
+				value=0;
+			_currentPosition=value;
+		}
 
 		/**
 		 * 派发playing事件的间隔时间
@@ -92,7 +105,10 @@ package com.pamakids.components.controls
 		protected function onTimer(event:TimerEvent):void
 		{
 			if (soundChannel)
+			{
+				soundLength=sound.length;
 				dispatchEvent(new DataEvent(PLAYING, false, false, soundChannel.position.toString()));
+			}
 		}
 
 		public function get volume():Number
@@ -103,7 +119,7 @@ package com.pamakids.components.controls
 		public function set volume(value:Number):void
 		{
 			_volume=value;
-			if (!soundChannel)
+			if (!soundChannel || muted)
 				return;
 			soundTransform=soundChannel.soundTransform;
 			TweenLite.to(soundTransform, 0.8, {volume: value, onUpdate: pausingHandler});
@@ -122,7 +138,11 @@ package com.pamakids.components.controls
 			_muted=value;
 			if (!soundChannel)
 				return;
-			volume=value ? 0 : 1;
+			soundTransform=soundChannel.soundTransform;
+			if (value)
+				TweenLite.to(soundTransform, 0.8, {volume: 0, onUpdate: pausingHandler});
+			else
+				TweenLite.to(soundTransform, 0.8, {volume: volume, onUpdate: pausingHandler});
 		}
 
 		private var _volume:Number=1;
@@ -169,6 +189,8 @@ package com.pamakids.components.controls
 			stopSoundChannel();
 			try
 			{
+				if (currentPosition > sound.length)
+					currentPosition=0;
 				soundChannel=sound.play(currentPosition);
 				soundLength=sound.length;
 				soundTransform=soundChannel.soundTransform;
@@ -186,10 +208,9 @@ package com.pamakids.components.controls
 			}
 			catch (error:Error)
 			{
-				trace('Sound Player error', error);
+				Log.Trace('Sound Player error', error);
 				dispatchEvent(new DataEvent('error', false, false, url));
 			}
-			trace('Sound Player play: ' + url);
 		}
 
 		public var soundLength:Number;
@@ -283,15 +304,6 @@ package com.pamakids.components.controls
 
 		public function set url(value:String):void
 		{
-			if (value == _url)
-			{
-				if (!currentPosition)
-					currentPosition=0;
-				if (internalTimer)
-					internalTimer.reset();
-				replay();
-				return;
-			}
 			_url=value;
 			stop();
 			initSound();
@@ -302,11 +314,17 @@ package com.pamakids.components.controls
 
 		private function errorHandler(event:IOErrorEvent):void
 		{
-			trace(event.toString());
+			Log.Trace(event.toString());
+			dispatchEvent(new DataEvent('error', false, false, url));
 		}
 
 		private function initSound():void
 		{
+			if (sound)
+			{
+				sound.removeEventListener(IOErrorEvent.IO_ERROR, errorHandler);
+				sound.removeEventListener(ProgressEvent.PROGRESS, progressHandler);
+			}
 			sound=new Sound();
 			sound.addEventListener(IOErrorEvent.IO_ERROR, errorHandler);
 			sound.addEventListener(ProgressEvent.PROGRESS, progressHandler);
@@ -328,7 +346,7 @@ package com.pamakids.components.controls
 
 		private function playedHandler(event:Event):void
 		{
-			trace('Sound Played', url);
+			playing=false;
 			stopInternalTimer();
 			if (repeat)
 			{
@@ -341,7 +359,6 @@ package com.pamakids.components.controls
 					dispatchEvent(new Event(PLAY_REPEAT_COMPLETE));
 					return;
 				}
-				playing=false;
 				currentPosition=0;
 				if (repeatInterval)
 				{
