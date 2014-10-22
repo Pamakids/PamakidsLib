@@ -23,7 +23,7 @@ package com.pamakids.manager
 			return _savedDir;
 		}
 
-		private static function get File():Class
+		public static function get File():Class
 		{
 			try
 			{
